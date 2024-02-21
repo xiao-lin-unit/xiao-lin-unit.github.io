@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>小琳的星空 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico?time=511" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css?time=511" />
+  <link rel="stylesheet" href="/css/layout.css?time=511" />
+  <link rel="stylesheet" href="/css/iconfont.css?time=511" />
+  <link rel="stylesheet" href="/css/APlayer.min.css?time=511" />
+  <script src="/js/APlayer.min.js?time=511"></script>
+  <script src="/js/jquery.min.js?time=511"></script>
+  <script src="/js/jquery.pjax.min.js?time=511"></script>
+
+  <script src="/js/Valine.min.js?time=511"></script>
+<!--  <script src='https://unpkg.com/valine/dist/Valine.min.js'></script>-->
+  <script>
+    document.title = `小琳的星空`
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="/?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/">-->
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="/log?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/log?time=505">-->
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="/link?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/link?time=505">-->
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="/about?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/about?time=505">-->
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"Promise","cover":1,"path":"2023/11/24/js/Promise/"},{"title":"MySQL系列(一)---安装","path":"2023/11/27/mysql/MySQL系列一之安装/"},{"title":"Redis系列(一)---安装","cover":0,"path":"2023/12/12/redis/Redis系列一之安装/"},{"title":"博客搭建","cover":"default","path":"2023/11/22/other/博客搭建/"},{"title":"项目对接海康SDK","path":"2024/02/21/other/项目对接海康SDK/"},{"title":"NPM和PNPM的安装及配置","cover":0,"path":"2023/12/26/node/npm和pnpm安装及配置/"},{"title":"Typescript系列(一)---基础","cover":0,"path":"2023/12/26/ts/TypeScript系列一之基础/"},{"title":"Typescript系列(二)---高级","cover":1,"path":"2024/01/04/ts/TypeScript系列二之高级/"},{"title":"SpringCloud系列(一)---项目创建","cover":0,"path":"2023/11/25/springcloud/SpringCloud系列一之基础服务/"},{"title":"SpringCloud系列(三)---服务熔断与降级","cover":0,"path":"2023/12/02/springcloud/SpringCloud系列三之服务熔断与降级/"},{"title":"SpringCloud系列(七)---认证和授权","cover":1,"path":"2024/02/03/springcloud/SpringCloud系列七之认证和授权/"},{"title":"SpringCloud系列(二)---注册中心和配置中心","cover":1,"path":"2023/11/30/springcloud/SpringCloud系列二之注册中心/"},{"title":"SpringCloud系列(五)---Redis使用","cover":1,"path":"2023/12/14/springcloud/SpringCloud系列五之Redis使用/"},{"title":"SpringCloud(八)---服务划分","cover":0,"path":"2024/02/19/springcloud/SpringCloud系列八之服务划分/"},{"title":"SpringCloud系列(六)---分布式主键","cover":0,"path":"2023/12/11/springcloud/SpringCloud系列六之分布式主键/"},{"title":"SpringCloud系列(四)---网关","cover":1,"path":"2023/12/10/springcloud/SpringCloud系列四之网关/"},{"title":"Vue系列(一)---项目创建和配置","cover":0,"path":"2024/01/25/web/Vue系列一之项目创建和配置/"},{"title":"Vue系列(三)---状态管理库","cover":0,"path":"2024/01/18/web/Vue系列三之状态管理库/"},{"title":"Vue系列(二)---路由","cover":1,"path":"2024/01/07/web/Vue系列二之路由/"},{"title":"Vue系列(四)---请求","cover":1,"path":"2024/02/01/web/Vue系列四之请求/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}${'?time=' + new Date().getMilliseconds()}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp'}${'?time=' + new Date().getMilliseconds()}" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg?time=506" class="main-left--avatar" alt />
+      <div class="main-left--intro">
+        <p class="main-left--name">小琳</p>
+        <div class="main-left--tags">
+          
+            <span class="main-left--tag">中二</span>
+          
+            <span class="main-left--tag">乐天派</span>
+          
+            <span class="main-left--tag">悲观主义</span>
+          
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>跳出圈子你会发现</p>
+        <p>其实你一无是处</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        
+          <a target="_blank" rel="noopener" href="https://github.com/?time=506" title="github">
+            <i class="logo xiao-lin-blog xiao-lin-blog-github"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://gitee.com/xiao-lin?time=506" title="码云">
+            <i class="logo xiao-lin-blog xiao-lin-blog-gitee"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43728193?type=blog?time=506" title="CSDN">
+            <i class="logo xiao-lin-blog xiao-lin-blog-csdn"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiao-lin-unit/?time=506" title="博客园">
+            <i class="logo xiao-lin-blog xiao-lin-blog-cnblogs"></i>
+          </a>
+        
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories?time=506">
+          <div>
+            <span>8</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags?time=506">
+          <div>
+            <span>23</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives?time=506">
+          <div>
+            <span>4 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/?time=506">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log?time=506">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link?time=506">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about?time=506">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tags?time=506">
+            <span class="header-menu--span">标签</span>
+            <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-tags-rectangle"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/categories?time=506">
+            <span class="header-menu--span">分类</span>
+            <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-categories"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>20 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>92天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  
+
+<link rel="stylesheet" href="/css/partial/article.css?time=492" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">Redis系列(一)---安装</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span class="xiao-lin-blog xiao-lin-blog-categories">分类：</span>
+            <a class="category-link" href="/categories/Redis/">Redis</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span class="xiao-lin-blog xiao-lin-blog-tags-fill">标签：</span>
+            <a class="tag-link" href="/tags/Redis/" rel="tag">Redis</a>
+          </div>
+          
+          <p class="article-info--date"><i class="xiao-lin-blog xiao-lin-blog-date-time">日期：2023-12-12 19:16:07</i></p>
+        </div>
+<!--        <img src="/imgs/cover/default-cover.webp" alt="" class="article-cover">-->
+        <img src="/imgs/cover/default-cover.webp" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <!-- toc -->
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p><code>Redis</code>作为比较火的<code>NoSQL</code>, 广泛应用与分布式系统中, 由于<code>Redis</code>是基于内存的, 极致的响应速度使其可以在分布式系统中担任众多角色, 如缓存, 分布式共享数据, 分布式锁, 分布式主键, 消息队列等</p>
+<p>本篇先讲安装, 在<code>Ubuntu</code>系统下的安装, 分别介绍两种安装方式的过程</p>
+<p>本人是在<code>Windows</code>下的<code>Ubuntu</code>进行的</p>
+<ol>
+<li>
+<p>配置好<code>wsl</code>环境</p>
+</li>
+<li>
+<p>执行<code>wsl --install</code>安装默认的<code>Ubuntu</code>系统或者从<code>Store</code>中安装</p>
+</li>
+<li>
+<p>创建<code>Ubuntu</code>系统的用户和密码</p>
+</li>
+<li>
+<p>更换源</p>
+<p>清华镜像源配置获取: <a target="_blank" rel="noopener" href="https://mirror.tuna.tsinghua.edu.cn/help/ubuntu/">https://mirror.tuna.tsinghua.edu.cn/help/ubuntu/</a></p>
+</li>
+</ol>
+<p>参考文章:</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/423249278">https://zhuanlan.zhihu.com/p/423249278</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/chigenb/article/details/105641189">https://blog.csdn.net/chigenb/article/details/105641189</a></p>
+<p><a target="_blank" rel="noopener" href="https://mirror.tuna.tsinghua.edu.cn/help/ubuntu/">https://mirror.tuna.tsinghua.edu.cn/help/ubuntu/</a></p>
+<h3 id="apt工具安装"><a class="markdownIt-Anchor" href="#apt工具安装"></a> <code>apt</code>工具安装</h3>
+<h4 id="安装"><a class="markdownIt-Anchor" href="#安装"></a> 安装</h4>
+<p>执行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install redis-server</span><br></pre></td></tr></table></figure>
+<p>安装<code>redis</code>服务, 遇到输入[Y/n]的提示时输入<code>y</code>, 或者在命令之后添加<code>-y</code></p>
+<img src="/2023/12/12/redis/Redis%E7%B3%BB%E5%88%97%E4%B8%80%E4%B9%8B%E5%AE%89%E8%A3%85/Redis%E4%BD%BF%E7%94%A8apt%E5%AE%89%E8%A3%85.png" class="" title="Redis使用apt安装">
+<p>执行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service redis status</span><br></pre></td></tr></table></figure>
+<p>查看<code>redis</code>的运行状态, 使用<code>apt</code>安装时, 安装完成后默认会启动</p>
+<img src="/2023/12/12/redis/Redis%E7%B3%BB%E5%88%97%E4%B8%80%E4%B9%8B%E5%AE%89%E8%A3%85/Redis%E8%BF%90%E8%A1%8C%E7%8A%B6%E6%80%81.png" class="" title="Redis运行状态">
+<p>进入<code>/etc/redis</code>目录, 执行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim redis.conf</span><br></pre></td></tr></table></figure>
+<p>编辑<code>redis</code>配置文件, 修改位置</p>
+<ol>
+<li><code>bind 127.0.0.1 ::1</code>这一行注释掉, 使其可以远程访问(注意让防火墙开放6379端口)</li>
+<li><a href="#问题一">将<code>protected-mode</code>的值设置为<code>no</code>, 关闭保护模式</a>, 否则也无法正常进行远程访问</li>
+</ol>
+<p>然后执行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service redis restart</span><br></pre></td></tr></table></figure>
+<p>重新启动服务</p>
+<h4 id="连接"><a class="markdownIt-Anchor" href="#连接"></a> 连接</h4>
+<p>测试远程连接</p>
+<p>可以使用命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli -h ip</span><br></pre></td></tr></table></figure>
+<p>或者使用工具</p>
+<img src="/2023/12/12/redis/Redis%E7%B3%BB%E5%88%97%E4%B8%80%E4%B9%8B%E5%AE%89%E8%A3%85/Redis%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5.png" class="" title="Redis远程连接">
+<p><code>redis</code>默认不是以守护进程的方式运行, 可以通过修改配置文件中的<code>daemonize</code>项为<code>yes</code>来启用守护进程</p>
+<h4 id="卸载"><a class="markdownIt-Anchor" href="#卸载"></a> 卸载</h4>
+<p>使用</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get remove redis-server</span><br></pre></td></tr></table></figure>
+<p>卸载安装的<code>redis</code>服务</p>
+<h3 id="压缩包安装"><a class="markdownIt-Anchor" href="#压缩包安装"></a> 压缩包安装</h3>
+<h4 id="下载"><a class="markdownIt-Anchor" href="#下载"></a> 下载</h4>
+<p>到官网https://download.redis.io中寻找想要的版本下载, 更简单的方式是直接使用https://download.redis.io/releases/redis-x.y.z.tar.gz下载, 将<code>xyz</code>分别改为版本对应的数字即可</p>
+<p>此处使用的是<code>7.2.3</code>版本</p>
+<p>在<code>Ubuntu</code>系统中进入到想要放置安装包的位置</p>
+<p>执行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget url [-P path] [-o path/name]</span><br></pre></td></tr></table></figure>
+<p>下载压缩包, 或者直接使用<code>-P</code>指定下载到哪个目录下, 或者使用<code>-o</code>指定下载到目录并将文件命名</p>
+<p>执行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf redis-x.y.z.tar.gz</span><br></pre></td></tr></table></figure>
+<p>将下载的压缩包解压</p>
+<h4 id="安装-2"><a class="markdownIt-Anchor" href="#安装-2"></a> 安装</h4>
+<ol>
+<li>
+<p>环境</p>
+<p>执行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get install gcc &amp;&amp; apt-get install g++</span><br></pre></td></tr></table></figure>
+<p>安装<code>c/c++</code>编译器</p>
+<p><a href="#问题三"><code>redis</code>是使用<code>c</code>语言开发的</a></p>
+</li>
+<li>
+<p>编译</p>
+<p><a href="#问题二">进入到解压后的目录中, 并执行<code>make</code>命令</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make PREFIX=/usr/local/redis install</span><br></pre></td></tr></table></figure>
+<p>这里使用<code>PREFIX</code>指定程序存放路径, 否则可能会将可执行文件存放到<code>/user/local/bin</code>目录下或者其他你找不到的位置, 别问我为啥知道😂</p>
+<img src="/2023/12/12/redis/Redis%E7%B3%BB%E5%88%97%E4%B8%80%E4%B9%8B%E5%AE%89%E8%A3%85/Redis%E7%BC%96%E8%AF%91%E5%91%BD%E4%BB%A4.png" class="" title="Redis编译命令">
+<p>编译成功</p>
+<img src="/2023/12/12/redis/Redis%E7%B3%BB%E5%88%97%E4%B8%80%E4%B9%8B%E5%AE%89%E8%A3%85/Redis%E7%BC%96%E8%AF%91%E6%88%90%E5%8A%9F.png" class="" title="Redis编译成功">
+</li>
+<li>
+<p>启动</p>
+<p>进入<code>/usr/local/redis/bin</code>目录执行<code>redis-server</code>文件启动服务</p>
+<img src="/2023/12/12/redis/Redis%E7%B3%BB%E5%88%97%E4%B8%80%E4%B9%8B%E5%AE%89%E8%A3%85/Redis%E5%90%AF%E5%8A%A8.png" class="" title="Redis启动">
+</li>
+<li>
+<p>注册服务</p>
+<ul>
+<li>
+<p>修改<code>/usr/local/redis-7.2.3/utils</code>目录下的<code>install-server.sh</code></p>
+<img src="/2023/12/12/redis/Redis%E7%B3%BB%E5%88%97%E4%B8%80%E4%B9%8B%E5%AE%89%E8%A3%85/Redis%E8%84%9A%E6%9C%AC%E4%BF%AE%E6%94%B9.png" class="" title="Redis脚本修改">
+<p>参考文档: <a target="_blank" rel="noopener" href="https://blog.csdn.net/w1014074794/article/details/129367170">https://blog.csdn.net/w1014074794/article/details/129367170</a></p>
+</li>
+<li>
+<p>将<code>redis</code>中的配置文件<code>redis.conf</code>复制到脚本中的目录下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp redis.conf /etc/redis/redis.conf</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>将启动服务文件添加到环境变量</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> sudo export PATH=/usr/local/redis/bin:$PATH</span><br><span class="line">sudo source /etc/profile</span><br></pre></td></tr></table></figure>
+<p>可以使用</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo $PATH</span><br></pre></td></tr></table></figure>
+<p>查看环境变量情况</p>
+</li>
+<li>
+<p>服务注册</p>
+<p>运行脚本<code>install-server.sh</code></p>
+<img src="/2023/12/12/redis/Redis%E7%B3%BB%E5%88%97%E4%B8%80%E4%B9%8B%E5%AE%89%E8%A3%85/Redis%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C.png" class="" title="Redis服务注册脚本执行">
+<p>比如我安装在了<code>/usr/local/redis/bin</code>下, 则需要将路径修改</p>
+<p>默认的服务名称是<code>redis_$&#123;port&#125;</code>, 若没有修改端口号就是<code>redis_6379</code>, 服务注册成功后会默认启动</p>
+</li>
+<li>
+<p>服务启动和停止</p>
+<p>服务注册后即可使用<code>service</code>相关命令启动或停止服务, 也可查看服务状态, 但是服务名称与<code>apt-get</code>的方式不太一样, 即此方式的名称是<code>redis_$&#123;port&#125;</code></p>
+</li>
+</ul>
+</li>
+<li>
+<p>配置远程访问</p>
+<p>参考<code>apt</code>工具安装中的远程访问配置</p>
+</li>
+</ol>
+<h3 id="出现问题"><a class="markdownIt-Anchor" href="#出现问题"></a> 出现问题😭</h3>
+<p><i id="问题一">问题一</i></p>
+<p>问题:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(error) DENIED Redis is running in protected mode ...</span><br></pre></td></tr></table></figure>
+<p>问题原因: 服务使用保护模式启动, 无法进行远程访问</p>
+<p>解决方案: 修改<code>redis.conf</code>中的<code>protected-mode</code>的值为<code>no</code></p>
+<p><i id="问题二">问题二</i></p>
+<p>问题: 找不到<code>make</code>命令</p>
+<p>问题原因: 没有安装编译工具</p>
+<p>解决方案: <code>sudo apt-get install make</code>安装编译工具</p>
+<p><i id="问题三">问题三</i></p>
+<p>问题: 使用<code>make</code>编译时报错</p>
+<p>问题原因: 可能是没有安装<code>gcc-c++</code></p>
+<p>解决方案: <code>CentOS</code>使用<code>yum install gcc-c++</code>安装, <code>Ubuntu</code>使用<code>apt-get install gcc &amp;&amp; apt-get install g++</code>安装, 在安装后使用<code>make clean &amp;&amp; make</code>重新编译, 如果仍不成功, 可以将解压的目录删除重新解压再编译</p>
+<p><i id="问题四">问题四</i></p>
+<p>问题: 服务注册后启动时可能失败</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Failed to start redis.service: Unit redis.service failed to load properly, please adjust/correct and reload service manager: File exists See system logs and &#x27;systemctl status redis.service&#x27; for details.</span><br></pre></td></tr></table></figure>
+<p>问题原因: 可能是被管控</p>
+<p>解决方案: 使用<code>systemctl enable $&#123;service_name&#125;</code>允许服务运行, 但此方式只适用于被管控的情况, 如果是其他情况导致的则无法处理</p>
+<h3 id="挖坑"><a class="markdownIt-Anchor" href="#挖坑"></a> 挖坑</h3>
+<p><code>Redis</code>的使用详情</p>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2023/12/12/redis/Redis系列一之安装/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text"> 前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#apt%E5%B7%A5%E5%85%B7%E5%AE%89%E8%A3%85"><span class="toc-number">2.</span> <span class="toc-text"> apt工具安装</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-number">2.1.</span> <span class="toc-text"> 安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5"><span class="toc-number">2.2.</span> <span class="toc-text"> 连接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%B8%E8%BD%BD"><span class="toc-number">2.3.</span> <span class="toc-text"> 卸载</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%8B%E7%BC%A9%E5%8C%85%E5%AE%89%E8%A3%85"><span class="toc-number">3.</span> <span class="toc-text"> 压缩包安装</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8B%E8%BD%BD"><span class="toc-number">3.1.</span> <span class="toc-text"> 下载</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-2"><span class="toc-number">3.2.</span> <span class="toc-text"> 安装</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BA%E7%8E%B0%E9%97%AE%E9%A2%98"><span class="toc-number">4.</span> <span class="toc-text"> 出现问题😭</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%96%E5%9D%91"><span class="toc-number">5.</span> <span class="toc-text"> 挖坑</span></a></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2023/12/14/springcloud/SpringCloud系列五之Redis使用/">SpringCloud系列(五)---Redis使用</a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2023/12/11/springcloud/SpringCloud系列六之分布式主键/">SpringCloud系列(六)---分布式主键</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2023/12/12/redis/Redis系列一之安装/'
+  })
+</script>
+
+
+<script>
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        let href = decodeURIComponent(link.href);
+        href = href.substring(href.indexOf('#'));
+        const target = $(href)[0];
+        const top = target.offsetTop;
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      我们在绵延的海滩上捡贝壳，今天捡到了不必欣喜，因为海很大，今天没捡到，也不必失落，因为海很大。 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">我好像没有网络备案</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"自転车","artist":"オレスカバンド","url":"/music/自転车-オレスカバンド.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"撞地球","artist":"鱼儿七","url":"/music/撞地球-鱼儿七.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"晴天","artist":"周杰伦","url":"/music/晴天-周杰伦.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"告白气球","artist":"周杰伦","url":"/music/告白气球-周杰伦.mp3","cover":"/imgs/music-bg1.jpg"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>
