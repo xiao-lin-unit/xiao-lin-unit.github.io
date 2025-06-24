@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>小琳的星空 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico?time=569" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css?time=569" />
+  <link rel="stylesheet" href="/css/layout.css?time=569" />
+  <link rel="stylesheet" href="/css/iconfont.css?time=569" />
+  <link rel="stylesheet" href="/css/APlayer.min.css?time=569" />
+  <script src="/js/APlayer.min.js?time=569"></script>
+  <script src="/js/jquery.min.js?time=569"></script>
+  <script src="/js/jquery.pjax.min.js?time=569"></script>
+
+  <script src="/js/Valine.min.js?time=569"></script>
+<!--  <script src='https://unpkg.com/valine/dist/Valine.min.js'></script>-->
+  <script>
+    document.title = `小琳的星空`
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="/?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/">-->
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="/log?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/log?time=565">-->
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="/link?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/link?time=565">-->
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="/about?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/about?time=565">-->
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"Promise","cover":"/imgs/cover/default-cover.jpeg?time=511?time=516?time=517?time=529?time=541?time=543","path":"2023/11/24/js/Promise/"},{"title":"MySQL系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=511?time=513?time=517?time=530?time=541?time=543","path":"2023/11/27/mysql/MySQL系列一之安装/"},{"title":"MySQL系列(三)---索引","cover":"/imgs/cover/default-cover.webp?time=520?time=525?time=530?time=538?time=544","path":"2024/04/29/mysql/MySQL系列三之索引/"},{"title":"MySQL系列(二)---SQL","cover":"/imgs/cover/default-cover.jpeg?time=520?time=524?time=530?time=538?time=544","path":"2024/02/26/mysql/MySQL系列二之SQL/"},{"title":"NPM和PNPM的安装及配置","cover":"/imgs/cover/default-cover.webp?time=507?time=513?time=519?time=531?time=540?time=544?time=545?time=546","path":"2023/12/26/node/npm和pnpm安装及配置/"},{"title":"Redis系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=507?time=513?time=519?time=532?time=540?time=547","path":"2023/12/12/redis/Redis系列一之安装/"},{"title":"博客搭建","cover":"/imgs/cover/default-cover.webp?time=511?time=516?time=517?time=532?time=541?time=543?time=546","path":"2023/11/22/other/博客搭建/"},{"title":"项目对接招商银行CBS","cover":"/imgs/cover/default-cover.webp?time=520?time=524?time=532?time=538?time=547","path":"2024/02/21/other/项目对接招商银行CBS/"},{"title":"项目对接海康SDK","cover":"/imgs/cover/default-cover.webp?time=520?time=524?time=532?time=538?time=548","path":"2024/02/21/other/项目对接海康SDK/"},{"title":"Typescript系列(二)---高级","cover":"/imgs/cover/default-cover.jpeg?time=507?time=521?time=522?time=533?time=540?time=548","path":"2024/01/04/ts/TypeScript系列二之高级/"},{"title":"Typescript系列(一)---基础","cover":"/imgs/cover/default-cover.webp?time=507?time=513?time=519?time=533?time=540?time=548","path":"2023/12/26/ts/TypeScript系列一之基础/"},{"title":"SpringCloud系列(一)---项目创建","cover":"/imgs/cover/default-cover.webp?time=511?time=513?time=517?time=533?time=541?time=549","path":"2023/11/25/springcloud/SpringCloud系列一之基础服务/"},{"title":"SpringCloud系列(七)---认证和授权","cover":"/imgs/cover/default-cover.jpeg?time=507?time=520?time=524?time=533?time=540?time=551","path":"2024/02/03/springcloud/SpringCloud系列七之认证和授权/"},{"title":"SpringCloud系列(三)---服务熔断与降级","cover":"/imgs/cover/default-cover.webp?time=511?time=513?time=519?time=533?time=541?time=549?time=551?time=552","path":"2023/12/02/springcloud/SpringCloud系列三之服务熔断与降级/"},{"title":"SpringCloud系列(九)---阶段总结","cover":"/imgs/cover/default-cover.jpeg?time=520?time=526?time=533?time=538?time=549","path":"2024/05/11/springcloud/SpringCloud系列九之阶段总结/"},{"title":"SpringCloud系列(二)---注册中心和配置中心","cover":"/imgs/cover/default-cover.jpeg?time=511?time=513?time=517?time=533?time=541?time=549?time=552?time=553","path":"2023/11/30/springcloud/SpringCloud系列二之注册中心/"},{"title":"SpringCloud系列(五)---Redis使用","cover":"/imgs/cover/default-cover.jpeg?time=507?time=513?time=519?time=533?time=540?time=547?time=549","path":"2023/12/14/springcloud/SpringCloud系列五之Redis使用/"},{"title":"SpringCloud系列(八)---服务划分","cover":"/imgs/cover/default-cover.webp?time=520?time=524?time=533?time=538?time=553","path":"2024/02/19/springcloud/SpringCloud系列八之服务划分/"},{"title":"SpringCloud系列(六)---分布式主键","cover":"/imgs/cover/default-cover.webp?time=507?time=513?time=519?time=533?time=540?time=549?time=554","path":"2023/12/11/springcloud/SpringCloud系列六之分布式主键/"},{"title":"SpringCloud系列(四)---网关","cover":"/imgs/cover/default-cover.jpeg?time=511?time=513?time=519?time=533?time=541?time=549?time=554","path":"2023/12/10/springcloud/SpringCloud系列四之网关/"},{"title":"Zookeeper系列(一)---原理","cover":"/imgs/cover/default-cover.webp?time=520?time=526?time=535?time=538?time=553","path":"2024/05/28/zookeeper/Zookeeper系列一之原理/"},{"title":"Zookeeper系列(二)---安装配置","cover":"/imgs/cover/default-cover.jpeg?time=520?time=526?time=535?time=538?time=553","path":"2024/05/10/zookeeper/Zookeeper系列二之安装配置/"},{"title":"Vue系列(一)---项目创建和配置","cover":"/imgs/cover/default-cover.webp?time=527?time=528?time=536?time=538?time=546?time=555?time=555","path":"2025/06/19/web/Vue系列一之项目创建和配置/"},{"title":"Vue系列(三)---状态管理库","cover":"/imgs/cover/default-cover.webp?time=507?time=521?time=522?time=536?time=540?time=555","path":"2024/01/18/web/Vue系列三之状态管理库/"},{"title":"Vue系列(二)---路由","cover":"/imgs/cover/default-cover.jpeg?time=507?time=521?time=522?time=536?time=540?time=556","path":"2024/01/07/web/Vue系列二之路由/"},{"title":"Vue系列(四)---请求","cover":"/imgs/cover/default-cover.jpeg?time=507?time=520?time=524?time=536?time=540?time=556","path":"2024/02/01/web/Vue系列四之请求/"},{"title":"","cover":"/imgs/cover/default-cover.webp?time=527?time=528?time=538","path":"2025/06/19/zookeeper/Zookeeper系列一之原理/The Part-Time Parliament CN/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}${'?time=' + new Date().getMilliseconds()}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp'}${'?time=' + new Date().getMilliseconds()}" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg?time=565" class="main-left--avatar" alt />
+      <div class="main-left--intro">
+        <p class="main-left--name">小琳</p>
+        <div class="main-left--tags">
+          
+            <span class="main-left--tag">中二</span>
+          
+            <span class="main-left--tag">乐天派</span>
+          
+            <span class="main-left--tag">悲观主义</span>
+          
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>跳出圈子你会发现</p>
+        <p>其实你一无是处</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        
+          <a target="_blank" rel="noopener" href="https://github.com/?time=565" title="github">
+            <i class="logo xiao-lin-blog xiao-lin-blog-github"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://gitee.com/xiao-lin?time=565" title="码云">
+            <i class="logo xiao-lin-blog xiao-lin-blog-gitee"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43728193?type=blog?time=565" title="CSDN">
+            <i class="logo xiao-lin-blog xiao-lin-blog-csdn"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiao-lin-unit/?time=565" title="博客园">
+            <i class="logo xiao-lin-blog xiao-lin-blog-cnblogs"></i>
+          </a>
+        
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories?time=565">
+          <div>
+            <span>9</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags?time=565">
+          <div>
+            <span>25</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives?time=565">
+          <div>
+            <span>7 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/?time=565">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log?time=565">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link?time=565">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about?time=565">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tags?time=565">
+            <span class="header-menu--span">标签</span>
+            <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-tags-rectangle"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/categories?time=565">
+            <span class="header-menu--span">分类</span>
+            <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-categories"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>27 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>581天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  
+
+<link rel="stylesheet" href="/css/partial/article.css?time=459" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">Vue系列(二)---路由</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span class="xiao-lin-blog xiao-lin-blog-categories">分类：</span>
+            <a class="category-link" href="/categories/web/">Web</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span class="xiao-lin-blog xiao-lin-blog-tags-fill">标签：</span>
+            <a class="tag-link" href="/tags/vue-router/" rel="tag">vue-router</a>
+          </div>
+          
+          <p class="article-info--date"><i class="xiao-lin-blog xiao-lin-blog-date-time">日期：2024-01-07 16:06:28</i></p>
+        </div>
+<!--        <img src="/1" alt="" class="article-cover">-->
+        <img src="/imgs/cover/default-cover.jpeg" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <!-- toc -->
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p><code>vue-router</code>是<code>vue</code>官方推荐的前端路由. 由于本篇的路由会实际引入项目中使用, 所以本篇中的路由不仅仅是路由, 还是菜单和页面标签. 在使用时会重新定义路由的使用</p>
+<h3 id="安装"><a class="markdownIt-Anchor" href="#安装"></a> 安装</h3>
+<p>本篇基于前篇, 使用<code>pnpm</code>方式安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pnpm add vue-router@4</span><br></pre></td></tr></table></figure>
+<h3 id="创建"><a class="markdownIt-Anchor" href="#创建"></a> 创建</h3>
+<p>在项目中创建一个<code>router</code>目录, 在<code>router</code>目录下创建<code>index.ts</code></p>
+<p>在<code>index.ts</code>中创建一个路由</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;createRouter, createWebHashHistory, <span class="title class_">Router</span>, <span class="title class_">RouteRecordRaw</span>&#125; <span class="keyword">from</span> <span class="string">&quot;vue-router&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="attr">routes</span>: <span class="title class_">Readonly</span>&lt;<span class="title class_">RouteRecordRaw</span>[]&gt; = [</span><br><span class="line"></span><br><span class="line">]</span><br><span class="line"><span class="keyword">const</span> <span class="attr">router</span>: <span class="title class_">Router</span> = <span class="title function_">createRouter</span>(&#123;</span><br><span class="line">    <span class="attr">history</span>: <span class="title function_">createWebHashHistory</span>(),</span><br><span class="line">    routes</span><br><span class="line">&#125;);</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> router;</span><br></pre></td></tr></table></figure>
+<h3 id="引入"><a class="markdownIt-Anchor" href="#引入"></a> 引入</h3>
+<p>在<code>main.ts</code>中导入创建的路由, 并通过<code>use</code>函数引入</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; createApp &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">App</span> <span class="keyword">from</span> <span class="string">&#x27;./App.vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> router <span class="keyword">from</span> <span class="string">&quot;@/router&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = <span class="title function_">createApp</span>(<span class="title class_">App</span>);</span><br><span class="line">app.<span class="title function_">use</span>(router);</span><br><span class="line">app.<span class="title function_">mount</span>(<span class="string">&#x27;#app&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="简单使用"><a class="markdownIt-Anchor" href="#简单使用"></a> 简单使用</h3>
+<ol>
+<li>
+<p>使用<code>router-view</code>来展示内容</p>
+<p>在<code>App.vue</code>中添加<code>router-view</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;script setup lang=&quot;ts&quot;&gt;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;router-view /&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;style&gt;</span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure>
+<p><code>App.vue</code>中实际上其他事情都可以不做, 但也可以处理部分内容, 如定义部分根样式</p>
+</li>
+<li>
+<p>使用<code>router-link</code>来切换路由</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;router-link to=&quot;/hello&quot;&gt;to hello&lt;/router-link&gt;</span><br></pre></td></tr></table></figure>
+<p>通常使用编程式导航代替</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">router.<span class="title function_">push</span>(&#123;<span class="attr">path</span>: <span class="string">`/hello`</span>&#125;);</span><br><span class="line">router.<span class="title function_">replace</span>(&#123;<span class="attr">path</span>: <span class="string">`hello`</span>&#125;);</span><br><span class="line">router.<span class="title function_">go</span>(<span class="number">1</span>/-<span class="number">1</span>/<span class="number">1000</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>在<code>routes</code>中添加路由</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="attr">routes</span>: <span class="title class_">Readonly</span>&lt;<span class="title class_">RouteRecordRaw</span>[]&gt; = [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">path</span>: <span class="string">&#x27;/hello&#x27;</span>,</span><br><span class="line">        <span class="attr">name</span>: <span class="string">&#x27;hello&#x27;</span>,</span><br><span class="line">        <span class="attr">component</span>: <span class="function">() =&gt;</span> <span class="keyword">import</span>(<span class="string">&#x27;@/components/HelloWorld.vue&#x27;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>展示</p>
+<p><img src="Router%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8.png" alt="Router基础使用" /></p>
+</li>
+<li>
+<p>其他</p>
+<p>在实际使用中, 路由路径的定义位置通常不是使用<code>router-link</code>, 而是使用组件来实现, 路由路径的定义位置和方式不重要, 重要的是定义路由路径和组件映射, 以及如何跳转到该路由路径上</p>
+</li>
+</ol>
+<h3 id="菜单和路由"><a class="markdownIt-Anchor" href="#菜单和路由"></a> 菜单和路由</h3>
+<p>本篇中使用<code>element</code>作为项目的开发组件库, 所以此处需要添加<code>element</code>, 然后使用<code>element</code>中的<code>menu</code>组件实现菜单和路由的控制</p>
+<p>采用官方推荐的按需导入的方式</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pnpm add element-plus --save</span><br><span class="line">pnpm add unplugin-vue-components unplugin-auto-import --save-dev</span><br></pre></td></tr></table></figure>
+<p>修改<code>vite.config.ts</code></p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;<span class="title class_">ElementPlusResolver</span>&#125; <span class="keyword">from</span> <span class="string">&quot;unplugin-vue-components/resolvers&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">AutoImport</span> <span class="keyword">from</span> <span class="string">&#x27;unplugin-auto-import/vite&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Components</span> <span class="keyword">from</span> <span class="string">&#x27;unplugin-vue-components/vite&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title function_">defineConfig</span>(&#123;</span><br><span class="line">    <span class="attr">plugins</span>: [</span><br><span class="line">        <span class="title function_">vue</span>(),</span><br><span class="line">        <span class="title class_">AutoImport</span>(&#123;</span><br><span class="line">            <span class="attr">resolvers</span>: [<span class="title class_">ElementPlusResolver</span>()]</span><br><span class="line">        &#125;),</span><br><span class="line">        <span class="title class_">Components</span>(&#123;</span><br><span class="line">            <span class="attr">resolvers</span>: [<span class="title class_">ElementPlusResolver</span>()],</span><br><span class="line">        &#125;),</span><br><span class="line">    ]</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>需要注意的是<code>AutoImport</code>和<code>Components</code>可能无法解析到, 需要手动添加导入</p>
+<ol>
+<li>
+<p>添加一个<code>login</code>路由</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">path</span>: <span class="string">&#x27;/login&#x27;</span>,</span><br><span class="line">    <span class="attr">name</span>: <span class="string">&#x27;login&#x27;</span>,</span><br><span class="line">    <span class="attr">component</span>: <span class="function">() =&gt;</span> <span class="keyword">import</span>(<span class="string">&#x27;@/views/system/login/Index.vue&#x27;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在<code>/src/views/system/login</code>下创建<code>Index.vue</code>文件</p>
+<p>网上随便扒拉一个登录页面添加到<code>Index.vue</code>中</p>
+<p>启动项目后, 输入<code>#/login</code>跳转路由</p>
+<p><img src="%E7%99%BB%E5%BD%95%E9%A1%B5%E8%B7%AF%E7%94%B1.png" alt="登录页路由" /></p>
+</li>
+<li>
+<p>项目布局和首页</p>
+<p>添加一个首页路由</p>
+<p>扒拉一个项目布局</p>
+<p>左侧添加菜单</p>
+<p><img src="%E7%B3%BB%E7%BB%9F%E9%A6%96%E9%A1%B5.png" alt="系统首页" /></p>
+<p>路由设置:</p>
+<ol>
+<li><code>App.vue</code>中有一个<code>router-view</code>标签, 用来路由网站首页和登录页</li>
+<li><code>Show.vue</code>中有一个<code>router-view</code>用来路由网站内容页</li>
+<li>路由配置
+<ul>
+<li>顶级路由有两个: 内容根路由和登录页路由</li>
+<li>内容路由: 内容路由作为内容根路由的子路由</li>
+<li>项目初始时的路由: 三个, 分别是两个顶级路由和一个内容根路由下的首页路由</li>
+<li>菜单和内容: 菜单所对应的路由从服务端获取, 依次添加到根路由中</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="高级使用"><a class="markdownIt-Anchor" href="#高级使用"></a> 高级使用</h3>
+<h4 id="多个router-view"><a class="markdownIt-Anchor" href="#多个router-view"></a> 多个<code>router-view</code></h4>
+<p>通常一个项目中会存在多个<code>router-view</code>标签, 不同的方式会有不同的展示结果</p>
+<ol>
+<li>
+<p>同一个组件中有多个<code>router-view</code></p>
+<p>即多视图</p>
+<p>要求:</p>
+<ul>
+<li>不同的<code>router-view</code>需要添加不同的<code>name</code>属性</li>
+<li>需要使用该组件展示的路由, 对应的<code>components</code>中的每个<code>component</code>的<code>key</code>必须与<code>router-view</code>中的<code>name</code>对应</li>
+</ul>
+<p>这种是通过路由的多组件表达的, 组件的<code>key</code>需要与对应的<code>router-view</code>的<code>name</code>一致</p>
+<p>多<code>router-view</code>组件定义:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">	&lt;router-view name=&quot;left&quot; /&gt;</span><br><span class="line">	&lt;router-view name=&quot;right&quot; /&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre></td></tr></table></figure>
+<p>多<code>router-view</code>的路由定义:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> routes = [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">path</span>: <span class="string">&#x27;/&#x27;</span>,</span><br><span class="line">        <span class="attr">components</span>: &#123;</span><br><span class="line">            <span class="attr">left</span>: <span class="function">() =&gt;</span> <span class="keyword">import</span>(<span class="string">&#x27;@/views/**/Left.vue&#x27;</span>),</span><br><span class="line">            <span class="attr">right</span>: <span class="function">() =&gt;</span> <span class="keyword">import</span>(<span class="string">&#x27;@/views/**/Right.vue&#x27;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>展示描述:</p>
+<p>当路由到<code>path</code>为<code>/</code>的地址时, <code>Left.vue</code>和<code>Right.vue</code>将分别在<code>left</code>和<code>right</code>中显示</p>
+</li>
+<li>
+<p>在有父子级关系的组件中有多个<code>router-view</code></p>
+<p>即<strong>嵌套路由</strong></p>
+<p>这种是通过路由的父子级关系表达的, 每更深一层的<code>router-view</code>都对应路由定义中更深一层的<code>children</code></p>
+<p>层级<code>router-view</code>组件定义:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">	&lt;h3&gt;</span><br><span class="line">        HOME</span><br><span class="line">    &lt;/h3&gt;</span><br><span class="line">	&lt;router-view /&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">	&lt;h3&gt;</span><br><span class="line">        CONTENT</span><br><span class="line">    &lt;/h3&gt;</span><br><span class="line">	&lt;router-view /&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">	&lt;h3&gt;</span><br><span class="line">        SO COOL</span><br><span class="line">    &lt;/h3&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre></td></tr></table></figure>
+<p>上述两个组件中分别有一个<code>router-view</code>, 现在想要在<code>HOME</code>的<code>router-view</code>中展示<code>CONTENT</code>, <code>CONTENT</code>的<code>router-view</code>中展示<code>SO COOL</code></p>
+<p>层级路由定义:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> routes = [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">path</span>: <span class="string">&#x27;/content&#x27;</span>,</span><br><span class="line">        <span class="attr">component</span>: <span class="function">() =&gt;</span> <span class="keyword">import</span>(<span class="string">&#x27;@/views/**/Content.vue&#x27;</span>)</span><br><span class="line">        <span class="attr">children</span>: [</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="attr">path</span>: <span class="string">&#x27;/so-cool&#x27;</span>,</span><br><span class="line">                <span class="attr">component</span>: <span class="function">() =&gt;</span> <span class="keyword">import</span>(<span class="string">&#x27;@/views/**/SoCool.vue&#x27;</span>)</span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>展示描述:</p>
+<p>当路由到<code>path</code>为<code>/content</code>的地址时, 将展示<code>Content.vue</code>组件, 当路由到<code>path</code>为<code>/content/so-cool</code>的地址时, 将展示<code>SoCool.vue</code>组件</p>
+</li>
+</ol>
+<h4 id="动态路由匹配与动态路由"><a class="markdownIt-Anchor" href="#动态路由匹配与动态路由"></a> 动态路由匹配与动态路由</h4>
+<p>首先动态路由匹配和动态路由不是同一个概念, 动态路由匹配是一种路由的匹配规则, 动态路由是指可以动态的添加删除路由</p>
+<p>动态路由匹配:</p>
+<p>指将路由中的参数定义在路由路径中, 路由在解析时会将该参数以<code>name:value</code>的形式放到<code>parmas</code>中, 格式通过<code>:name</code>的方式体现, 如下</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> routes = [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">path</span>: <span class="string">&#x27;/user/:id&#x27;</span>,</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>这个路由会匹配具有两级, 并且以<code>user</code>开始的路径, 如:``/user/1<code>,</code>/user/xiaolin<code>, 它不会区分参数的类型等信息, 解析完成后会在</code>params<code>中有</code>id:1<code>或者</code>id:xiaolin`的内容:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">path</span>: <span class="string">&#x27;/user/1&#x27;</span>,</span><br><span class="line">        <span class="attr">params</span>: &#123;</span><br><span class="line">            <span class="attr">id</span>: <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意:</p>
+<p>当使用路由匹配, 其中参数发生变化时, 相同的组件实例会被复用, 即不会由于参数值的变化而重新销毁再创建, 这表示组件的声明周期钩子函数不会被调用</p>
+<p>解决方式:</p>
+<ol>
+<li>
+<p>在组件中使用<code>watch</code>监听路由参数变化</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">watch</span>(</span><br><span class="line">	<span class="function">() =&gt;</span> router.<span class="property">currentRoute</span>.<span class="property">value</span>.<span class="property">params</span>,</span><br><span class="line">    <span class="function">(<span class="params">newVal, oldVal</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>在组件中使用导航守卫监听路由参数变化</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="title function_">beforeRouteUpdate</span>(<span class="params">to, <span class="keyword">from</span>, next</span>) &#123;</span><br><span class="line">    <span class="comment">// to.params</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;script setup&gt;</span><br><span class="line">    import &#123; useRouter,onBeforeRouteUpdate &#125; from &#x27;vue-router&#x27;;</span><br><span class="line">    const router = useRouter();</span><br><span class="line">    watch(</span><br><span class="line">        () =&gt; router.currentRoute.value.params,</span><br><span class="line">        (newVal, oldVal) =&gt; &#123;</span><br><span class="line">            // ...</span><br><span class="line">        &#125;</span><br><span class="line">    );</span><br><span class="line">    onBeforeRouteUpdate(to, from, next) &#123;</span><br><span class="line">        // to.params</span><br><span class="line">    &#125;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">&lt;!-- ... --&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;style&gt;</span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<ol>
+<li>
+<p>参数形式匹配正则</p>
+<p>在参数后紧跟<code>()</code>, 在<code>()</code>内定义参数正则</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    path<span class="punctuation">:</span> &#x27;/user/<span class="punctuation">:</span>id&#x27;<span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    path<span class="punctuation">:</span> &#x27;/user/<span class="punctuation">:</span>name&#x27;<span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>由于路由匹配时, 实际是不知道参数的, 所以上述两个路由匹配时只是参数的<code>key</code>不一致, 但内容无限制, 所以会冲突</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    path<span class="punctuation">:</span> &#x27;/user/<span class="punctuation">:</span>id(\\d+)&#x27;<span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    path<span class="punctuation">:</span> &#x27;/user/<span class="punctuation">:</span>name&#x27;<span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>现在将第一个路由添加正则匹配, 则该路由仅匹配参数值为数字的路径, 而其他类型的参数将被第二个路由匹配</p>
+</li>
+<li>
+<p>可重复参数匹配</p>
+<p>可以认为是参数个数正则匹配</p>
+<p>在参数后面紧跟<code>*</code>(&gt;=0个参数)或者<code>+</code>(&gt;=1个参数), 有参数形式正则匹配时, 跟在参数形式正则匹配之后</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    path<span class="punctuation">:</span> &#x27;/user/<span class="punctuation">:</span>name+&#x27;<span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    path<span class="punctuation">:</span> &#x27;/user/<span class="punctuation">:</span>name*&#x27;<span class="punctuation">,</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>路由解析时会将可重复的参数在<code>params</code>中解析为一个数组, <code>key</code>为定义的参数名</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    path<span class="punctuation">:</span> &#x27;/user/<span class="punctuation">:</span>name&#x27;<span class="punctuation">,</span></span><br><span class="line">    params<span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        name<span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>该路由即可匹配<code>/user/1/2/3/...</code>, 需要注意的是<code>*</code>是可以匹配0个参数的, 但<code>+</code>不可以, 这是正则匹配</p>
+</li>
+<li>
+<p>可选参数匹配</p>
+<p>可以使用<code>?</code>标记一个参数为可选</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    path<span class="punctuation">:</span> &#x27;/user/<span class="punctuation">:</span>id?&#x27;</span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>这表示参数的个数只能是0或1, 配合参数正则匹配</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    path<span class="punctuation">:</span> &#x27;/user<span class="punctuation">:</span>id(\\d+)?&#x27;</span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="导航守卫"><a class="markdownIt-Anchor" href="#导航守卫"></a> 导航守卫</h4>
+<p>用来通过跳转或取消的方式守卫导航, 织入方式: 全局的, 单个路由独享的, 组件级别的</p>
+<ol>
+<li>
+<p>全局</p>
+<ul>
+<li>
+<p>前置守卫</p>
+<p><code>beforeEach</code></p>
+<p>两个参数<code>(to, from)</code>: 返回<code>boolean</code>, <code>true</code>时通过, <code>false</code>不通过</p>
+<p>三个参数<code>(to, from, next)</code>: 返回<code>void</code>, 调用<code>next</code>回调才会跳转到<code>to</code>路由, 如果<code>next</code>回调函数在调用时添加了新路由作为参数, 则会跳转到新路由</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">router.<span class="title function_">beforeEach</span>(<span class="title function_">async</span> (to, <span class="keyword">from</span>, next) =&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span>(!<span class="title function_">isAuthenticated</span>() &amp;&amp; to.<span class="property">name</span> !== <span class="string">&#x27;Login&#x27;</span>) &#123;</span><br><span class="line">        <span class="title function_">next</span>(&#123;<span class="attr">path</span>: <span class="string">&#x27;/login&#x27;</span>, <span class="attr">name</span>: <span class="string">&#x27;Login&#x27;</span>, <span class="attr">query</span>: &#123;</span><br><span class="line">            to</span><br><span class="line">        &#125;&#125;);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="title function_">next</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>解析守卫</p>
+<p><code>beforeResolve</code></p>
+<p>解析守卫刚好会在导航被确认之前, 所有组件内守卫和异步路由组件被解析之后调用</p>
+<p>一个参数<code>(to)</code>: 返回<code>boolean | void</code>, <code>false</code>时取消导航</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">router.<span class="title function_">beforeResole</span>(<span class="keyword">async</span> to =&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span>(to.<span class="property">meta</span>.<span class="property">requiresCamera</span>) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//...</span></span><br><span class="line">        &#125; <span class="keyword">catch</span>(err) &#123;</span><br><span class="line">            <span class="keyword">if</span>(err <span class="keyword">instanceof</span> <span class="title class_">NotAllowedError</span>) &#123;</span><br><span class="line">               returen <span class="literal">false</span></span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">throw</span> err</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>上述是一个确保用户可以访问自定义的<code>meta</code>属性<code>requiresCamera</code>的例子</p>
+</li>
+<li>
+<p>后置钩子</p>
+<p><code>afterEach</code></p>
+<p>后置称为钩子, 和守卫不同, 这些钩子不会接受<code>next</code>函数, 也不会改变导航本身. 可以用来处理导航故障</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">router.<span class="title function_">afterEach</span>(<span class="function">(<span class="params">to, <span class="keyword">from</span>, failure</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>守卫内的全局注册</p>
+<p>在导航守卫内使用<code>inject</code>方法获取全局内容. 在<code>app.provede</code>中提供的所有内容都可以在<code>beforeEach</code>, <code>beforeResolve</code>, <code>afterEach</code>内获取到</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// main.ts</span></span><br><span class="line"><span class="keyword">const</span> app = <span class="title function_">createApp</span>(<span class="title class_">App</span>);</span><br><span class="line">app.<span class="title function_">provide</span>(<span class="string">&#x27;global&#x27;</span>, <span class="string">&#x27;Hello Injections&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// router.ts</span></span><br><span class="line">router.<span class="title function_">beforeEach</span>(<span class="function">(<span class="params">to, <span class="keyword">from</span></span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="variable language_">global</span> = <span class="title function_">inject</span>(<span class="string">&#x27;global&#x27;</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">const</span> userStore = <span class="title function_">userAuthStore</span>();</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li>
+<p>路由独享守卫</p>
+<p><code>beforeEnter</code></p>
+<p>路由独享守卫只在进入路由时触发, 不会再<code>params</code>, <code>query</code>或<code>hash</code>改变时触发</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> routes = [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">path</span>: <span class="string">&#x27;/user/:id&#x27;</span>,</span><br><span class="line">        <span class="attr">component</span>: <span class="title class_">User</span>,</span><br><span class="line">        <span class="attr">beforeEnter</span>: <span class="function">(<span class="params">to, <span class="keyword">from</span></span>) =&gt;</span> &#123;</span><br><span class="line">            <span class="comment">// ...</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p><code>beforeEnter</code>也可以是函数数组</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">foo1</span>(<span class="params">to</span>) &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">foo2</span>(<span class="params">to</span>) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> routes = [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">path</span>: <span class="string">&#x27;/user/:id&#x27;</span>,</span><br><span class="line">        <span class="attr">component</span>: <span class="title class_">User</span>,</span><br><span class="line">        <span class="attr">beforeEnter</span>: [foo1, foo2]</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>组件内的守卫</p>
+<ul>
+<li>
+<p>进入</p>
+<p><code>beforeRouteEnter</code> =&gt; <code>onBeforeRouteEnter</code></p>
+<p>支持<code>next</code>回调, 与全局的前置守卫相似, 却别时组件内的守卫是在组件的声明周期中调用的,只针对该组件有效</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">beforeRouteEnter</span>(to, <span class="keyword">from</span>, next) =&gt; &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="title function_">next</span>(<span class="function"><span class="params">vm</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="comment">// 通过vm访问组件实例, 可以访问组件中定义的内容</span></span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>修改</p>
+<p><code>beforeRouteUpdate</code> =&gt; <code>onBeforeRouteUpdate</code></p>
+<p>不支持<code>next</code></p>
+</li>
+<li>
+<p>离开</p>
+<p><code>beforeRouteLeave</code> =&gt; <code>onBeforeRouteLeave</code></p>
+<p>不支持<code>next</code>, 通常用来预防用户在还未保存修改前突然离开, 可以通过返回<code>false</code>来取消离开</p>
+</li>
+</ul>
+</li>
+<li>
+<p>完整的导航解析流程</p>
+<ul>
+<li>导航被触发</li>
+<li>失活组件里调用<code>beforeRouteLeave</code></li>
+<li>调用全局<code>beforeEach</code></li>
+<li>在重用的组件里调用<code>beforeRouteUpdate</code></li>
+<li>在路由配置里调用<code>BeforeEnter</code></li>
+<li>解析异步路由组件</li>
+<li>在被激活的组件里调用<code>beforeRouteEnter</code></li>
+<li>调用全局的<code>beforeResolve</code></li>
+<li>导航被确认</li>
+<li>调用全局的<code>afterEach</code></li>
+<li>触发<code>DOM</code>更新</li>
+<li>调用<code>beforeRouteEnter</code>, 创建好的组件实例会为作为回调函数<code>next</code>的参数传入</li>
+</ul>
+</li>
+</ol>
+<h4 id="数据获取"><a class="markdownIt-Anchor" href="#数据获取"></a> 数据获取</h4>
+<p>某些情况下需要根据路由的参数来从服务中获取相关数据, 实现方式有两种:</p>
+<ol>
+<li>
+<p>导航完成之后获取</p>
+<p>通常是在组件的声明周期钩子函数中完成的</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">onMounted</span>(<span class="title function_">async</span> () =&gt; &#123;</span><br><span class="line">	<span class="keyword">const</span> id = route.<span class="property">params</span>.<span class="property">id</span>;</span><br><span class="line">    <span class="keyword">const</span> data = <span class="keyword">await</span> <span class="title function_">getData</span>(id);</span><br><span class="line">&#125;)</span><br><span class="line"><span class="title function_">watch</span>(</span><br><span class="line">    <span class="function">() =&gt;</span> route.<span class="property">params</span>,</span><br><span class="line">    <span class="title function_">async</span> () =&gt; &#123;</span><br><span class="line">        <span class="keyword">const</span> id = router.<span class="property">currentRoute</span>.<span class="property">value</span>.<span class="property">params</span>.<span class="property">id</span>;</span><br><span class="line">        <span class="keyword">const</span> data = <span class="keyword">await</span> <span class="title function_">getData</span>();</span><br><span class="line">    &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>导航完成之前获取</p>
+<p>通常是组件内守卫中完成的</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">onBeforeRouteEnter</span>(<span class="params">to, <span class="keyword">from</span>, next</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> id = to.<span class="property">params</span>.<span class="property">id</span>;</span><br><span class="line">    <span class="keyword">const</span> data = <span class="title function_">getData</span>(id).<span class="title function_">then</span>(<span class="function">(<span class="params">res</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="title function_">next</span>(<span class="function"><span class="params">vm</span> =&gt;</span> vm.<span class="title function_">setData</span>(res));</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> comData = <span class="title function_">ref</span>(<span class="literal">null</span>)</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">setData</span>(<span class="params">data</span>) &#123;</span><br><span class="line">    comData.<span class="property">value</span> = data;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="组合式api"><a class="markdownIt-Anchor" href="#组合式api"></a> 组合式<code>API</code></h4>
+<p>在<code>setup</code>中使用路由的组合式<code>API</code></p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;useRoute, useRouter, onBeforeRouteUpdate &#125; <span class="keyword">from</span> <span class="string">&#x27;vue-router&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> route = <span class="title function_">useRoute</span>();</span><br><span class="line"><span class="keyword">const</span> router = <span class="title function_">useRouter</span>();</span><br><span class="line"></span><br><span class="line"><span class="title function_">onBeforeRouteUpdate</span>(<span class="function">(<span class="params">to, <span class="keyword">from</span></span>) =&gt;</span> &#123;</span><br><span class="line">    </span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>参考文章: <a target="_blank" rel="noopener" href="https://router.vuejs.org/zh/guide/advanced/composition-api.html">https://router.vuejs.org/zh/guide/advanced/composition-api.html</a></p>
+<h3 id="出现问题"><a class="markdownIt-Anchor" href="#出现问题"></a> 出现问题😭</h3>
+<p><i id="问题一">问题一</i></p>
+<p>添加<code>element-plus</code>的<code>icon</code>不生效</p>
+<p>此处指的不生效是指: 1. 使用自动导入的方式; 2. 添加<code>element-plus</code>组件后, 组件生效; 3. 添加<code>icon</code>库后, 并进行的自动导入配置. 如下</p>
+<blockquote>
+<ol>
+<li>
+<p><code>element-plus</code>组件库自动导入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ pnpm add element-plus</span><br><span class="line">$ pnpm add --save-dev unplugin-vue-components unplugin-auto-import</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p><code>element-plus</code>组件库配置</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// vite.config.ts</span></span><br><span class="line"><span class="keyword">import</span> &#123; defineConfig &#125; <span class="keyword">from</span> <span class="string">&#x27;vite&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">AutoImport</span> <span class="keyword">from</span> <span class="string">&#x27;unplugin-auto-import/vite&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Components</span> <span class="keyword">from</span> <span class="string">&#x27;unplugin-vue-components/vite&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">ElementPlusResolver</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;unplugin-vue-components/resolvers&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title function_">defineConfig</span>(&#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="title class_">AutoImport</span>(&#123;</span><br><span class="line">      <span class="attr">resolvers</span>: [<span class="title class_">ElementPlusResolver</span>()],</span><br><span class="line">    &#125;),</span><br><span class="line">    <span class="title class_">Components</span>(&#123;</span><br><span class="line">      <span class="attr">resolvers</span>: [<span class="title class_">ElementPlusResolver</span>()],</span><br><span class="line">    &#125;),</span><br><span class="line">  ],</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>添加<code>element-plus</code>的<code>icon</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ pnpm add @element-plus/icons-vue</span><br><span class="line">$ pnpm add --save-dev unplugin-icons unplugin-auto-import</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>添加<code>element-plus</code>的<code>icon</code>配置</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// vite.config.ts</span></span><br><span class="line"><span class="keyword">import</span> &#123;resolve&#125; <span class="keyword">from</span> <span class="string">&#x27;path&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123; defineConfig &#125; <span class="keyword">from</span> <span class="string">&#x27;vite&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Vue</span> <span class="keyword">from</span> <span class="string">&#x27;@vitejs/plugin-vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Icons</span> <span class="keyword">from</span> <span class="string">&#x27;unplugin-icons/vite&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">IconsResolver</span> <span class="keyword">from</span> <span class="string">&#x27;unplugin-icons/resolver&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">AutoImport</span> <span class="keyword">from</span> <span class="string">&#x27;unplugin-auto-import/vite&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Components</span> <span class="keyword">from</span> <span class="string">&#x27;unplugin-vue-components/vite&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">ElementPlusResolver</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;unplugin-vue-components/resolvers&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Inspect</span> <span class="keyword">from</span> <span class="string">&#x27;vite-plugin-inspect&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> pathSrc = <span class="title function_">resolve</span>(__dirname, <span class="string">&#x27;src&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title function_">defineConfig</span>(&#123;</span><br><span class="line">  <span class="attr">resolve</span>: &#123;</span><br><span class="line">    <span class="attr">alias</span>: &#123;</span><br><span class="line">      <span class="string">&#x27;@&#x27;</span>: pathSrc,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    <span class="title class_">Vue</span>(),</span><br><span class="line">    <span class="title class_">AutoImport</span>(&#123;</span><br><span class="line">      <span class="comment">// Auto import functions from Vue, e.g. ref, reactive, toRef...</span></span><br><span class="line">      <span class="comment">// 自动导入 Vue 相关函数，如：ref, reactive, toRef 等</span></span><br><span class="line">      <span class="attr">imports</span>: [<span class="string">&#x27;vue&#x27;</span>],</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Auto import functions from Element Plus, e.g. ElMessage, ElMessageBox... (with style)</span></span><br><span class="line">      <span class="comment">// 自动导入 Element Plus 相关函数，如：ElMessage, ElMessageBox... (带样式)</span></span><br><span class="line">      <span class="attr">resolvers</span>: [</span><br><span class="line">        <span class="title class_">ElementPlusResolver</span>(),</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Auto import icon components</span></span><br><span class="line">        <span class="comment">// 自动导入图标组件</span></span><br><span class="line">        <span class="title class_">IconsResolver</span>(&#123;</span><br><span class="line">          <span class="attr">prefix</span>: <span class="string">&#x27;Icon&#x27;</span>,</span><br><span class="line">        &#125;),</span><br><span class="line">      ],</span><br><span class="line"></span><br><span class="line">      <span class="attr">dts</span>: <span class="title function_">resolve</span>(pathSrc, <span class="string">&#x27;auto-imports.d.ts&#x27;</span>),</span><br><span class="line">    &#125;),</span><br><span class="line"></span><br><span class="line">    <span class="title class_">Components</span>(&#123;</span><br><span class="line">      <span class="attr">resolvers</span>: [</span><br><span class="line">        <span class="comment">// Auto register icon components</span></span><br><span class="line">        <span class="comment">// 自动注册图标组件</span></span><br><span class="line">        <span class="title class_">IconsResolver</span>(&#123;</span><br><span class="line">          <span class="attr">enabledCollections</span>: [<span class="string">&#x27;ep&#x27;</span>],</span><br><span class="line">        &#125;),</span><br><span class="line">        <span class="comment">// Auto register Element Plus components</span></span><br><span class="line">        <span class="comment">// 自动导入 Element Plus 组件</span></span><br><span class="line">        <span class="title class_">ElementPlusResolver</span>(),</span><br><span class="line">      ],</span><br><span class="line"></span><br><span class="line">      <span class="attr">dts</span>: <span class="title function_">resolve</span>(pathSrc, <span class="string">&#x27;components.d.ts&#x27;</span>),</span><br><span class="line">    &#125;),</span><br><span class="line"></span><br><span class="line">    <span class="title class_">Icons</span>(&#123;</span><br><span class="line">      <span class="attr">autoInstall</span>: <span class="literal">true</span>,</span><br><span class="line">    &#125;),</span><br><span class="line"></span><br><span class="line">    <span class="title class_">Inspect</span>(),</span><br><span class="line">  ],</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</blockquote>
+<p>问题原因: 进行如上配置后, 仍然不生效, 大概率是标签使用方式问题. 这个在官方文档中没有写, 很***CD***</p>
+<p>解决方案: 修改<code>icon</code>标签的命名, 比如官方文档中复制出的<code>icon</code>标签为<code>&lt;Edit/&gt;</code>, 则在使用时修改为<code>&lt;i-ep-edit/&gt;</code>或者<IconEpEdit/>, 这个可以在官方网站的参考模板中看到</p>
+<p><img src="element-plus-icon%E5%8F%82%E8%80%83%E6%A8%A1%E6%9D%BF%E5%85%A5%E5%8F%A3.png" alt="element-plus-icon参考模板入口" /></p>
+<p><img src="element-plus-icon%E5%8F%82%E8%80%83%E9%85%8D%E7%BD%AE.png" alt="element-plus-icon参考配置" /></p>
+<p><img src="element-plus-icon%E4%BD%BF%E7%94%A8%E6%A8%A1%E6%9D%BF.png" alt="element-plus-icon使用模板" /></p>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2024/01/07/web/Vue系列二之路由/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text"> 前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-number">2.</span> <span class="toc-text"> 安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA"><span class="toc-number">3.</span> <span class="toc-text"> 创建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%95%E5%85%A5"><span class="toc-number">4.</span> <span class="toc-text"> 引入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8"><span class="toc-number">5.</span> <span class="toc-text"> 简单使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8F%9C%E5%8D%95%E5%92%8C%E8%B7%AF%E7%94%B1"><span class="toc-number">6.</span> <span class="toc-text"> 菜单和路由</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AB%98%E7%BA%A7%E4%BD%BF%E7%94%A8"><span class="toc-number">7.</span> <span class="toc-text"> 高级使用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E4%B8%AArouter-view"><span class="toc-number">7.1.</span> <span class="toc-text"> 多个router-view</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%B7%AF%E7%94%B1%E5%8C%B9%E9%85%8D%E4%B8%8E%E5%8A%A8%E6%80%81%E8%B7%AF%E7%94%B1"><span class="toc-number">7.2.</span> <span class="toc-text"> 动态路由匹配与动态路由</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%BC%E8%88%AA%E5%AE%88%E5%8D%AB"><span class="toc-number">7.3.</span> <span class="toc-text"> 导航守卫</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E8%8E%B7%E5%8F%96"><span class="toc-number">7.4.</span> <span class="toc-text"> 数据获取</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BB%84%E5%90%88%E5%BC%8Fapi"><span class="toc-number">7.5.</span> <span class="toc-text"> 组合式API</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BA%E7%8E%B0%E9%97%AE%E9%A2%98"><span class="toc-number">8.</span> <span class="toc-text"> 出现问题😭</span></a></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2024/01/18/web/Vue系列三之状态管理库/">Vue系列(三)---状态管理库</a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2024/01/04/ts/TypeScript系列二之高级/">Typescript系列(二)---高级</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2024/01/07/web/Vue系列二之路由/'
+  })
+</script>
+
+
+<script>
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        let href = decodeURIComponent(link.href);
+        href = href.substring(href.indexOf('#'));
+        const target = $(href)[0];
+        const top = target.offsetTop;
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      我们在绵延的海滩上捡贝壳，今天捡到了不必欣喜，因为海很大，今天没捡到，也不必失落，因为海很大。 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">我好像没有网络备案</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"自転车","artist":"オレスカバンド","url":"/music/自転车-オレスカバンド.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"撞地球","artist":"鱼儿七","url":"/music/撞地球-鱼儿七.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"晴天","artist":"周杰伦","url":"/music/晴天-周杰伦.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"告白气球","artist":"周杰伦","url":"/music/告白气球-周杰伦.mp3","cover":"/imgs/music-bg1.jpg"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>

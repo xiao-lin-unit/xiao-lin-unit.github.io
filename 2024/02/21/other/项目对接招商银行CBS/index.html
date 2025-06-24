@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>小琳的星空 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico?time=568" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css?time=568" />
+  <link rel="stylesheet" href="/css/layout.css?time=568" />
+  <link rel="stylesheet" href="/css/iconfont.css?time=568" />
+  <link rel="stylesheet" href="/css/APlayer.min.css?time=568" />
+  <script src="/js/APlayer.min.js?time=568"></script>
+  <script src="/js/jquery.min.js?time=568"></script>
+  <script src="/js/jquery.pjax.min.js?time=568"></script>
+
+  <script src="/js/Valine.min.js?time=568"></script>
+<!--  <script src='https://unpkg.com/valine/dist/Valine.min.js'></script>-->
+  <script>
+    document.title = `小琳的星空`
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="/?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/">-->
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="/log?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/log?time=565">-->
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="/link?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/link?time=565">-->
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="/about?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/about?time=565">-->
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"Promise","cover":"/imgs/cover/default-cover.jpeg?time=511?time=516?time=517?time=529?time=541?time=543","path":"2023/11/24/js/Promise/"},{"title":"MySQL系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=511?time=513?time=517?time=530?time=541?time=543","path":"2023/11/27/mysql/MySQL系列一之安装/"},{"title":"MySQL系列(三)---索引","cover":"/imgs/cover/default-cover.webp?time=520?time=525?time=530?time=538?time=544","path":"2024/04/29/mysql/MySQL系列三之索引/"},{"title":"MySQL系列(二)---SQL","cover":"/imgs/cover/default-cover.jpeg?time=520?time=524?time=530?time=538?time=544","path":"2024/02/26/mysql/MySQL系列二之SQL/"},{"title":"NPM和PNPM的安装及配置","cover":"/imgs/cover/default-cover.webp?time=507?time=513?time=519?time=531?time=540?time=544?time=545?time=546","path":"2023/12/26/node/npm和pnpm安装及配置/"},{"title":"Redis系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=507?time=513?time=519?time=532?time=540?time=547","path":"2023/12/12/redis/Redis系列一之安装/"},{"title":"博客搭建","cover":"/imgs/cover/default-cover.webp?time=511?time=516?time=517?time=532?time=541?time=543?time=546","path":"2023/11/22/other/博客搭建/"},{"title":"项目对接招商银行CBS","cover":"/imgs/cover/default-cover.webp?time=520?time=524?time=532?time=538?time=547","path":"2024/02/21/other/项目对接招商银行CBS/"},{"title":"项目对接海康SDK","cover":"/imgs/cover/default-cover.webp?time=520?time=524?time=532?time=538?time=548","path":"2024/02/21/other/项目对接海康SDK/"},{"title":"Typescript系列(二)---高级","cover":"/imgs/cover/default-cover.jpeg?time=507?time=521?time=522?time=533?time=540?time=548","path":"2024/01/04/ts/TypeScript系列二之高级/"},{"title":"Typescript系列(一)---基础","cover":"/imgs/cover/default-cover.webp?time=507?time=513?time=519?time=533?time=540?time=548","path":"2023/12/26/ts/TypeScript系列一之基础/"},{"title":"SpringCloud系列(一)---项目创建","cover":"/imgs/cover/default-cover.webp?time=511?time=513?time=517?time=533?time=541?time=549","path":"2023/11/25/springcloud/SpringCloud系列一之基础服务/"},{"title":"SpringCloud系列(七)---认证和授权","cover":"/imgs/cover/default-cover.jpeg?time=507?time=520?time=524?time=533?time=540?time=551","path":"2024/02/03/springcloud/SpringCloud系列七之认证和授权/"},{"title":"SpringCloud系列(三)---服务熔断与降级","cover":"/imgs/cover/default-cover.webp?time=511?time=513?time=519?time=533?time=541?time=549?time=551?time=552","path":"2023/12/02/springcloud/SpringCloud系列三之服务熔断与降级/"},{"title":"SpringCloud系列(九)---阶段总结","cover":"/imgs/cover/default-cover.jpeg?time=520?time=526?time=533?time=538?time=549","path":"2024/05/11/springcloud/SpringCloud系列九之阶段总结/"},{"title":"SpringCloud系列(二)---注册中心和配置中心","cover":"/imgs/cover/default-cover.jpeg?time=511?time=513?time=517?time=533?time=541?time=549?time=552?time=553","path":"2023/11/30/springcloud/SpringCloud系列二之注册中心/"},{"title":"SpringCloud系列(五)---Redis使用","cover":"/imgs/cover/default-cover.jpeg?time=507?time=513?time=519?time=533?time=540?time=547?time=549","path":"2023/12/14/springcloud/SpringCloud系列五之Redis使用/"},{"title":"SpringCloud系列(八)---服务划分","cover":"/imgs/cover/default-cover.webp?time=520?time=524?time=533?time=538?time=553","path":"2024/02/19/springcloud/SpringCloud系列八之服务划分/"},{"title":"SpringCloud系列(六)---分布式主键","cover":"/imgs/cover/default-cover.webp?time=507?time=513?time=519?time=533?time=540?time=549?time=554","path":"2023/12/11/springcloud/SpringCloud系列六之分布式主键/"},{"title":"SpringCloud系列(四)---网关","cover":"/imgs/cover/default-cover.jpeg?time=511?time=513?time=519?time=533?time=541?time=549?time=554","path":"2023/12/10/springcloud/SpringCloud系列四之网关/"},{"title":"Zookeeper系列(一)---原理","cover":"/imgs/cover/default-cover.webp?time=520?time=526?time=535?time=538?time=553","path":"2024/05/28/zookeeper/Zookeeper系列一之原理/"},{"title":"Zookeeper系列(二)---安装配置","cover":"/imgs/cover/default-cover.jpeg?time=520?time=526?time=535?time=538?time=553","path":"2024/05/10/zookeeper/Zookeeper系列二之安装配置/"},{"title":"Vue系列(一)---项目创建和配置","cover":"/imgs/cover/default-cover.webp?time=527?time=528?time=536?time=538?time=546?time=555?time=555","path":"2025/06/19/web/Vue系列一之项目创建和配置/"},{"title":"Vue系列(三)---状态管理库","cover":"/imgs/cover/default-cover.webp?time=507?time=521?time=522?time=536?time=540?time=555","path":"2024/01/18/web/Vue系列三之状态管理库/"},{"title":"Vue系列(二)---路由","cover":"/imgs/cover/default-cover.jpeg?time=507?time=521?time=522?time=536?time=540?time=556","path":"2024/01/07/web/Vue系列二之路由/"},{"title":"Vue系列(四)---请求","cover":"/imgs/cover/default-cover.jpeg?time=507?time=520?time=524?time=536?time=540?time=556","path":"2024/02/01/web/Vue系列四之请求/"},{"title":"","cover":"/imgs/cover/default-cover.webp?time=527?time=528?time=538","path":"2025/06/19/zookeeper/Zookeeper系列一之原理/The Part-Time Parliament CN/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}${'?time=' + new Date().getMilliseconds()}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp'}${'?time=' + new Date().getMilliseconds()}" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg?time=565" class="main-left--avatar" alt />
+      <div class="main-left--intro">
+        <p class="main-left--name">小琳</p>
+        <div class="main-left--tags">
+          
+            <span class="main-left--tag">中二</span>
+          
+            <span class="main-left--tag">乐天派</span>
+          
+            <span class="main-left--tag">悲观主义</span>
+          
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>跳出圈子你会发现</p>
+        <p>其实你一无是处</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        
+          <a target="_blank" rel="noopener" href="https://github.com/?time=565" title="github">
+            <i class="logo xiao-lin-blog xiao-lin-blog-github"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://gitee.com/xiao-lin?time=565" title="码云">
+            <i class="logo xiao-lin-blog xiao-lin-blog-gitee"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43728193?type=blog?time=565" title="CSDN">
+            <i class="logo xiao-lin-blog xiao-lin-blog-csdn"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiao-lin-unit/?time=565" title="博客园">
+            <i class="logo xiao-lin-blog xiao-lin-blog-cnblogs"></i>
+          </a>
+        
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories?time=565">
+          <div>
+            <span>9</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags?time=565">
+          <div>
+            <span>25</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives?time=565">
+          <div>
+            <span>7 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/?time=565">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log?time=565">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link?time=565">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about?time=565">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tags?time=565">
+            <span class="header-menu--span">标签</span>
+            <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-tags-rectangle"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/categories?time=565">
+            <span class="header-menu--span">分类</span>
+            <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-categories"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>27 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>581天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  
+
+<link rel="stylesheet" href="/css/partial/article.css?time=417" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">项目对接招商银行CBS</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span class="xiao-lin-blog xiao-lin-blog-categories">分类：</span>
+            <a class="category-link" href="/categories/%E5%85%B6%E4%BB%96/">其他</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span class="xiao-lin-blog xiao-lin-blog-tags-fill">标签：</span>
+            <a class="tag-link" href="/tags/%E6%8B%9B%E5%95%86%E9%93%B6%E8%A1%8CCBS/" rel="tag">招商银行CBS</a>
+          </div>
+          
+          <p class="article-info--date"><i class="xiao-lin-blog xiao-lin-blog-date-time">日期：2024-02-21 17:12:00</i></p>
+        </div>
+<!--        <img src="/imgs/cover/default-cover.webp" alt="" class="article-cover">-->
+        <img src="/imgs/cover/default-cover.webp" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <!-- toc -->
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>年前给公司系统对接了一下招商银行的<code>CBS</code>系统, 对接还是比较简单的, 只是有一些需要注意的东西, 整理一篇文章简单记录一下</p>
+<p>对接的内容上目前是只对接了<mark>支付</mark>, <mark>支付结果</mark>, <mark>电子回单</mark>, <mark>交易明细</mark>. 后三者过程大致类似, 就以支付结果为例, 特别点会进行额外描述</p>
+<p>相关文件</p>
+<p><a href="cbs.7z" download="Demo.7z">官方Demo</a></p>
+<p><a href="CBS8财资云业务对接指南.docx" download="CBS8财资云业务对接指南.docx">CBS8财资云业务对接指南.docx</a></p>
+<p><a href="测试资源.docx" download="测试资源.docx">测试资源.docx</a></p>
+<h3 id="前提"><a class="markdownIt-Anchor" href="#前提"></a> 前提</h3>
+<ol>
+<li>已经在招商银行的<code>CBS</code>中注册企业用户, 获取到<code>app-id</code>和密钥等信息</li>
+<li>使用的账户已经注册到招商银行<code>CBS</code>的注册企业用户中</li>
+</ol>
+<p>这两个条件保证了企业在招商银行<code>CBS</code>系统中的使用权限和可操作账户</p>
+<p>如果企业使用了其他银行的银行卡账户, 应联系招商银行, 让其进行目标银行的对接工作, 这样此处就只需要对接招商银行的<code>CBS</code>系统即可</p>
+<h3 id="基础配置"><a class="markdownIt-Anchor" href="#基础配置"></a> 基础配置</h3>
+<p>前面讲到将企业注册为企业用户, 获取到<code>app-id</code>和密钥等信息, 这些信息我们需要配置到系统中, 用来进行对接</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">cbs:</span></span><br><span class="line">  <span class="attr">app-id:</span> <span class="string">xxx</span></span><br><span class="line">  <span class="attr">app-secret:</span> <span class="string">xxx</span></span><br><span class="line">  <span class="comment">#平台公钥</span></span><br><span class="line">  <span class="attr">platform-public-key:</span> <span class="string">xxx</span></span><br><span class="line">  <span class="comment">#公司公钥</span></span><br><span class="line">  <span class="attr">firm-public-key:</span> <span class="string">xxx</span></span><br><span class="line">  <span class="comment">#公司私钥</span></span><br><span class="line">  <span class="attr">firm-private-key:</span> <span class="string">xxx</span></span><br><span class="line">  <span class="comment">#CBS请求域名</span></span><br><span class="line">  <span class="attr">open-api-url:</span> <span class="string">https://tmcapi.cmbchina.com</span></span><br><span class="line">  <span class="comment">#支付接口路径</span></span><br><span class="line">  <span class="attr">payment-url:</span> <span class="string">/openapi/payment/openapi/v1/payment-apply-common</span></span><br><span class="line">  <span class="comment"># 查询支付的实际支付结果</span></span><br><span class="line">  <span class="attr">payment-query-url:</span> <span class="string">/openapi/payment/openapi/v1/query</span></span><br><span class="line">  <span class="comment">#电子回单</span></span><br><span class="line">  <span class="attr">payment-receipt-url:</span> <span class="string">/openapi/account/openapi/v1/electronic-bill/query</span></span><br><span class="line">  <span class="comment">#交易详情</span></span><br><span class="line">  <span class="attr">transaction-detail-url:</span> <span class="string">/openapi/account/openapi/v1/transaction-detail/query</span></span><br><span class="line">  <span class="attr">get-token-url:</span> <span class="string">/openapi/app/v1/app/token</span></span><br><span class="line">  <span class="attr">refresh-token-url:</span> <span class="string">/openapi/app/v1/app/refresh-token</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;cbs8&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CBSConfig</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String appId;</span><br><span class="line">    <span class="keyword">private</span> String appSecret;</span><br><span class="line">    <span class="comment">// 平台公钥</span></span><br><span class="line">    <span class="keyword">private</span> String platformPublicKey;</span><br><span class="line">    <span class="comment">// 公司公钥</span></span><br><span class="line">    <span class="keyword">private</span> String firmPublicKey;</span><br><span class="line">    <span class="comment">// 公司私钥</span></span><br><span class="line">    <span class="keyword">private</span> String firmPrivateKey;</span><br><span class="line">    <span class="comment">// CBS请求域名</span></span><br><span class="line">    <span class="keyword">private</span> String openApiUrl;</span><br><span class="line">    <span class="comment">// 支付接口路径</span></span><br><span class="line">    <span class="keyword">private</span> String paymentUrl;</span><br><span class="line">    <span class="comment">// 电子回单</span></span><br><span class="line">    <span class="keyword">private</span> String paymentReceiptUrl;</span><br><span class="line">    <span class="comment">// 交易详情</span></span><br><span class="line">    <span class="keyword">private</span> String transactionDetailUrl;</span><br><span class="line">    <span class="comment">// 获取TOKEN</span></span><br><span class="line">    <span class="keyword">private</span> String getTokenUrl;</span><br><span class="line">    <span class="comment">// 刷新TOKEN</span></span><br><span class="line">    <span class="keyword">private</span> String refreshTokenUrl;</span><br><span class="line">	<span class="comment">// 支付结果查询</span></span><br><span class="line">    <span class="keyword">private</span> String paymentQueryUrl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="公共内容"><a class="markdownIt-Anchor" href="#公共内容"></a> 公共内容</h3>
+<h4 id="token"><a class="markdownIt-Anchor" href="#token"></a> <code>TOKEN</code></h4>
+<p>获取<code>token</code>和刷新<code>token</code>, 此处使用<code>Redis</code>存储<code>token</code>信息, <code>CBS</code>系统的<code>token</code>有效时长为30分钟</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CBSTokenUtils</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * token保存map的key</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">TOKEN_INFO_KEY</span> <span class="operator">=</span> <span class="string">&quot;cbs_docking_key&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * token在map中的key</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">TOKEN_KEY</span> <span class="operator">=</span> <span class="string">&quot;token&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 过期时间</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">EXPIRES</span> <span class="operator">=</span> <span class="string">&quot;expires&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 保存时间</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">SAVE_TIME</span> <span class="operator">=</span> <span class="string">&quot;save_time&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 预留过期时间, 5分钟</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">RESERVE_TIME</span> <span class="operator">=</span> <span class="number">5</span> * <span class="number">60</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">REFRESH_TIME</span> <span class="operator">=</span> <span class="number">4</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * token 的有效时长, 30分钟</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">EFFECTIVE_TIME</span> <span class="operator">=</span> <span class="number">10</span> * <span class="number">60</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">RestTemplate</span> <span class="variable">restTemplate</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RestTemplate</span>();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> CBSConfig cbsConfig;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> RedisUtil redisUtil;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">token</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// 获取token</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">token</span> <span class="operator">=</span> (String) redisUtil.hget(TOKEN_INFO_KEY, TOKEN_KEY);</span><br><span class="line">        <span class="comment">// 当前系统时间, 秒</span></span><br><span class="line">        <span class="type">long</span> <span class="variable">l</span> <span class="operator">=</span> System.currentTimeMillis() / <span class="number">1000</span>;</span><br><span class="line">        <span class="comment">// 如果token不为空</span></span><br><span class="line">        <span class="keyword">if</span> (StringUtils.isNotBlank(token)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!expires(l)) &#123;</span><br><span class="line">                <span class="keyword">return</span> token;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">JSONObject</span> <span class="variable">tokenInfo</span> <span class="operator">=</span> getTokenInfo();</span><br><span class="line">        token = tokenInfo.getString(<span class="string">&quot;token&quot;</span>);</span><br><span class="line">        <span class="type">Integer</span> <span class="variable">expires</span> <span class="operator">=</span> tokenInfo.getInteger(<span class="string">&quot;expires&quot;</span>);</span><br><span class="line">        <span class="comment">//刷新token</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="literal">null</span> != expires) &#123;</span><br><span class="line">            <span class="comment">// 过期时间小于4秒, 则等待重新获取</span></span><br><span class="line">            <span class="keyword">if</span> (expires &lt; REFRESH_TIME) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    log.info(<span class="string">&quot;expires: &#123;&#125;; 等待: &#123;&#125;&quot;</span>, expires, REFRESH_TIME + <span class="number">1</span>);</span><br><span class="line">                    Thread.sleep((REFRESH_TIME + <span class="number">1</span>) * <span class="number">1000</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    log.info(<span class="string">&quot;等待异常: &quot;</span>, e);</span><br><span class="line">                &#125;</span><br><span class="line">                tokenInfo = getTokenInfo();</span><br><span class="line">                token = tokenInfo.getString(<span class="string">&quot;token&quot;</span>);</span><br><span class="line">                expires = tokenInfo.getInteger(<span class="string">&quot;expires&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 过期时间小于五分钟刷新token</span></span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (expires &lt; RESERVE_TIME) &#123;</span><br><span class="line">                <span class="type">JSONObject</span> <span class="variable">refreshTokenInfo</span> <span class="operator">=</span> refreshTokenInfo(token);</span><br><span class="line">                token = refreshTokenInfo.getString(<span class="string">&quot;token&quot;</span>);</span><br><span class="line">                expires = refreshTokenInfo.getInteger(<span class="string">&quot;expires&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        setToken(expires, token, l);</span><br><span class="line">        <span class="keyword">return</span> token;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> <span class="title function_">expires</span><span class="params">(<span class="type">long</span> current)</span> &#123;</span><br><span class="line">        <span class="comment">// 计算当前时间 - token的获取时间</span></span><br><span class="line">        <span class="comment">// 过期时间 秒</span></span><br><span class="line">        <span class="type">Integer</span> <span class="variable">redisExpires</span> <span class="operator">=</span> (Integer) redisUtil.hget(TOKEN_INFO_KEY, EXPIRES);</span><br><span class="line">        <span class="type">long</span> <span class="variable">exp</span> <span class="operator">=</span> redisExpires == <span class="literal">null</span> ? <span class="number">0L</span> : redisExpires;</span><br><span class="line">        <span class="comment">// 上次保存时间 秒</span></span><br><span class="line">        <span class="type">Integer</span> <span class="variable">saveTime</span> <span class="operator">=</span> (Integer) redisUtil.hget(TOKEN_INFO_KEY, SAVE_TIME);</span><br><span class="line">        <span class="comment">// 计算结果 秒 上次保存时间为null则用0</span></span><br><span class="line">        <span class="type">long</span> <span class="variable">result</span> <span class="operator">=</span> saveTime == <span class="literal">null</span> ? <span class="number">0L</span> : current - saveTime;</span><br><span class="line">        <span class="comment">// 如果计算结果 &gt;= 过期时间, 则过期</span></span><br><span class="line">        <span class="comment">// 当前时间 - 上次保存时间 &gt;= 有效时长 则过期</span></span><br><span class="line">        log.info(<span class="string">&quot;cbs expires: &#123;&#125;, save time: &#123;&#125;, current time: &#123;&#125;&quot;</span>, exp, saveTime, current);</span><br><span class="line">        <span class="keyword">return</span> result &gt;= exp;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">setToken</span><span class="params">(Integer expires, String token, <span class="type">long</span> current)</span> &#123;</span><br><span class="line">        <span class="comment">// 预留5分钟</span></span><br><span class="line">        expires = <span class="literal">null</span> == expires ? EFFECTIVE_TIME - RESERVE_TIME : expires - RESERVE_TIME;</span><br><span class="line">        <span class="comment">// 设置token</span></span><br><span class="line">        redisUtil.hset(TOKEN_INFO_KEY, TOKEN_KEY, token);</span><br><span class="line">        <span class="comment">// 设置有效时长</span></span><br><span class="line">        redisUtil.hset(TOKEN_INFO_KEY, EXPIRES, expires);</span><br><span class="line">        <span class="comment">// 设置保存时间</span></span><br><span class="line">        redisUtil.hset(TOKEN_INFO_KEY, SAVE_TIME, current);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> JSONObject <span class="title function_">getTokenInfo</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">HttpHeaders</span> <span class="variable">headers</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HttpHeaders</span>();</span><br><span class="line">        headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);</span><br><span class="line">        Map&lt;String, String&gt; params = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        params.put(<span class="string">&quot;app_id&quot;</span>, cbsConfig.getAppId());</span><br><span class="line">        params.put(<span class="string">&quot;app_secret&quot;</span>, cbsConfig.getAppSecret());</span><br><span class="line">        params.put(<span class="string">&quot;grant_type&quot;</span>, <span class="string">&quot;client_credentials&quot;</span>);</span><br><span class="line">        HttpEntity&lt;Map&lt;String, String&gt;&gt; request = <span class="keyword">new</span> <span class="title class_">HttpEntity</span>&lt;&gt;(params, headers);</span><br><span class="line">        ResponseEntity&lt;JSONObject&gt; response = restTemplate.exchange(cbsConfig.getOpenApiUrl() + cbsConfig.getGetTokenUrl(), HttpMethod.POST, request, JSONObject.class);</span><br><span class="line">        <span class="type">JSONObject</span> <span class="variable">data</span> <span class="operator">=</span> response.getBody();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (Objects.isNull(data)) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;请求TOKEN失败&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">String</span> <span class="variable">code</span> <span class="operator">=</span> data.getString(<span class="string">&quot;code&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (!<span class="string">&quot;0&quot;</span>.equals(code)) &#123;</span><br><span class="line">            log.info(<span class="string">&quot;获取token失败,返回报文: &#123;&#125; , 错误提示信息: &#123;&#125;&quot;</span>, data, getErrorMessage(code));</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">JSONObject</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> data.getJSONObject(<span class="string">&quot;data&quot;</span>);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> JSONObject <span class="title function_">refreshTokenInfo</span><span class="params">(String token)</span> &#123;</span><br><span class="line">        <span class="type">HttpHeaders</span> <span class="variable">headers</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HttpHeaders</span>();</span><br><span class="line">        headers.setBearerAuth(token);</span><br><span class="line">        HttpEntity&lt;String&gt; request = <span class="keyword">new</span> <span class="title class_">HttpEntity</span>&lt;&gt;(headers);</span><br><span class="line">        ResponseEntity&lt;JSONObject&gt; response = restTemplate.exchange(cbsConfig.getOpenApiUrl() + cbsConfig.getRefreshTokenUrl(), HttpMethod.GET, request, JSONObject.class);</span><br><span class="line">        <span class="type">JSONObject</span> <span class="variable">data</span> <span class="operator">=</span> response.getBody();</span><br><span class="line">        <span class="keyword">if</span> (Objects.isNull(data)) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;获取TOKEN失败&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">String</span> <span class="variable">code</span> <span class="operator">=</span> data.getString(<span class="string">&quot;code&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (!<span class="string">&quot;0&quot;</span>.equals(code)) &#123;</span><br><span class="line">            log.info(<span class="string">&quot;刷新token失败,返回报文: &#123;&#125; , 错误提示信息: &#123;&#125;&quot;</span>, data, getErrorMessage(code));</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">JSONObject</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> data.getJSONObject(<span class="string">&quot;data&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> String <span class="title function_">getErrorMessage</span><span class="params">(String code)</span> &#123;</span><br><span class="line">        <span class="keyword">switch</span> (code) &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&quot;10010001&quot;</span>:</span><br><span class="line">                <span class="keyword">return</span> <span class="string">&quot;参数校验失败&quot;</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&quot;2006&quot;</span>:</span><br><span class="line">                <span class="keyword">return</span> <span class="string">&quot;授权模式不支持&quot;</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&quot;2009&quot;</span>:</span><br><span class="line">                <span class="keyword">return</span> <span class="string">&quot;客户端密钥错误&quot;</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&quot;AE0004&quot;</span>:</span><br><span class="line">                <span class="keyword">return</span> <span class="string">&quot;会话已过期，请重新登录&quot;</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">return</span> <span class="string">&quot;其他错误&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="请求封装"><a class="markdownIt-Anchor" href="#请求封装"></a> 请求封装</h4>
+<p>此处的请求封装是业务请求中公共内容的封装和结果的解析, 参考官方<code>Demo</code>中的内容进行封装</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CBSHttpUtil</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> CBSConfig cbsConfig;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> CBSTokenUtils cbsTokenUtils;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">doHttp</span><span class="params">(String url, String data)</span> &#123;</span><br><span class="line">        <span class="comment">// 禁止HttpClient自动解压缩</span></span><br><span class="line">        <span class="keyword">try</span> (<span class="type">CloseableHttpClient</span> <span class="variable">client</span> <span class="operator">=</span> HttpClients.custom()</span><br><span class="line">                <span class="comment">// 禁止HttpClient自动解压缩</span></span><br><span class="line">                .disableContentCompression()</span><br><span class="line">                .build()) &#123;</span><br><span class="line">            <span class="type">HttpPost</span> <span class="variable">httpPost</span> <span class="operator">=</span> setupRequest(url, data);</span><br><span class="line">            <span class="type">CloseableHttpResponse</span> <span class="variable">response</span> <span class="operator">=</span> client.execute(httpPost);</span><br><span class="line">            <span class="keyword">return</span> handleResponse(response);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException ignored) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;网络连接失败或超时！&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            log.info(<span class="string">&quot;&#123;&#125;:请求异常: &#123;&#125;&quot;</span>, LocalDateTime.now(), e);</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;请求异常&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> HttpPost <span class="title function_">setupRequest</span><span class="params">(String url, String requestData)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> setupRequest(url, cbsTokenUtils.token(), cbsConfig.getFirmPrivateKey(), cbsConfig.getPlatformPublicKey(), requestData);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 生成请求报文</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> HttpPost <span class="title function_">setupRequest</span><span class="params">(String url, String token, String signEncryptionPrivateKey, String bodyEncryptionKey, String requestData)</span> &#123;</span><br><span class="line">        <span class="type">long</span> <span class="variable">timestamp</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 请求数据拼接：  报文体+时间戳</span></span><br><span class="line">        <span class="type">byte</span>[] requestDataBytes = requestData.getBytes(StandardCharsets.UTF_8);</span><br><span class="line">        <span class="type">byte</span>[] timestampBytes = (<span class="string">&quot;&amp;timestamp=&quot;</span> + timestamp).getBytes(StandardCharsets.UTF_8);</span><br><span class="line">        <span class="type">byte</span>[] newBytes = <span class="keyword">new</span> <span class="title class_">byte</span>[requestDataBytes.length + timestampBytes.length];</span><br><span class="line">        System.arraycopy(requestDataBytes, <span class="number">0</span>, newBytes, <span class="number">0</span>, requestDataBytes.length);</span><br><span class="line">        System.arraycopy(timestampBytes, <span class="number">0</span>, newBytes, requestDataBytes.length, timestampBytes.length);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 生成签名</span></span><br><span class="line">        <span class="type">byte</span>[] signature = CBSSM2Util.sign(signEncryptionPrivateKey, newBytes);</span><br><span class="line">        <span class="type">String</span> <span class="variable">sign</span> <span class="operator">=</span> Base64.encodeBase64String(CBSSM2Util.encodeDERSignature(signature));</span><br><span class="line">        log.info(<span class="string">&quot;签名:&#123;&#125;&quot;</span>, sign);</span><br><span class="line">        <span class="comment">// 设置请求URL</span></span><br><span class="line">        <span class="type">HttpPost</span> <span class="variable">httpPost</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HttpPost</span>(url);</span><br><span class="line">        <span class="comment">// 请求头设置签名</span></span><br><span class="line">        httpPost.setHeader(CBSConstant.SIGN_HEADER_NAME, sign);</span><br><span class="line">        <span class="comment">// 请求头设置时间戳</span></span><br><span class="line">        httpPost.setHeader(CBSConstant.TIMESTAMP_HEADER, Long.toString(timestamp));</span><br><span class="line">        <span class="comment">// 请求头设置请求参数格式，请根据实际情况改写</span></span><br><span class="line">        httpPost.setHeader(HTTP.CONTENT_TYPE, CBSConstant.TARGET_CONTENT_TYPE);</span><br><span class="line">        <span class="comment">// 请求头设置TOKEN</span></span><br><span class="line">        httpPost.setHeader(CBSConstant.AUTHORIZATION, CBSConstant.BEARER + token);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 报文体加密</span></span><br><span class="line">        <span class="type">byte</span>[] encryptedData = CBSSM2Util.encrypt(bodyEncryptionKey, requestDataBytes);</span><br><span class="line">        <span class="comment">// 设置请求体</span></span><br><span class="line"></span><br><span class="line">        httpPost.setEntity(<span class="keyword">new</span> <span class="title class_">ByteArrayEntity</span>(encryptedData));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> httpPost;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">handleResponse</span><span class="params">(HttpResponse response)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">byte</span>[] bytes = handleResponse(response, cbsConfig.getFirmPrivateKey());</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">String</span>(bytes);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 处理响应报文</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">byte</span>[] handleResponse(HttpResponse response, String bodyDecryptionKey) <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">InputStream</span> <span class="variable">content</span> <span class="operator">=</span> response.getEntity().getContent();</span><br><span class="line">        <span class="type">byte</span>[] responseData = IOUtils.toByteArray(content);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (responseData == <span class="literal">null</span> || responseData.length == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> responseData == <span class="literal">null</span> ? <span class="keyword">new</span> <span class="title class_">byte</span>[<span class="number">0</span>] : responseData;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 步骤1 原始响应报文解密 如果服务网关获取加解密密钥失败，则无法解密请求报文，且无法加密响应报文。 这时候，网关会直接返回错误信息，响应报文是未加密状态。</span></span><br><span class="line">        <span class="type">Boolean</span> <span class="variable">encryptionEnable</span> <span class="operator">=</span> getHeader(response, CBSConstant.ENCRYPTION_ENABLED_HEADER_NAME);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (Boolean.TRUE.equals(encryptionEnable)) &#123;</span><br><span class="line">            responseData = CBSSM2Util.decrypt(bodyDecryptionKey, responseData);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">Boolean</span> <span class="variable">xMbcloudCompress</span> <span class="operator">=</span> getHeader(response, CBSConstant.X_MBCLOUD_COMPRESS);</span><br><span class="line">        <span class="keyword">if</span> (Boolean.TRUE.equals(xMbcloudCompress)) &#123;</span><br><span class="line">            responseData = decompress(responseData);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> responseData;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Boolean <span class="title function_">getHeader</span><span class="params">(HttpMessage message, String name)</span> &#123;</span><br><span class="line">        <span class="type">Header</span> <span class="variable">header</span> <span class="operator">=</span> message.getFirstHeader(name);</span><br><span class="line">        <span class="keyword">return</span> header != <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">byte</span>[] decompress(<span class="type">byte</span>[] data) <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">ByteArrayInputStream</span> <span class="variable">input</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ByteArrayInputStream</span>(data);</span><br><span class="line">        <span class="type">GZIPInputStream</span> <span class="variable">gzipInput</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">GZIPInputStream</span>(input);</span><br><span class="line">        <span class="keyword">return</span> IOUtils.toByteArray(gzipInput);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="业务对接"><a class="markdownIt-Anchor" href="#业务对接"></a> 业务对接</h3>
+<h4 id="支付"><a class="markdownIt-Anchor" href="#支付"></a> 支付</h4>
+<p><img src="%E6%94%AF%E4%BB%98%E6%97%B6%E5%BA%8F%E5%9B%BE.png" alt="支付时序图" /></p>
+<p>支付接口是一个批量操作接口, 传入的是一个<code>list</code>, 具体的参数和返回值参考对接指南.</p>
+<p>注意事项</p>
+<ol>
+<li>调用支付接口是发送<code>CBS</code>的支付指令(上图中的步骤1-5), 实际的支付需要<code>CBS</code>端审核, 此审核可以关闭(询问招行如何操作)</li>
+<li>调用支付接口时会进行一系列的校验, 这些校验是可以关闭的(询问招商银行), 建议添加业务参考号的校验, 如果有要求可以全部关闭(个人需要实现记录的重复请求问题, 确保支付指令的唯一)</li>
+<li>调用支付接口后, 不会立即执行付款操作, 实际的支付操作会滞后一段时间, 并且即使在<code>CBS</code>校验通过, 也不一定会支付成功. 如果<code>CBS</code>校验通过, 但是实际支付却失败了, 则该业务参考号(开启业务参考号校验的情况下)在<code>CBS</code>中就不可用了</li>
+<li>付款的账户必须是在<code>CBS</code>注册的企业用户中备案的账户</li>
+</ol>
+<p>如果不是有大量的批量支付的情况, 建议使用单条记录调用支付接口, 这样在进行本地的参数预校验和请求参数与返回结果进行操作时比较方便</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> CBSPaymentApplyEntity <span class="title function_">paymentApply</span><span class="params">(CBSPaymentApplyEntity payment)</span> &#123;</span><br><span class="line">    <span class="type">SysPaymentConfig</span> <span class="variable">config</span> <span class="operator">=</span> sysPaymentConfigMapper.selectConfigById(<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">if</span> (<span class="number">0</span> == config.getEnablePayment()) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;支付接口被禁用&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (Objectss.isNull(payment)) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;请添加支付记录&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    log.info(<span class="string">&quot;支付申请: &#123;&#125;&quot;</span>, payment);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 数据初步校验, 判断数据是否符合要求, 不符合可直接不进行后续处理</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 进行固定的数据填充</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 调用支付接口, 只需要将有业务参考号的处理即可</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">data</span> <span class="operator">=</span> JSONArray.toJSONString(Collections.singletonList(payment), SerializerFeature.PrettyFormat);</span><br><span class="line">    <span class="type">String</span> <span class="variable">response</span> <span class="operator">=</span> cbsHttpUtil.doHttp(cbsConfig.getOpenApiUrl() + cbsConfig.getPaymentUrl(), data);</span><br><span class="line">    <span class="type">JSONObject</span> <span class="variable">jsonObject</span> <span class="operator">=</span> JSONObject.parseObject(response);</span><br><span class="line">    <span class="keyword">if</span> (!<span class="string">&quot;0&quot;</span>.equals(jsonObject.get(<span class="string">&quot;code&quot;</span>))) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(jsonObject.getString(<span class="string">&quot;msg&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">CBSPaymentApplyEntity</span> <span class="variable">json</span> <span class="operator">=</span> jsonObject.getJSONArray(<span class="string">&quot;data&quot;</span>).toJavaList(CBSPaymentApplyEntity.class).get(<span class="number">0</span>);</span><br><span class="line">    <span class="comment">// 处理支付结果</span></span><br><span class="line">    payment.setReferenceNum(referenceNum)</span><br><span class="line">        .setSuccessed(json.getSuccessed())</span><br><span class="line">        .setBusNum(json.getBusNum())</span><br><span class="line">        .setErrorCode(json.getErrorCode())</span><br><span class="line">        .setErrorMsg(json.getErrorMsg())</span><br><span class="line">        .setRecordNum(json.getRecordNum())</span><br><span class="line">        .setFreezeFlowNum(json.getFreezeFlowNum())</span><br><span class="line">        .setPayStatus(Boolean.parseBoolean(json.getSuccessed()) ? <span class="string">&quot;a&quot;</span> : <span class="string">&quot;&quot;</span>)</span><br><span class="line">        .setStatus(Boolean.parseBoolean(json.getSuccessed()) ? <span class="string">&quot;1&quot;</span> : <span class="string">&quot;&quot;</span>)</span><br><span class="line">        .setSync(<span class="string">&quot;0&quot;</span>);</span><br><span class="line">    <span class="comment">// 将实际调用支付接口的记录保存日志</span></span><br><span class="line">    <span class="type">boolean</span> <span class="variable">saved</span> <span class="operator">=</span> cbsPaymentApplyService.save(payment);</span><br><span class="line">    <span class="keyword">return</span> payment;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>预处理可以根据需要自定义, 本人在此处的定义的实体中有支付参数信息, 接口返回结果信息和支付结果信息三部分内容, 所以预校验时参考的对接指南中的错误码, 添加到数据并中, 记录不必进行调用请求</p>
+<p>支付结果中的支付状态和状态信息可以参考对接指南中的支付状态和状态对应的信息, 这个在支付结果查询处理中会用到</p>
+<p>这个内容在做的时候, 总监设想的是使用<code>RabbitMQ</code>处理来自公司系统中的支付请求, 但是没明说, 经理就说直接用<code>Dubbo</code>调用即可, 就没用<code>RabbitMQ</code>, 设计时是应当考虑是否需要使用消息队列的</p>
+<h4 id="支付结果"><a class="markdownIt-Anchor" href="#支付结果"></a> 支付结果</h4>
+<p>支付结果查询接口是获取一定时间段内处理的支付记录, 这些支付记录的成功与否可以通过流程状态和支付状态字段进行判断, 具体的状态信息可参考对接指南</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">paymentDetail</span><span class="params">()</span> &#123;</span><br><span class="line">    log.info(<span class="string">&quot;==获取支付结果开始==&quot;</span>);</span><br><span class="line">    <span class="type">SysPaymentConfig</span> <span class="variable">config</span> <span class="operator">=</span> sysPaymentConfigMapper.selectConfigById(<span class="number">1</span>);</span><br><span class="line">    <span class="type">JSONObject</span> <span class="variable">param</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JSONObject</span>();</span><br><span class="line">    <span class="type">LocalDateTime</span> <span class="variable">now</span> <span class="operator">=</span> LocalDateTime.now();</span><br><span class="line">    <span class="comment">// 查询最近n小时的记录, 通过数据库配置时长</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">startTime</span> <span class="operator">=</span> now.plusHours(-<span class="number">1L</span> * config.getPaymentPullOffset()).format(DATE_TIME_FORMATTER);</span><br><span class="line">    <span class="type">String</span> <span class="variable">endTime</span> <span class="operator">=</span> now.format(DATE_TIME_FORMATTER);</span><br><span class="line">    param.put(<span class="string">&quot;queryDateStart&quot;</span>, startTime);</span><br><span class="line">    param.put(<span class="string">&quot;queryDateEnd&quot;</span>, endTime);</span><br><span class="line">    param.put(<span class="string">&quot;currentPage&quot;</span>, <span class="number">1</span>);</span><br><span class="line">    param.put(<span class="string">&quot;pageSize&quot;</span>, <span class="number">1000</span>);</span><br><span class="line">    <span class="type">String</span> <span class="variable">response</span> <span class="operator">=</span> cbsHttpUtil.doHttp(cbsConfig.getOpenApiUrl() + cbsConfig.getPaymentQueryUrl(), JSONObject.toJSONString(param));</span><br><span class="line">    <span class="type">JSONObject</span> <span class="variable">jsonObject</span> <span class="operator">=</span> JSONObject.parseObject(response, JSONObject.class);</span><br><span class="line">    <span class="keyword">if</span> (!<span class="string">&quot;0&quot;</span>.equals(jsonObject.getString(<span class="string">&quot;code&quot;</span>))) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;请求失败: &quot;</span> + jsonObject.getString(<span class="string">&quot;msg&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">JSONArray</span> <span class="variable">jsonArray</span> <span class="operator">=</span> jsonObject.getJSONObject(<span class="string">&quot;data&quot;</span>).getJSONArray(<span class="string">&quot;list&quot;</span>);</span><br><span class="line">    List&lt;CBSPaymentApplyEntity&gt; res = jsonArray.toJavaList(CBSPaymentApplyEntity.class);</span><br><span class="line">    <span class="comment">// 查询结果处理, 一般来说, 只需要处理支付状态不是最终状态的记录即可</span></span><br><span class="line">    <span class="comment">// 支付状态&quot;pay_status&quot;的最终状态有&quot;j&quot;, &quot;g&quot;, &quot;i&quot;, &quot;h&quot;, &quot;k&quot;, &quot;d&quot;, 只需要找到系统保存的记录中不是这些状态的记录进行处理即可</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    log.info(<span class="string">&quot;==获取支付结果结束==&quot;</span>);</span><br><span class="line">    <span class="comment">// 发布监听事件</span></span><br><span class="line">    applicationContext.publishEvent(<span class="keyword">new</span> <span class="title class_">PaymentResultEvent</span>(update));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>本人此处在支付结果查询后进行了支付记录的结果修改, 为了避免重复处理, 每次查询后只处理系统数据库保存的记录中支付状态不是最终状态的记录</p>
+<p>此处使用了事件监听来处理后续任务, 这样做有两个好处:</p>
+<ol>
+<li>分离结果获取和业务逻辑</li>
+<li>支付结果的获取处理通常是非常频繁的(公司财务要求太高), 这样在系统之间的调用或者在处理业务时会出现结果等待或者异步问题, 使用事件监听方便处理, 不会阻塞请求支付结果的任务(使用消息队列也可以, 好像没有多大必要)</li>
+</ol>
+<p>后面的电子回单和交易明细也使用了相同的处理</p>
+<p>电子回单: <code>bucketFileUrl</code>字段就是文件的下载地址, 从浏览器中即可直接访问, 对接指南中描述有效时间为7日</p>
+<h3 id="结尾"><a class="markdownIt-Anchor" href="#结尾"></a> 结尾</h3>
+<p>其实从对接上而言并没有难度, 只是一些问题需要多沟通解决. 还有就是在处理数据上确保数据的准确, 不会重复等问题, 毕竟涉及到钞票.</p>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2024/02/21/other/项目对接招商银行CBS/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text"> 前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E6%8F%90"><span class="toc-number">2.</span> <span class="toc-text"> 前提</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E9%85%8D%E7%BD%AE"><span class="toc-number">3.</span> <span class="toc-text"> 基础配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%AC%E5%85%B1%E5%86%85%E5%AE%B9"><span class="toc-number">4.</span> <span class="toc-text"> 公共内容</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#token"><span class="toc-number">4.1.</span> <span class="toc-text"> TOKEN</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%B7%E6%B1%82%E5%B0%81%E8%A3%85"><span class="toc-number">4.2.</span> <span class="toc-text"> 请求封装</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%9A%E5%8A%A1%E5%AF%B9%E6%8E%A5"><span class="toc-number">5.</span> <span class="toc-text"> 业务对接</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%94%AF%E4%BB%98"><span class="toc-number">5.1.</span> <span class="toc-text"> 支付</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%94%AF%E4%BB%98%E7%BB%93%E6%9E%9C"><span class="toc-number">5.2.</span> <span class="toc-text"> 支付结果</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E5%B0%BE"><span class="toc-number">6.</span> <span class="toc-text"> 结尾</span></a></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2024/02/26/mysql/MySQL系列二之SQL/">MySQL系列(二)---SQL</a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2024/02/21/other/项目对接海康SDK/">项目对接海康SDK</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2024/02/21/other/项目对接招商银行CBS/'
+  })
+</script>
+
+
+<script>
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        let href = decodeURIComponent(link.href);
+        href = href.substring(href.indexOf('#'));
+        const target = $(href)[0];
+        const top = target.offsetTop;
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      我们在绵延的海滩上捡贝壳，今天捡到了不必欣喜，因为海很大，今天没捡到，也不必失落，因为海很大。 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">我好像没有网络备案</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"自転车","artist":"オレスカバンド","url":"/music/自転车-オレスカバンド.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"撞地球","artist":"鱼儿七","url":"/music/撞地球-鱼儿七.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"晴天","artist":"周杰伦","url":"/music/晴天-周杰伦.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"告白气球","artist":"周杰伦","url":"/music/告白气球-周杰伦.mp3","cover":"/imgs/music-bg1.jpg"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>
