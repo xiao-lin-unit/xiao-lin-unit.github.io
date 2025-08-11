@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>小琳的星空 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico?time=789" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css?time=789" />
+  <link rel="stylesheet" href="/css/layout.css?time=789" />
+  <link rel="stylesheet" href="/css/iconfont.css?time=789" />
+  <link rel="stylesheet" href="/css/APlayer.min.css?time=789" />
+  <script src="/js/APlayer.min.js?time=789"></script>
+  <script src="/js/jquery.min.js?time=789"></script>
+  <script src="/js/jquery.pjax.min.js?time=789"></script>
+
+  <script src="/js/Valine.min.js?time=789"></script>
+<!--  <script src='https://unpkg.com/valine/dist/Valine.min.js'></script>-->
+  <script>
+    document.title = `小琳的星空`
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="/?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/">-->
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="/log?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/log?time=786">-->
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="/link?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/link?time=786">-->
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="/about?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/about?time=787">-->
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"Docker系列(一)---安装和基本使用","cover":"/imgs/cover/default-cover.jpeg?time=746?time=747?time=750?time=752?time=759?time=759","path":"2025/08/05/docker/Docker系列一之安装和基本使用/"},{"title":"Docker系列(三)---项目部署","cover":"/imgs/cover/default-cover.webp?time=746?time=747?time=750?time=752?time=759","path":"2025/08/11/docker/Docker系列三之项目部署/"},{"title":"Docker系列(二)---进阶使用","cover":"/imgs/cover/default-cover.webp?time=746?time=747?time=750?time=752?time=759?time=759","path":"2025/08/07/docker/Docker系列二之进阶使用/"},{"title":"MySQL系列(三)---索引","cover":"/imgs/cover/default-cover.webp?time=739?time=744?time=747?time=753?time=760","path":"2024/04/29/mysql/MySQL系列三之索引/"},{"title":"MySQL系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=731?time=733?time=737?time=751?time=753?time=761","path":"2023/11/27/mysql/MySQL系列一之安装/"},{"title":"Promise","cover":"/imgs/cover/default-cover.jpeg?time=731?time=735?time=737?time=751?time=754?time=761","path":"2023/11/24/js/Promise/"},{"title":"MySQL系列(二)---SQL","cover":"/imgs/cover/default-cover.jpeg?time=739?time=742?time=747?time=753?time=760","path":"2024/02/26/mysql/MySQL系列二之SQL/"},{"title":"博客搭建","cover":"/imgs/cover/default-cover.webp?time=731?time=735?time=737?time=751?time=754?time=761?time=762","path":"2023/11/22/other/博客搭建/"},{"title":"项目对接招商银行CBS","cover":"/imgs/cover/default-cover.webp?time=739?time=742?time=747?time=754?time=762","path":"2024/02/21/other/项目对接招商银行CBS/"},{"title":"Redis系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=731?time=733?time=738?time=751?time=755?time=763","path":"2023/12/12/redis/Redis系列一之安装/"},{"title":"项目对接海康SDK","cover":"/imgs/cover/default-cover.webp?time=727?time=739?time=742?time=750?time=754?time=763","path":"2024/02/21/other/项目对接海康SDK/"},{"title":"SpringCloud系列(一)---项目创建","cover":"/imgs/cover/default-cover.webp?time=731?time=733?time=737?time=751?time=755?time=764","path":"2023/11/25/springcloud/SpringCloud系列一之基础服务/"},{"title":"SpringCloud系列(七)---认证和授权","cover":"/imgs/cover/default-cover.jpeg?time=727?time=739?time=742?time=750?time=755?time=764","path":"2024/02/03/springcloud/SpringCloud系列七之认证和授权/"},{"title":"SpringCloud系列(九)---阶段总结","cover":"/imgs/cover/default-cover.jpeg?time=739?time=744?time=747?time=755?time=764","path":"2024/05/11/springcloud/SpringCloud系列九之阶段总结/"},{"title":"SpringCloud系列(三)---服务熔断与降级","cover":"/imgs/cover/default-cover.webp?time=731?time=733?time=738?time=751?time=755?time=764?time=765?time=765","path":"2023/12/02/springcloud/SpringCloud系列三之服务熔断与降级/"},{"title":"SpringCloud系列(二)---注册中心和配置中心","cover":"/imgs/cover/default-cover.jpeg?time=731?time=733?time=737?time=751?time=755?time=764?time=766?time=766","path":"2023/11/30/springcloud/SpringCloud系列二之注册中心/"},{"title":"SpringCloud系列(五)---Redis使用","cover":"/imgs/cover/default-cover.jpeg?time=727?time=733?time=738?time=750?time=755?time=763?time=764","path":"2023/12/14/springcloud/SpringCloud系列五之Redis使用/"},{"title":"SpringCloud系列(八)---服务划分","cover":"/imgs/cover/default-cover.webp?time=727?time=739?time=742?time=750?time=755?time=767","path":"2024/02/19/springcloud/SpringCloud系列八之服务划分/"},{"title":"SpringCloud系列(四)---网关","cover":"/imgs/cover/default-cover.jpeg?time=731?time=733?time=738?time=751?time=755?time=764?time=767","path":"2023/12/10/springcloud/SpringCloud系列四之网关/"},{"title":"SpringCloud系列(六)---分布式主键","cover":"/imgs/cover/default-cover.webp?time=731?time=733?time=738?time=751?time=755?time=764?time=768","path":"2023/12/11/springcloud/SpringCloud系列六之分布式主键/"},{"title":"NPM和PNPM的安装及配置","cover":"/imgs/cover/default-cover.webp?time=727?time=733?time=738?time=750?time=756?time=768?time=769?time=769","path":"2023/12/26/node/npm和pnpm安装及配置/"},{"title":"Typescript系列(一)---基础","cover":"/imgs/cover/default-cover.webp?time=727?time=733?time=738?time=750?time=757?time=769","path":"2023/12/26/ts/TypeScript系列一之基础/"},{"title":"Typescript系列(二)---高级","cover":"/imgs/cover/default-cover.jpeg?time=727?time=740?time=741?time=750?time=757?time=769","path":"2024/01/04/ts/TypeScript系列二之高级/"},{"title":"Vue系列(一)---项目创建和配置","cover":"/imgs/cover/default-cover.webp?time=746?time=747?time=749?time=757?time=769?time=770?time=770","path":"2025/06/19/web/Vue系列一之项目创建和配置/"},{"title":"Vue系列(三)---状态管理库","cover":"/imgs/cover/default-cover.webp?time=727?time=739?time=741?time=750?time=757?time=773","path":"2024/01/18/web/Vue系列三之状态管理库/"},{"title":"Vue系列(二)---路由","cover":"/imgs/cover/default-cover.jpeg?time=727?time=740?time=741?time=750?time=757?time=771","path":"2024/01/07/web/Vue系列二之路由/"},{"title":"Zookeeper系列(一)---原理","cover":"/imgs/cover/default-cover.webp?time=739?time=745?time=747?time=758?time=766","path":"2024/11/28/zookeeper/Zookeeper系列一之原理/"},{"title":"Vue系列(四)---请求","cover":"/imgs/cover/default-cover.jpeg?time=727?time=739?time=742?time=750?time=757?time=774","path":"2024/02/01/web/Vue系列四之请求/"},{"title":"Zookeeper系列(二)---安装配置","cover":"/imgs/cover/default-cover.jpeg?time=746?time=747?time=747?time=758?time=766","path":"2025/01/10/zookeeper/Zookeeper系列二之安装配置/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}${'?time=' + new Date().getMilliseconds()}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp'}${'?time=' + new Date().getMilliseconds()}" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg?time=787" class="main-left--avatar" alt />
+      <div class="main-left--intro">
+        <p class="main-left--name">小琳</p>
+        <div class="main-left--tags">
+          
+            <span class="main-left--tag">中二</span>
+          
+            <span class="main-left--tag">乐天派</span>
+          
+            <span class="main-left--tag">悲观主义</span>
+          
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>跳出圈子你会发现</p>
+        <p>其实你一无是处</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        
+          <a target="_blank" rel="noopener" href="https://github.com/?time=787" title="github">
+            <i class="logo xiao-lin-blog xiao-lin-blog-github"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://gitee.com/xiao-lin?time=787" title="码云">
+            <i class="logo xiao-lin-blog xiao-lin-blog-gitee"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43728193?type=blog?time=787" title="CSDN">
+            <i class="logo xiao-lin-blog xiao-lin-blog-csdn"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiao-lin-unit/?time=787" title="博客园">
+            <i class="logo xiao-lin-blog xiao-lin-blog-cnblogs"></i>
+          </a>
+        
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories?time=787">
+          <div>
+            <span>10</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags?time=787">
+          <div>
+            <span>27</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives?time=787">
+          <div>
+            <span>10 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/?time=787">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log?time=787">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link?time=787">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about?time=787">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tags?time=787">
+            <span class="header-menu--span">标签</span>
+            <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-tags-rectangle"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/categories?time=787">
+            <span class="header-menu--span">分类</span>
+            <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-categories"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools?time=787">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>29 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>629天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  
+
+<link rel="stylesheet" href="/css/partial/article.css?time=580" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">Docker系列(三)---项目部署</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span class="xiao-lin-blog xiao-lin-blog-categories">分类：</span>
+            <a class="category-link" href="/categories/Docker/">Docker</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span class="xiao-lin-blog xiao-lin-blog-tags-fill">标签：</span>
+            <a class="tag-link" href="/tags/Docker/" rel="tag">Docker</a>
+          </div>
+          
+          <p class="article-info--date"><i class="xiao-lin-blog xiao-lin-blog-date-time">日期：2025-08-11 15:44:57</i></p>
+        </div>
+<!--        <img src="/imgs/cover/default-cover.webp" alt="" class="article-cover">-->
+        <img src="/imgs/cover/default-cover.webp" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <p>重头戏来了，学习的最终目的就是为了应用，所以项目部署就是我们的最终阶段。本阶段是在<code>windows</code>系统上完成的，需要在<code>windows</code>上安装<code>Docker Desktop</code></p>
+<h3 id="安装docker-desktop"><a class="markdownIt-Anchor" href="#安装docker-desktop"></a> 安装<code>Docker Desktop</code></h3>
+<ol>
+<li>
+<p>开启功能</p>
+<ul>
+<li><code>Hyper-V</code></li>
+<li>适用于<code>Linux</code>的<code>Windows</code>子系统</li>
+<li>虚拟机平台</li>
+</ul>
+</li>
+<li>
+<p><code>wsl</code>安装<code>Ubuntu</code></p>
+<ul>
+<li>
+<p>将<code>wsl</code>设置为版本2</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用powershell</span></span><br><span class="line">wsl --set-default-version 2</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>用<code>wsl</code>安装<code>Ubuntu</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wsl --install ubuntu</span><br></pre></td></tr></table></figure>
+<p>也可以使用<code>Microsoft Store</code>安装</p>
+<p>安装后建议修改源文件</p>
+</li>
+</ul>
+</li>
+<li>
+<p>安装<code>Docker Desktop</code></p>
+<p>如果一直卡在<code>Docker engine starting</code>，可以到<code>C:\Program Files\Docker\Docker</code>目录下执行命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./DockerCli.exe --SwitchDaemon</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>客户端设置</p>
+<p><code>Settings</code> -&gt; <code>Docker Engine</code>添加源</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;builder&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;gc&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;defaultKeepStorage&quot;</span><span class="punctuation">:</span> <span class="string">&quot;20GB&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;enabled&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;experimental&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;insecure-registries&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;registry-mirrors&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;https://docker.m.daocloud.io&quot;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：</p>
+<p>由于国内限制问题，会出现查询镜像查询不到的问题，建议直接使用<code>docker</code>命令直接拉取目标镜像，拉取完后可以在<code>Docker Desktop</code>中查看使用</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="springboot项目部署"><a class="markdownIt-Anchor" href="#springboot项目部署"></a> <code>SpringBoot</code>项目部署</h3>
+<h4 id="maven插件"><a class="markdownIt-Anchor" href="#maven插件"></a> <code>maven</code>插件</h4>
+<h5 id="常见插件"><a class="markdownIt-Anchor" href="#常见插件"></a> 常见插件</h5>
+<ol>
+<li>
+<p><code>Spring Boot Maven</code>打包内置的<code>build-image</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># spring-boot-maven-plugin</span></span><br><span class="line">mvn spring-boot:build-image</span><br><span class="line"><span class="comment"># 不需要写dockerfile，而是基于plugin配置构建</span></span><br><span class="line"><span class="comment"># 配置官方文档： https://docs.spring.io/spring-boot/maven-plugin/build-image.html#build-image.build-image-goal</span></span><br><span class="line"><span class="comment"># 官方文档的地址可能会发生变化，建议直接到spring-boot官网找maven-plugin，然后从goals中找到build-image即可</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p><code>Google</code>的<code>jib-maven-plugin</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 不需要dockerfile，甚至本地可以没有docker</span></span><br><span class="line">mvn comple com.google.cloud.tools:jib-maven-plugin:2.3.0:dockerBuild</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p><code>Spotify</code>的<code>dockerfile-maven-plugin</code></p>
+<p><code>pom.xml</code></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 打包springboot包 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 镜像构建插件 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.spotify<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>dockerfile-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.4.13<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">executions</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">execution</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">id</span>&gt;</span>default<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">goals</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">goal</span>&gt;</span>build<span class="tag">&lt;/<span class="name">goal</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">goal</span>&gt;</span>push<span class="tag">&lt;/<span class="name">goal</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">goals</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">execution</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">executions</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">repository</span>&gt;</span>192.168.0.1:5000/xiao-lin-unit/$&#123;project.artifactId&#125;<span class="tag">&lt;/<span class="name">repository</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">tag</span>&gt;</span>$&#123;project.version&#125;<span class="tag">&lt;/<span class="name">tag</span>&gt;</span></span><br><span class="line">                <span class="comment">&lt;!-- 开启验证 --&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">useMavenSettingsForAuth</span>&gt;</span>true<span class="tag">&lt;/<span class="name">useMavenSettingsForAuth</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">buildArgs</span>&gt;</span></span><br><span class="line">                    <span class="comment">&lt;!-- 设置dockerfile中的JAR_FILE参数定义的值 --&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">JAR_FILE</span>&gt;</span>target/$&#123;project.artifactId&#125;-$&#123;project.version&#125;.jar<span class="tag">&lt;/<span class="name">JAR_FILE</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">buildArgs</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>settings.xml</code></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">servers</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">server</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">id</span>&gt;</span>192.168.0.1:5000<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">username</span>&gt;</span>admin<span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">password</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">password</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">server</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">servers</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>Dockerfile</code></p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> openjdk:<span class="number">21</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">MAINTAINER</span> xiao-lin &lt;xiao_lin_unit@<span class="number">163</span>.com&gt;</span><br><span class="line"></span><br><span class="line"><span class="keyword">ARG</span> JAR_FILE</span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">mkdir</span> -p /spring-boot-demo</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /spring-boot-demo</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> <span class="variable">$JAR_FILE</span> application.jar</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ENV</span> TZ=Asia/Shanghai JAVA_OPTS=<span class="string">&quot;-Xms256m -Xmx256m&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">8080</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CMD</span><span class="language-bash"> java <span class="variable">$JAVA_OPTS</span> -Djava.security.edg=file:/dev/./urandom -jar application.jar</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>打包时需要将docker的2375端口暴露出来</p>
+<p><code>Docker Desktop</code> -&gt; <code>Settings</code> -&gt; <code>General</code> -&gt; <code>Expose daemon on tcp://localhost:2375 without TLS</code></p>
+</blockquote>
+<p>创建一个<code>docker</code>启动容器的脚本<code>docker-deploy.sh</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">COMMAND=<span class="variable">$1</span></span><br><span class="line"></span><br><span class="line">APP_NAME=<span class="variable">$2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># shellcheck disable=SC1069</span></span><br><span class="line"><span class="keyword">if</span>[ -z <span class="string">&quot;<span class="variable">$APP_NAME</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">  APP_NAME=<span class="string">&quot;spring-boot-demo&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">EXPOSE_PORT=8080</span><br><span class="line"></span><br><span class="line">NAMESPACE=xiao-lin-unit</span><br><span class="line"></span><br><span class="line">TAG=1.0.0</span><br><span class="line"></span><br><span class="line">REGISTRY_SERVER=192.168.0.1:5000</span><br><span class="line"></span><br><span class="line"><span class="comment"># shellcheck disable=SC2209</span></span><br><span class="line">USERNAME=admin</span><br><span class="line"></span><br><span class="line">PASSWORD=123456</span><br><span class="line"></span><br><span class="line">IMAGE_NAME=<span class="string">&quot;<span class="variable">$REGISTRY_SERVER</span>/<span class="variable">$NAMESPACE</span>/<span class="variable">$APP_NAME</span>:<span class="variable">$TAG</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">usage</span></span>() &#123;</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;Usage: sh docker-deploy.sh [up|start|stop|restart|rm]&quot;</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">login</span></span>() &#123;</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;docker login -u <span class="variable">$USERNAME</span> --password-stdin <span class="variable">$REGISTRY_SERVER</span>&quot;</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$PASSWORD</span>&quot;</span> | docker login -u <span class="variable">$USERNAME</span> --password-stdin <span class="variable">$REGISTRY_SERVER</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># shellcheck disable=SC2120</span></span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">start</span></span>() &#123;</span><br><span class="line">    CONTAINER_NAME=$(docker ps | grep <span class="string">&quot;<span class="variable">$APP_NAME</span>&quot;</span> | awk <span class="string">&#x27;&#123;print $NF&#125;&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> [ -n <span class="string">&quot;<span class="variable">$CONTAINER_NAME</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">      <span class="built_in">echo</span> <span class="string">&quot;container <span class="variable">$CONTAINER_NAME</span> already started...&quot;</span></span><br><span class="line">      <span class="built_in">exit</span> 1</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">    IMAGE=$(docker images | grep <span class="string">&quot;<span class="variable">$APP_NAME</span>&quot;</span> | awk <span class="string">&quot;&#123;print <span class="variable">$3</span>&#125;&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> [ -z <span class="string">&quot;<span class="variable">$IMAGE</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">        login</span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;starting container <span class="variable">$APP_NAME</span>...&quot;</span></span><br><span class="line">    docker run -d --restart=already --name <span class="variable">$APP_NAME</span> -p <span class="variable">$EXPOSE_PORT</span>:8080 <span class="variable">$IMAGE_NAME</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;container <span class="variable">$APP_NAME</span> started...&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">stop</span></span>() &#123;</span><br><span class="line">    CONTAINER_NAME=$(docker ps | grep <span class="string">&quot;<span class="variable">$APP_NAME</span>&quot;</span> | awk <span class="string">&#x27;&#123;print $NF&#125;&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> [ -z <span class="string">&quot;<span class="variable">$CONTAINER_NAME</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">      <span class="built_in">echo</span> <span class="string">&quot;container <span class="variable">$CONTAINER_NAME</span> not running...&quot;</span></span><br><span class="line">      <span class="built_in">exit</span> 1</span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;stopping container <span class="variable">$APP_NAME</span>...&quot;</span></span><br><span class="line">    docker stop <span class="string">&quot;<span class="variable">$CONTAINER_NAME</span>&quot;</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;container <span class="variable">$APP_NAME</span> stopped...&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">restart</span></span>() &#123;</span><br><span class="line">    stop</span><br><span class="line">    start</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">rm</span></span>() &#123;</span><br><span class="line">    CONTAINER_NAME=$(docker ps | grep <span class="string">&quot;<span class="variable">$APP_NAME</span>&quot;</span> | awk <span class="string">&#x27;&#123;print $NF&#125;&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> [ -n <span class="string">&quot;<span class="variable">$CONTAINER_NAME</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">      stop</span><br><span class="line"></span><br><span class="line">      <span class="built_in">echo</span> <span class="string">&quot;removing container <span class="variable">$APP_NAME</span>...&quot;</span></span><br><span class="line">      docker <span class="built_in">rm</span> <span class="string">&quot;<span class="variable">$CONTAINER_NAME</span>&quot;</span></span><br><span class="line">      <span class="built_in">echo</span> <span class="string">&quot;container <span class="variable">$APP_NAME</span> removed...&quot;</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">    IMAGE=$(docker images | grepj <span class="string">&quot;<span class="variable">$APP_NAME</span>&quot;</span> | awk <span class="string">&#x27;&#123;print $3&#125;&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> [ -n <span class="string">&quot;<span class="variable">$IMAGE</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;removing image <span class="variable">$IMAGE</span>...&quot;</span></span><br><span class="line">        docker rmi <span class="string">&quot;<span class="variable">$IMAGE</span>&quot;</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;image <span class="variable">$IMAGE</span> removed...&quot;</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">up</span></span>() &#123;</span><br><span class="line">    <span class="built_in">rm</span></span><br><span class="line">    start</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">case</span> <span class="string">&quot;<span class="variable">$COMMAND</span>&quot;</span> <span class="keyword">in</span></span><br><span class="line"><span class="string">&quot;up&quot;</span>)</span><br><span class="line">  up</span><br><span class="line">  ;;</span><br><span class="line"><span class="string">&quot;start&quot;</span>)</span><br><span class="line">  start</span><br><span class="line">  ;;</span><br><span class="line"><span class="string">&quot;stop&quot;</span>)</span><br><span class="line">  stop</span><br><span class="line">  ;;</span><br><span class="line"><span class="string">&quot;restart&quot;</span>)</span><br><span class="line">  restart</span><br><span class="line">  ;;</span><br><span class="line"><span class="string">&quot;rm&quot;</span>)</span><br><span class="line">  <span class="built_in">rm</span></span><br><span class="line">  ;;</span><br><span class="line">*)</span><br><span class="line">  usage</span><br><span class="line">  ;;</span><br><span class="line"><span class="keyword">esac</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>基于以上内容后，部署项目只需要三个步骤</p>
+<ol>
+<li>项目打包</li>
+<li>推送到镜像仓库</li>
+<li>使用部署脚本重新部署项目</li>
+</ol>
+</blockquote>
+</li>
+</ol>
+<p>推荐<code>IDEA</code>插件，<code>Alibaba Cloud Toolkit</code>，此工具包是一个远程连接的插件，可以时间在<code>IDEA</code>中连接远程服务器，不修改和影响前面的项目部署配置和过程</p>
+<ol>
+<li>
+<p>安装</p>
+<p>在<code>IDEA</code>中添加<code>Alibaba Cloud Toolkit</code>插件</p>
+</li>
+<li>
+<p>添加<code>Host</code></p>
+<blockquote>
+<p>如果连接的是<code>Windows</code>系统，需要确认系统是否安装了<code>OpenSSH</code></p>
+<p>安装方式，使用管理员运行<code>PowerShell</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 获取相关组件</span></span><br><span class="line">Get-WindowsCapability -Online | Where-Object Name -like <span class="string">&#x27;OpenSSH*&#x27;</span></span><br><span class="line"><span class="comment"># 安装服务</span></span><br><span class="line">Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0</span><br><span class="line"><span class="comment"># 启动服务</span></span><br><span class="line">Start-Service sshd</span><br><span class="line"><span class="comment"># 设置启动类型</span></span><br><span class="line">Set-Service -Name sshd -StartupType Automatic</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+</ol>
+<h3 id="微服务项目部署"><a class="markdownIt-Anchor" href="#微服务项目部署"></a> 微服务项目部署</h3>
+<h4 id="微服务项目部署问题及解决方案"><a class="markdownIt-Anchor" href="#微服务项目部署问题及解决方案"></a> 微服务项目部署问题及解决方案</h4>
+<ol>
+<li>
+<p>服务+中间件的复杂度问题</p>
+<p>使用<code>docker-compose</code>的服务编排能力，实现多服务的批量化处理</p>
+</li>
+<li>
+<p>服务与服务之间的依赖关系</p>
+<p>使用<code>docker-compose</code>的<code>depends_on</code>属性来设置服务依赖</p>
+</li>
+<li>
+<p>服务之间的网络共享问题</p>
+<p>利用自定义网络或者<code>links</code>来实现网络共享</p>
+</li>
+<li>
+<p>有状态服务的数据持久化问题</p>
+<p>使用数据卷进行持久化的数据管理</p>
+</li>
+</ol>
+<h4 id="微服务项目docker镜像结构及配置"><a class="markdownIt-Anchor" href="#微服务项目docker镜像结构及配置"></a> 微服务项目<code>docker</code>镜像结构及配置</h4>
+<p><img src="Docker%E9%A1%B9%E7%9B%AE%E9%85%8D%E7%BD%AE.png" alt="Docker项目配置" /></p>
+<p><code>docker-compose.yml</code></p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&quot;3.8&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">starry-sky-mysql:</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">&quot;starry-sky-mysql&quot;</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">&quot;mysql:8.5&quot;</span></span><br><span class="line">    <span class="attr">build:</span></span><br><span class="line">      <span class="attr">context:</span> <span class="string">./mysql</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;3306:3306&quot;</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./mysql/conf:/etc/mysql/conf.d</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./mysql/logs:/logs</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./mysql/data:/var/lib/mysql</span></span><br><span class="line">    <span class="attr">command:</span> [</span><br><span class="line">      <span class="string">&#x27;mysqld&#x27;</span>,</span><br><span class="line">      <span class="string">&#x27;--innodb-buffer-pool-size=80M&#x27;</span>,</span><br><span class="line">      <span class="string">&#x27;--character-set-server=utf8mb4&#x27;</span>,</span><br><span class="line">      <span class="string">&#x27;--collation-server=utf8mb4_unicode_ci&#x27;</span>,</span><br><span class="line">      <span class="string">&#x27;--default-time-zone=+8:00&#x27;</span></span><br><span class="line">      <span class="string">&#x27;--lower-case-table-names=1&#x27;</span></span><br><span class="line">    ]</span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">MYSQL_DATABASE:</span> <span class="string">&#x27;starry-sky&#x27;</span></span><br><span class="line">      <span class="attr">MYSQL_ROOT_PASSWORD:</span> <span class="string">&#x27;123456&#x27;</span></span><br><span class="line">  <span class="attr">starry-sky-redis:</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">&quot;starry-sky-redis&quot;</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">redis</span></span><br><span class="line">    <span class="attr">build:</span></span><br><span class="line">      <span class="attr">context:</span> <span class="string">./redis</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;6379:6379&quot;</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./redis/conf/redis.conf:/home/starry-sky/redis/redis.conf</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./redis/data:/data</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">redis-server</span> <span class="string">/home/starry-sky/redis/redis.conf</span></span><br><span class="line">  <span class="attr">starry-sky-zookeeper:</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">&quot;starry-sky-zookeeper&quot;</span></span><br><span class="line">  <span class="attr">starry-sky-web:</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">&quot;starry-sky-web&quot;</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">build:</span></span><br><span class="line">      <span class="attr">context:</span> <span class="string">./web</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;80:80&quot;</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./web/html/dist:/home/projects/starry-sky/web</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./web/conf/nginx.conf:/etc/nginx/nginx.conf</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./web/logs:/var/log/nginx</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./web/conf.d:/etc/nginx/conf.d</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">starry-sky-gateway</span></span><br><span class="line">    <span class="attr">links:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">starry-sky-gateway</span></span><br><span class="line">  <span class="attr">starry-sky-gateway:</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">&quot;starry-sky-gateway&quot;</span></span><br><span class="line">    <span class="attr">build:</span></span><br><span class="line">      <span class="attr">context:</span> <span class="string">./service/gateway</span></span><br><span class="line">      <span class="attr">dockerfile:</span> <span class="string">dockerfile</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;8080:8080&quot;</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">starry-sky-redis</span></span><br><span class="line">    <span class="attr">links:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">starry-sky-redis</span></span><br><span class="line">  <span class="attr">starry-sky-core:</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">&quot;starry-sky-core&quot;</span></span><br><span class="line">    <span class="attr">build:</span></span><br><span class="line">      <span class="attr">context:</span> <span class="string">./service/core</span></span><br><span class="line">      <span class="attr">dockerfile:</span> <span class="string">dockerfile</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;8081:8081&quot;</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">starry-sky-redis</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">starry-sky-mysql</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">starry-sky-gateway</span></span><br><span class="line">  <span class="attr">starry-sky-life:</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">&quot;starry-sky-life&quot;</span></span><br><span class="line">    <span class="attr">build:</span></span><br><span class="line">      <span class="attr">context:</span> <span class="string">./service/life</span></span><br><span class="line">      <span class="attr">dockerfile:</span> <span class="string">dockerfile</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;8082:8082&quot;</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">starry-sky-redis</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">starry-sky-mysql</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">starry-sky-gateway</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">starry-sky-core</span></span><br><span class="line">  <span class="attr">starry-sky-ai:</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">&quot;starry-sky-ai&quot;</span></span><br><span class="line">    <span class="attr">build:</span></span><br><span class="line">      <span class="attr">context:</span> <span class="string">./service/ai</span></span><br><span class="line">      <span class="attr">dockerfile:</span> <span class="string">dockerfile</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;8083:8083&quot;</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">starry-sky-redis</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">starry-sky-mysql</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">starry-sky-gateway</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">starry-sky-core</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：</p>
+<ol>
+<li>每个项目的配置不一样，<code>docker-compose.yml</code>应该根据自己的项目进行自定义配置,具体如何配置可以根据<a target="_blank" rel="noopener" href="https://docs.docker.com/reference/compose-file">官方文档</a>查看</li>
+<li>每个<code>dockerfile</code>文件的内容应基于镜像本身和项目特点来修改配置，如<code>mysql</code>、<code>redis</code>可能需要持久化策略，需要用到数据卷；<code>zookeeper</code>则根据需要，如果只是服务注册而不作为配置中心则不需要数据卷</li>
+</ol>
+</blockquote>
+<p><code>deploy.sh</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">usage</span></span>() &#123;</span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;Usage: sh deploy.sh [base|services|stop|rm]&quot;</span></span><br><span class="line">  <span class="built_in">exit</span> 1</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">base</span></span>() &#123;</span><br><span class="line">  docker-compose up -d starry-sky-mysql starry-sky-redis starry-sky-zookeeper</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">services</span></span>() &#123;</span><br><span class="line">  docker-compose up -d starry-sky-gateway starry-sky-core starry-sky-life starry-sky-ai</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">all</span></span>() &#123;</span><br><span class="line">  base</span><br><span class="line">  services</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">stop</span></span>() &#123;</span><br><span class="line">  docker-compose stop</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">rm</span></span>() &#123;</span><br><span class="line">  docker-compose <span class="built_in">rm</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">case</span> <span class="string">&quot;<span class="variable">$1</span>&quot;</span> <span class="keyword">in</span></span><br><span class="line"><span class="string">&quot;base&quot;</span>)</span><br><span class="line">  base</span><br><span class="line">  ;;</span><br><span class="line"><span class="string">&quot;services&quot;</span>)</span><br><span class="line">  services</span><br><span class="line">  ;;</span><br><span class="line"><span class="string">&quot;all&quot;</span>)</span><br><span class="line">  all</span><br><span class="line">  ;;</span><br><span class="line"><span class="string">&quot;stop&quot;</span>)</span><br><span class="line">  stop</span><br><span class="line">  ;;</span><br><span class="line"><span class="string">&quot;rm&quot;</span>)</span><br><span class="line">  <span class="built_in">rm</span></span><br><span class="line">  ;;</span><br><span class="line">*)</span><br><span class="line">  usage</span><br><span class="line">  ;;</span><br><span class="line"><span class="keyword">esac</span></span><br></pre></td></tr></table></figure>
+<p>基于以上，微服务项目的部署步骤如下：</p>
+<ol>
+<li>项目打包</li>
+<li>内容复制，利用<code>copy.sh</code>（或者基于配置手动复制）将相关内容复制到对应的目录下</li>
+<li>目录上传，将整个<code>docker</code>目录及其内容复制到部署服务器</li>
+<li>项目部署，使用<code>deploy.sh</code>（或者手动）进行容器编排方式的项目部署</li>
+</ol>
+<blockquote>
+<p><code>docker-compose</code>是单机的项目部署方式</p>
+<p>分布式部署可以使用<code>swarm</code></p>
+</blockquote>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2025/08/11/docker/Docker系列三之项目部署/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85docker-desktop"><span class="toc-number">1.</span> <span class="toc-text"> 安装Docker Desktop</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#springboot%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2"><span class="toc-number">2.</span> <span class="toc-text"> SpringBoot项目部署</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#maven%E6%8F%92%E4%BB%B6"><span class="toc-number">2.1.</span> <span class="toc-text"> maven插件</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E6%8F%92%E4%BB%B6"><span class="toc-number">2.1.1.</span> <span class="toc-text"> 常见插件</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2"><span class="toc-number">3.</span> <span class="toc-text"> 微服务项目部署</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">3.1.</span> <span class="toc-text"> 微服务项目部署问题及解决方案</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E9%A1%B9%E7%9B%AEdocker%E9%95%9C%E5%83%8F%E7%BB%93%E6%9E%84%E5%8F%8A%E9%85%8D%E7%BD%AE"><span class="toc-number">3.2.</span> <span class="toc-text"> 微服务项目docker镜像结构及配置</span></a></li></ol></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2025/08/07/docker/Docker系列二之进阶使用/">Docker系列(二)---进阶使用</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2025/08/11/docker/Docker系列三之项目部署/'
+  })
+</script>
+
+
+<script>
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        let href = decodeURIComponent(link.href);
+        href = href.substring(href.indexOf('#'));
+        const target = $(href)[0];
+        const top = target.offsetTop;
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      我们在绵延的海滩上捡贝壳，今天捡到了不必欣喜，因为海很大，今天没捡到，也不必失落，因为海很大。 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">我好像没有网络备案</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"自転车","artist":"オレスカバンド","url":"/music/自転车-オレスカバンド.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"撞地球","artist":"鱼儿七","url":"/music/撞地球-鱼儿七.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"晴天","artist":"周杰伦","url":"/music/晴天-周杰伦.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"告白气球","artist":"周杰伦","url":"/music/告白气球-周杰伦.mp3","cover":"/imgs/music-bg1.jpg"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>
