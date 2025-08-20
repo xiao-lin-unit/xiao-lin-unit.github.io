@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>小琳的星空 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico?time=142" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css?time=142" />
+  <link rel="stylesheet" href="/css/layout.css?time=142" />
+  <link rel="stylesheet" href="/css/iconfont.css?time=142" />
+  <link rel="stylesheet" href="/css/APlayer.min.css?time=142" />
+  <script src="/js/APlayer.min.js?time=142"></script>
+  <script src="/js/jquery.min.js?time=142"></script>
+  <script src="/js/jquery.pjax.min.js?time=142"></script>
+
+  <script src="/js/Valine.min.js?time=142"></script>
+<!--  <script src='https://unpkg.com/valine/dist/Valine.min.js'></script>-->
+  <script>
+    document.title = `小琳的星空`
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="/?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/">-->
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="/log?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/log?time=139">-->
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="/link?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/link?time=139">-->
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="/about?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/about?time=139">-->
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"Docker系列(三)---项目部署","cover":"/imgs/cover/default-cover.webp?time=99?time=103?time=103?time=110?time=124","path":"2025/08/11/docker/Docker系列三之项目部署/"},{"title":"Promise","cover":"/imgs/cover/default-cover.jpeg?time=85?time=89?time=90?time=104?time=111?time=127","path":"2023/11/24/js/Promise/"},{"title":"Docker系列(一)---安装和基本使用","cover":"/imgs/cover/default-cover.jpeg?time=99?time=103?time=103?time=110?time=111?time=124","path":"2025/08/05/docker/Docker系列一之安装和基本使用/"},{"title":"MySQL系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=85?time=87?time=90?time=105?time=112?time=127","path":"2023/11/27/mysql/MySQL系列一之安装/"},{"title":"博客搭建","cover":"/imgs/cover/default-cover.webp?time=85?time=89?time=90?time=105?time=111?time=112?time=127","path":"2023/11/22/other/博客搭建/"},{"title":"Docker系列(二)---进阶使用","cover":"/imgs/cover/default-cover.webp?time=99?time=103?time=103?time=110?time=111?time=124","path":"2025/08/07/docker/Docker系列二之进阶使用/"},{"title":"NPM和PNPM的安装及配置","cover":"/imgs/cover/default-cover.webp?time=80?time=87?time=91?time=106?time=113?time=113?time=114?time=126","path":"2023/12/26/node/npm和pnpm安装及配置/"},{"title":"MySQL系列(三)---索引","cover":"/imgs/cover/default-cover.webp?time=92?time=97?time=105?time=114?time=124","path":"2024/04/29/mysql/MySQL系列三之索引/"},{"title":"项目对接海康SDK","cover":"/imgs/cover/default-cover.webp?time=80?time=92?time=96?time=105?time=115?time=126","path":"2024/02/21/other/项目对接海康SDK/"},{"title":"项目对接招商银行CBS","cover":"/imgs/cover/default-cover.webp?time=92?time=96?time=105?time=116?time=124","path":"2024/02/21/other/项目对接招商银行CBS/"},{"title":"MySQL系列(二)---SQL","cover":"/imgs/cover/default-cover.jpeg?time=92?time=96?time=105?time=114?time=124","path":"2024/02/26/mysql/MySQL系列二之SQL/"},{"title":"SpringCloud系列(一)---项目创建","cover":"/imgs/cover/default-cover.webp?time=85?time=87?time=90?time=106?time=116?time=127","path":"2023/11/25/springcloud/SpringCloud系列一之基础服务/"},{"title":"SpringCloud系列(三)---服务熔断与降级","cover":"/imgs/cover/default-cover.webp?time=85?time=87?time=91?time=106?time=116?time=117?time=118?time=127","path":"2023/12/02/springcloud/SpringCloud系列三之服务熔断与降级/"},{"title":"SpringCloud系列(五)---Redis使用","cover":"/imgs/cover/default-cover.jpeg?time=80?time=87?time=91?time=106?time=116?time=118?time=126","path":"2023/12/14/springcloud/SpringCloud系列五之Redis使用/"},{"title":"SpringCloud系列(七)---认证和授权","cover":"/imgs/cover/default-cover.jpeg?time=80?time=92?time=96?time=106?time=119?time=126","path":"2024/02/03/springcloud/SpringCloud系列七之认证和授权/"},{"title":"SpringCloud系列(九)---阶段总结","cover":"/imgs/cover/default-cover.jpeg?time=92?time=98?time=106?time=116?time=124","path":"2024/05/11/springcloud/SpringCloud系列九之阶段总结/"},{"title":"SpringCloud系列(六)---分布式主键","cover":"/imgs/cover/default-cover.webp?time=85?time=87?time=91?time=106?time=116?time=119?time=127","path":"2023/12/11/springcloud/SpringCloud系列六之分布式主键/"},{"title":"SpringCloud系列(四)---网关","cover":"/imgs/cover/default-cover.jpeg?time=85?time=87?time=91?time=106?time=116?time=120?time=127","path":"2023/12/10/springcloud/SpringCloud系列四之网关/"},{"title":"SpringCloud系列(二)---注册中心和配置中心","cover":"/imgs/cover/default-cover.jpeg?time=85?time=87?time=90?time=106?time=116?time=120?time=121?time=127","path":"2023/11/30/springcloud/SpringCloud系列二之注册中心/"},{"title":"Typescript系列(一)---基础","cover":"/imgs/cover/default-cover.webp?time=80?time=87?time=91?time=108?time=121?time=126","path":"2023/12/26/ts/TypeScript系列一之基础/"},{"title":"Typescript系列(二)---高级","cover":"/imgs/cover/default-cover.jpeg?time=80?time=94?time=95?time=108?time=121?time=126","path":"2024/01/04/ts/TypeScript系列二之高级/"},{"title":"Redis系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=85?time=87?time=91?time=108?time=118?time=127","path":"2023/12/12/redis/Redis系列一之安装/"},{"title":"Vue系列(一)---项目创建和配置","cover":"/imgs/cover/default-cover.webp?time=99?time=102?time=109?time=114?time=122?time=122?time=124","path":"2025/06/19/web/Vue系列一之项目创建和配置/"},{"title":"SpringCloud系列(八)---服务划分","cover":"/imgs/cover/default-cover.webp?time=80?time=92?time=96?time=106?time=123?time=126","path":"2024/02/19/springcloud/SpringCloud系列八之服务划分/"},{"title":"Vue系列(三)---状态管理库","cover":"/imgs/cover/default-cover.webp?time=80?time=92?time=95?time=109?time=123?time=126","path":"2024/01/18/web/Vue系列三之状态管理库/"},{"title":"Zookeeper系列(一)---原理","cover":"/imgs/cover/default-cover.webp?time=92?time=99?time=109?time=121?time=124","path":"2024/11/28/zookeeper/Zookeeper系列一之原理/"},{"title":"Vue系列(二)---路由","cover":"/imgs/cover/default-cover.jpeg?time=80?time=94?time=95?time=109?time=125?time=126","path":"2024/01/07/web/Vue系列二之路由/"},{"title":"Vue系列(四)---请求","cover":"/imgs/cover/default-cover.jpeg?time=80?time=92?time=96?time=109?time=125?time=126","path":"2024/02/01/web/Vue系列四之请求/"},{"title":"Zookeeper系列(二)---安装和使用","cover":"/imgs/cover/default-cover.jpeg?time=99?time=101?time=109?time=121?time=124","path":"2025/01/10/zookeeper/Zookeeper系列二之安装和使用/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}${'?time=' + new Date().getMilliseconds()}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp'}${'?time=' + new Date().getMilliseconds()}" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg?time=139" class="main-left--avatar" alt />
+      <div class="main-left--intro">
+        <p class="main-left--name">小琳</p>
+        <div class="main-left--tags">
+          
+            <span class="main-left--tag">中二</span>
+          
+            <span class="main-left--tag">乐天派</span>
+          
+            <span class="main-left--tag">悲观主义</span>
+          
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>跳出圈子你会发现</p>
+        <p>其实你一无是处</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        
+          <a target="_blank" rel="noopener" href="https://github.com/?time=139" title="github">
+            <i class="logo xiao-lin-blog xiao-lin-blog-github"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://gitee.com/xiao-lin?time=139" title="码云">
+            <i class="logo xiao-lin-blog xiao-lin-blog-gitee"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43728193?type=blog?time=139" title="CSDN">
+            <i class="logo xiao-lin-blog xiao-lin-blog-csdn"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiao-lin-unit/?time=139" title="博客园">
+            <i class="logo xiao-lin-blog xiao-lin-blog-cnblogs"></i>
+          </a>
+        
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories?time=139">
+          <div>
+            <span>10</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags?time=139">
+          <div>
+            <span>27</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives?time=139">
+          <div>
+            <span>10 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/?time=139">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log?time=139">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link?time=139">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about?time=139">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tags?time=139">
+            <span class="header-menu--span">标签</span>
+            <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-tags-rectangle"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/categories?time=139">
+            <span class="header-menu--span">分类</span>
+            <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-categories"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools?time=139">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>29 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>638天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  
+
+<link rel="stylesheet" href="/css/partial/article.css?time=997" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">Zookeeper系列(二)---安装和使用</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span class="xiao-lin-blog xiao-lin-blog-categories">分类：</span>
+            <a class="category-link" href="/categories/zookeeper/">Zookeeper</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span class="xiao-lin-blog xiao-lin-blog-tags-fill">标签：</span>
+            <a class="tag-link" href="/tags/zookeeper/" rel="tag">zookeeper</a>
+          </div>
+          
+          <p class="article-info--date"><i class="xiao-lin-blog xiao-lin-blog-date-time">日期：2025-01-10 15:50:45</i></p>
+        </div>
+<!--        <img src="/1" alt="" class="article-cover">-->
+        <img src="/imgs/cover/default-cover.jpeg" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <!-- toc -->
+<h3 id="zookeeper概念"><a class="markdownIt-Anchor" href="#zookeeper概念"></a> <code>Zookeeper</code>概念</h3>
+<p><code>Zookeeper</code>是一个开源的分布式应用程序的协调服务,其重点就是在<mark>协调</mark>这两个字上,它最重要的能力就是服务协调工作,某一项任务由哪个节点去处理</p>
+<p><code>Zookeeper</code>常用的功能有: 配置管理, 分布式锁, 集群管理</p>
+<h3 id="zookeeper安装"><a class="markdownIt-Anchor" href="#zookeeper安装"></a> <code>Zookeeper</code>安装</h3>
+<p>从<a href="[Apache ZooKeeper](https://zookeeper.apache.org/)"><code>Zookeeper</code></a>官网选择想要的版本, 直接通过<code>http</code>下载压缩包即可.</p>
+<p>将压缩包解压之后即可使用</p>
+<p><img src="Zookeeper%E5%8E%8B%E7%BC%A9%E5%8C%85%E5%86%85%E5%AE%B9.png" alt="Zookeeper压缩包内容" /></p>
+<ul>
+<li><code>bin</code>目录中有启动<code>Zookeeper</code>服务和客户端的脚本</li>
+<li><code>conf</code>目录中可以修改<code>zoo.cfg</code>来修改<code>Zookeeper</code>的配置</li>
+<li><code>data</code>目录是<code>Zookeeper</code>服务的数据目录</li>
+<li><code>lib</code>目录中是<code>Zookeeper</code>服务及其使用的相关包</li>
+</ul>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># zoo.cfg 配置</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 心跳间隔</span></span><br><span class="line"><span class="attr">tickTime</span>=<span class="string">2000</span></span><br><span class="line"><span class="comment"># The number of ticks that the initial </span></span><br><span class="line"><span class="comment"># synchronization phase can take</span></span><br><span class="line"><span class="attr">initLimit</span>=<span class="string">10</span></span><br><span class="line"><span class="comment"># The number of ticks that can pass between </span></span><br><span class="line"><span class="comment"># sending a request and getting an acknowledgement</span></span><br><span class="line"><span class="attr">syncLimit</span>=<span class="string">5</span></span><br><span class="line"><span class="comment"># the directory where the snapshot is stored.</span></span><br><span class="line"><span class="comment"># do not use /tmp for storage, /tmp here is just </span></span><br><span class="line"><span class="comment"># example sakes.</span></span><br><span class="line"><span class="comment"># 数据路径</span></span><br><span class="line"><span class="attr">dataDir</span>=<span class="string">D:\\software\\zookeeper\\apache-zookeeper-3.9.3-bin\\data</span></span><br><span class="line"><span class="comment"># 日志路径</span></span><br><span class="line"><span class="attr">dataLogDir</span>=<span class="string">D:\\software\\zookeeper\\apache-zookeeper-3.9.3-bin\\logs</span></span><br><span class="line"><span class="comment"># the port at which the clients will connect</span></span><br><span class="line"><span class="comment"># 客户端端口号</span></span><br><span class="line"><span class="attr">clientPort</span>=<span class="string">2181</span></span><br><span class="line"><span class="comment"># 修改占用的8080端口号</span></span><br><span class="line"><span class="attr">admin.serverPort</span>=<span class="string">8079</span></span><br><span class="line"><span class="comment"># the maximum number of client connections.</span></span><br><span class="line"><span class="comment"># increase this if you need to handle more clients</span></span><br><span class="line"><span class="comment">#maxClientCnxns=60</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># The number of snapshots to retain in dataDir</span></span><br><span class="line"><span class="comment">#autopurge.snapRetainCount=3</span></span><br><span class="line"><span class="comment"># Purge task interval in hours</span></span><br><span class="line"><span class="comment"># Set to &quot;0&quot; to disable auto purge feature</span></span><br><span class="line"><span class="comment">#autopurge.purgeInterval=1</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">## Metrics Providers</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># https://prometheus.io Metrics Exporter</span></span><br><span class="line"><span class="comment">#metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider</span></span><br><span class="line"><span class="comment">#metricsProvider.httpHost=0.0.0.0</span></span><br><span class="line"><span class="comment">#metricsProvider.httpPort=7000</span></span><br><span class="line"><span class="comment">#metricsProvider.exportJvmInfo=true</span></span><br></pre></td></tr></table></figure>
+<p>从<code>bin</code>目录中的<code>zkServer.cmd</code>(<code>Windows</code>)或者<code>zkServer.sh</code>(<code>Linux</code>)启动服务</p>
+<p>自此, <code>Zookeeper</code>就安装启动完成</p>
+<p>如果想在项目中使用<code>Zookeeper</code>, 可以查看<a target="_blank" rel="noopener" href="https://xiao-lin-unit.github.io/2023/11/30/springcloud/SpringCloud%E7%B3%BB%E5%88%97%E4%BA%8C%E4%B9%8B%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83/"><code>SpringCloud系列(二)</code></a></p>
+<h3 id="zookeeper数据模型"><a class="markdownIt-Anchor" href="#zookeeper数据模型"></a> <code>Zookeeper</code>数据模型</h3>
+<p><code>Zookeeper</code>是一个树形目录服务, 其数据模型和<code>Unix</code>的文件系统目录树类似, 拥有一个层次化结构</p>
+<p><img src="Zookeeper%E7%9A%84%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B.png" alt="Zookeeper的数据模型" /></p>
+<p><code>Zookeeper</code>的每个节点都可以存储数据和节点信息</p>
+<p><code>Zookeeper</code>的节点分类:</p>
+<ol>
+<li><code>PERSISTENT</code>持久化节点</li>
+<li><code>EPHEMERAL</code>临时节点, 客户端关闭即删除: <code>-e</code></li>
+<li><code>PERSISTENT_SEQUENTIAL</code>持久化顺序节点: <code>-s</code></li>
+<li><code>EPHEMERAL_SEQUENTIAL</code>临时顺序节点: <code>-es</code></li>
+</ol>
+<h3 id="zookeeper客户端命令"><a class="markdownIt-Anchor" href="#zookeeper客户端命令"></a> <code>Zookeeper</code>客户端命令</h3>
+<p><code>ls</code>: 查看节点</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> [-s] /zookeeper</span><br></pre></td></tr></table></figure>
+<p><code>create</code>: 创建节点</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create [option(-e/-s/-es)] /mynode [data]</span><br></pre></td></tr></table></figure>
+<p><code>get</code>: 获取节点数据</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">get /mynode</span><br></pre></td></tr></table></figure>
+<p><code>set</code>: 设置节点数据</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> /mynode data</span><br></pre></td></tr></table></figure>
+<p><code>delete</code>: 删除节点</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delete /mynode</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意:</p>
+<p><code>Zookeeper</code>客户端命令的指向节点必须从根开始</p>
+</blockquote>
+<h3 id="zookeeper的java-api"><a class="markdownIt-Anchor" href="#zookeeper的java-api"></a> <code>Zookeeper</code>的<code>JAVA API</code></h3>
+<p>使用<code>Curator API</code>操作<code>Zookeeper</code></p>
+<h4 id="引入依赖"><a class="markdownIt-Anchor" href="#引入依赖"></a> 引入依赖</h4>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.curator<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>curator-framework<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.1.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.curator<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>curator-recipes<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.1.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="建立连接"><a class="markdownIt-Anchor" href="#建立连接"></a> 建立连接</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> CuratorFramework connect &#123;</span><br><span class="line">    <span class="type">CuratorFramework</span> <span class="variable">client</span> <span class="operator">=</span> CuratorFrameworkFactory.builder()</span><br><span class="line">        .connectString(<span class="string">&quot;192.168.0.1:2181,192.168.0.2:2181&quot;</span>)</span><br><span class="line">        .connectionTimeoutMs(<span class="number">3000</span>)</span><br><span class="line">        .sessionTimeoutMs(<span class="number">3000</span>)</span><br><span class="line">        .retryPolicy(<span class="keyword">new</span> <span class="title class_">ExponentialBackoffRetry</span>(<span class="number">3000</span>, <span class="number">5</span>))</span><br><span class="line">        .build();</span><br><span class="line">    client.start();</span><br><span class="line">    <span class="keyword">return</span> client;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="创建节点"><a class="markdownIt-Anchor" href="#创建节点"></a> 创建节点</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">create</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="comment">// 如果没有添加数据, 会默认将本机的ip地址添加到节点数据中</span></span><br><span class="line">    client.create().forPath(<span class="string">&quot;/mynode&quot;</span>, <span class="string">&quot;data&quot;</span>.getBytes(StandardCharsets.UTF_8));</span><br><span class="line">    <span class="comment">// 不同类型的节点用 withMode 表示</span></span><br><span class="line">    client.create().withMode(CreateMode.PERSISTENT).forPath(<span class="string">&quot;/mynode&quot;</span>, <span class="string">&quot;data&quot;</span>.getBytes(StandardCharsets.UTF_8));</span><br><span class="line">    <span class="comment">// 创建多级节点使用 creatingParentsIfNeeded</span></span><br><span class="line">    client.create().creatingParentsIfNeeded().forPath(<span class="string">&quot;/mynode/node1&quot;</span>, <span class="string">&quot;data&quot;</span>.getBytes(StandardCharsets.UTF_8));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="查询节点"><a class="markdownIt-Anchor" href="#查询节点"></a> 查询节点</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">get</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="comment">// 节点的数据和状态都是用getData获取,不同的是数据是直接返回,但是状态信息需要使用状态类用storingStatIn获取</span></span><br><span class="line">    <span class="comment">// 用于查询节点状态</span></span><br><span class="line">    <span class="type">Stat</span> <span class="variable">stat</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Stat</span>();</span><br><span class="line">    <span class="comment">// 节点数据</span></span><br><span class="line">    <span class="type">byte</span>[] bytes = client.getData().storingStatIn(stat).forPath(<span class="string">&quot;/mynode&quot;</span>);</span><br><span class="line">    <span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">String</span>(bytes, StandardCharsets.UTF_8);</span><br><span class="line">	<span class="comment">// 节点的子节点</span></span><br><span class="line">    List&lt;String&gt; strings = client.getChildren().forPath(<span class="string">&quot;/mynode&quot;</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="修改节点"><a class="markdownIt-Anchor" href="#修改节点"></a> 修改节点</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">set</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="type">Stat</span> <span class="variable">stat</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Stat</span>();</span><br><span class="line">    client.getData().storingStatIn(stat).forPath(<span class="string">&quot;/mynode&quot;</span>);</span><br><span class="line">    <span class="comment">// 根据版本修改, 避免数据不一致</span></span><br><span class="line">    client.setData().withVersion(stat.getVersion()).forPath(<span class="string">&quot;/mynode&quot;</span>, <span class="string">&quot;data&quot;</span>.getBytes(StandardCharsets.UTF_8));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="删除节点"><a class="markdownIt-Anchor" href="#删除节点"></a> 删除节点</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">delete</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="type">Stat</span> <span class="variable">stat</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Stat</span>();</span><br><span class="line">    client.getData().storingStatIn(stat).forPath(<span class="string">&quot;/mynode&quot;</span>);</span><br><span class="line">    <span class="comment">// 根据版本删除</span></span><br><span class="line">    client.delete().withVersion(stat.getVersion()).forPath(<span class="string">&quot;/mynode&quot;</span>);</span><br><span class="line">    <span class="comment">// 删除节点及其子节点</span></span><br><span class="line">    client.delete().deletingChildrenIfNeeded().withVersion(stat.getVersion()).forPath(<span class="string">&quot;/mynode/node1&quot;</span>);</span><br><span class="line">    <span class="comment">// 必须删除</span></span><br><span class="line">    client.delete().guaranteed().deletingChildrenIfNeeded().withVersion(stat.getVersion()).forPath(<span class="string">&quot;/mynode/node1&quot;</span>);</span><br><span class="line">    <span class="comment">// 带有回调的删除</span></span><br><span class="line">    client.delete().deletingChildrenIfNeeded().withVersion(stat.getVersion()).inBackground((client, event) -&gt; &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;删除成功&quot;</span>);</span><br><span class="line">    &#125;).forPath(<span class="string">&quot;/mynode/node1&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="watch监听"><a class="markdownIt-Anchor" href="#watch监听"></a> <code>Watch</code>监听</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">cache</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">CuratorCache</span> <span class="variable">cache</span> <span class="operator">=</span> CuratorCache.builder(client, <span class="string">&quot;/mynode&quot;</span>).build();</span><br><span class="line">    cache.listenable().addListener((type, oldData, data) -&gt; &#123;</span><br><span class="line">        <span class="keyword">switch</span> (type) &#123;</span><br><span class="line">            <span class="keyword">case</span> NODE_CREATED -&gt; System.out.println(<span class="string">&quot;create node &quot;</span> + data.getPath());</span><br><span class="line">            <span class="keyword">case</span> NODE_CHANGED -&gt; System.out.println(<span class="string">&quot;change &quot;</span> + oldData.getPath() + <span class="string">&quot; to &quot;</span> + data.getPath());</span><br><span class="line">            <span class="keyword">case</span> NODE_DELETED -&gt; System.out.println(<span class="string">&quot;delete node &quot;</span> + oldData.getPath());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    cache.start();</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="分布式锁"><a class="markdownIt-Anchor" href="#分布式锁"></a> 分布式锁</h4>
+<p>核心思想: 当客户端要获取锁, 则创建节点, 使用完锁, 则删除该节点</p>
+<ol>
+<li>客户端获取锁时, 在<code>lock</code>节点下创建<mark>临时顺序</mark>节点</li>
+<li>所有客户端获取<code>lock</code>节点下的所有子节点</li>
+<li>如果当前客户端发现自己创建的节点序号在<code>lock</code>节点的所有子节点中最小, 那么就认为该客户端获取到了锁, 使用完锁后, 将该节点删除</li>
+<li>如果当前客户端发现自己创建的节点序号在<code>lock</code>节点的所有子节点中并非最小, 说明该客户端还没有获取到锁, 此时该客户端需要找到比自己小的那个节点, 同事对其祖册事件监听器, 监听删除事件</li>
+<li>如果当前客户端发现比自己小的节点被删除, 则客户端的监听器会收到相应通知, 此时再次判断自己创建的节点是否是<code>lock</code>子节点中序号最小的, 如果是则获取到锁, 如果不是则重复上述步骤</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">lock</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">InterProcessLock</span> <span class="variable">lock</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InterProcessMutex</span>(client, <span class="string">&quot;/mynode/lock&quot;</span>);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        lock.acquire(<span class="number">3</span>, TimeUnit.SECONDS);</span><br><span class="line">        <span class="comment">// do some synchronized things</span></span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(e);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            lock.release();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="zookeeper集群"><a class="markdownIt-Anchor" href="#zookeeper集群"></a> <code>Zookeeper</code>集群</h3>
+<h4 id="安装"><a class="markdownIt-Anchor" href="#安装"></a> 安装</h4>
+<p>安装即在不同的机器上安装<code>Zookeeper</code></p>
+<h4 id="配置集群"><a class="markdownIt-Anchor" href="#配置集群"></a> 配置集群</h4>
+<ol>
+<li>
+<p>在每个<code>Zookeeper</code>的<code>data</code>目录下创建一个<code>myid</code>文件, 这个文件就是记录每个服务器的<code>ID</code>, 文件内容就是<code>Zookeeper</code>在集群中的数字, 如<code>1, 2, 3</code></p>
+</li>
+<li>
+<p>修改每个<code>Zookeeper</code>服务的<code>zoo.cfg</code>配置文件</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 服务.myid=对应zk服务ip:对应zk服务通信端口(2881):对应zk服务选举端口(3881)</span></span><br><span class="line"><span class="attr">server.1</span>=<span class="string">&#123;zk1.ip&#125;:&#123;zk1.connect_port&#125;:&#123;zk1.port&#125;</span></span><br><span class="line"><span class="attr">server.2</span>=<span class="string">&#123;zk2.ip&#125;:&#123;zk2.connect_port&#125;:&#123;zk2.port&#125;</span></span><br><span class="line"><span class="attr">server.3</span>=<span class="string">&#123;zk3.ip&#125;:&#123;zk3.connect_port&#125;:&#123;zk3.port&#125;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2025/01/10/zookeeper/Zookeeper系列二之安装和使用/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#zookeeper%E6%A6%82%E5%BF%B5"><span class="toc-number">1.</span> <span class="toc-text"> Zookeeper概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#zookeeper%E5%AE%89%E8%A3%85"><span class="toc-number">2.</span> <span class="toc-text"> Zookeeper安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#zookeeper%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.</span> <span class="toc-text"> Zookeeper数据模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#zookeeper%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%91%BD%E4%BB%A4"><span class="toc-number">4.</span> <span class="toc-text"> Zookeeper客户端命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#zookeeper%E7%9A%84java-api"><span class="toc-number">5.</span> <span class="toc-text"> Zookeeper的JAVA API</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%95%E5%85%A5%E4%BE%9D%E8%B5%96"><span class="toc-number">5.1.</span> <span class="toc-text"> 引入依赖</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BB%BA%E7%AB%8B%E8%BF%9E%E6%8E%A5"><span class="toc-number">5.2.</span> <span class="toc-text"> 建立连接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E8%8A%82%E7%82%B9"><span class="toc-number">5.3.</span> <span class="toc-text"> 创建节点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E8%8A%82%E7%82%B9"><span class="toc-number">5.4.</span> <span class="toc-text"> 查询节点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E8%8A%82%E7%82%B9"><span class="toc-number">5.5.</span> <span class="toc-text"> 修改节点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E8%8A%82%E7%82%B9"><span class="toc-number">5.6.</span> <span class="toc-text"> 删除节点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#watch%E7%9B%91%E5%90%AC"><span class="toc-number">5.7.</span> <span class="toc-text"> Watch监听</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="toc-number">5.8.</span> <span class="toc-text"> 分布式锁</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#zookeeper%E9%9B%86%E7%BE%A4"><span class="toc-number">6.</span> <span class="toc-text"> Zookeeper集群</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-number">6.1.</span> <span class="toc-text"> 安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E9%9B%86%E7%BE%A4"><span class="toc-number">6.2.</span> <span class="toc-text"> 配置集群</span></a></li></ol></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2025/06/19/web/Vue系列一之项目创建和配置/">Vue系列(一)---项目创建和配置</a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2024/11/28/zookeeper/Zookeeper系列一之原理/">Zookeeper系列(一)---原理</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2025/01/10/zookeeper/Zookeeper系列二之安装和使用/'
+  })
+</script>
+
+
+<script>
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        let href = decodeURIComponent(link.href);
+        href = href.substring(href.indexOf('#'));
+        const target = $(href)[0];
+        const top = target.offsetTop;
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      我们在绵延的海滩上捡贝壳，今天捡到了不必欣喜，因为海很大，今天没捡到，也不必失落，因为海很大。 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">我好像没有网络备案</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"自転车","artist":"オレスカバンド","url":"/music/自転车-オレスカバンド.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"撞地球","artist":"鱼儿七","url":"/music/撞地球-鱼儿七.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"晴天","artist":"周杰伦","url":"/music/晴天-周杰伦.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"告白气球","artist":"周杰伦","url":"/music/告白气球-周杰伦.mp3","cover":"/imgs/music-bg1.jpg"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>
