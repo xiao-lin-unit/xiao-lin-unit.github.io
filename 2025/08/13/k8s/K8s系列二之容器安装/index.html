@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>小琳的星空 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico?time=127" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css?time=127" />
+  <link rel="stylesheet" href="/css/layout.css?time=127" />
+  <link rel="stylesheet" href="/css/iconfont.css?time=127" />
+  <link rel="stylesheet" href="/css/APlayer.min.css?time=127" />
+  <script src="/js/APlayer.min.js?time=127"></script>
+  <script src="/js/jquery.min.js?time=127"></script>
+  <script src="/js/jquery.pjax.min.js?time=127"></script>
+
+  <script src="/js/Valine.min.js?time=127"></script>
+<!--  <script src='https://unpkg.com/valine/dist/Valine.min.js'></script>-->
+  <script>
+    document.title = `小琳的星空`
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="/?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/">-->
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="/log?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/log?time=125">-->
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="/link?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/link?time=125">-->
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="/about?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/about?time=125">-->
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"Docker系列(一)---安装和基本使用","cover":"/imgs/cover/default-cover.jpeg?time=85?time=87?time=89?time=93?time=94?time=110","path":"2025/08/05/docker/Docker系列一之安装和基本使用/"},{"title":"Docker系列(三)---项目部署","cover":"/imgs/cover/default-cover.webp?time=85?time=87?time=89?time=93?time=110","path":"2025/08/11/docker/Docker系列三之项目部署/"},{"title":"Docker系列(二)---进阶使用","cover":"/imgs/cover/default-cover.webp?time=85?time=87?time=89?time=93?time=94?time=110","path":"2025/08/07/docker/Docker系列二之进阶使用/"},{"title":"Promise","cover":"/imgs/cover/default-cover.jpeg?time=73?time=76?time=76?time=92?time=94?time=111","path":"2023/11/24/js/Promise/"},{"title":"MySQL系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=71?time=74?time=76?time=91?time=95?time=111","path":"2023/11/27/mysql/MySQL系列一之安装/"},{"title":"MySQL系列(三)---索引","cover":"/imgs/cover/default-cover.webp?time=67?time=79?time=83?time=90?time=95?time=111","path":"2024/04/29/mysql/MySQL系列三之索引/"},{"title":"MySQL系列(二)---SQL","cover":"/imgs/cover/default-cover.jpeg?time=67?time=79?time=82?time=90?time=95?time=111","path":"2024/02/26/mysql/MySQL系列二之SQL/"},{"title":"NPM和PNPM的安装及配置","cover":"/imgs/cover/default-cover.webp?time=71?time=74?time=78?time=91?time=96?time=96?time=97?time=112","path":"2023/12/26/node/npm和pnpm安装及配置/"},{"title":"博客搭建","cover":"/imgs/cover/default-cover.webp?time=73?time=76?time=76?time=92?time=94?time=97?time=112","path":"2023/11/22/other/博客搭建/"},{"title":"项目对接招商银行CBS","cover":"/imgs/cover/default-cover.webp?time=67?time=79?time=82?time=90?time=98?time=112","path":"2024/02/21/other/项目对接招商银行CBS/"},{"title":"K8s系列(一)---基本概念","cover":"/imgs/cover/default-cover.webp?time=85?time=87?time=89?time=98?time=113","path":"2025/08/12/k8s/K8s系列一之基本概念/"},{"title":"K8s系列---番外篇","cover":"/imgs/cover/default-cover.jpeg?time=85?time=87?time=90?time=98?time=99?time=100?time=113","path":"2025/09/06/k8s/K8s系列之番外篇/"},{"title":"项目对接海康SDK","cover":"/imgs/cover/default-cover.webp?time=67?time=79?time=82?time=90?time=100?time=112","path":"2024/02/21/other/项目对接海康SDK/"},{"title":"K8s系列(三)---搭建","cover":"/imgs/cover/default-cover.jpeg?time=85?time=87?time=89?time=98?time=99?time=113","path":"2025/08/14/k8s/K8s系列三之搭建/"},{"title":"Redis系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=71?time=74?time=78?time=91?time=101?time=113","path":"2023/12/12/redis/Redis系列一之安装/"},{"title":"K8s系列(二)---软件安装","cover":"/imgs/cover/default-cover.jpeg?time=85?time=87?time=89?time=98?time=99?time=113","path":"2025/08/13/k8s/K8s系列二之容器安装/"},{"title":"SpringCloud系列(一)---项目创建","cover":"/imgs/cover/default-cover.webp?time=73?time=74?time=76?time=92?time=101?time=114","path":"2023/11/25/springcloud/SpringCloud系列一之基础服务/"},{"title":"SpringCloud系列(七)---认证和授权","cover":"/imgs/cover/default-cover.jpeg?time=67?time=79?time=82?time=90?time=102?time=114","path":"2024/02/03/springcloud/SpringCloud系列七之认证和授权/"},{"title":"SpringCloud系列(三)---服务熔断与降级","cover":"/imgs/cover/default-cover.webp?time=71?time=74?time=78?time=91?time=101?time=103?time=103?time=114","path":"2023/12/02/springcloud/SpringCloud系列三之服务熔断与降级/"},{"title":"SpringCloud系列(九)---阶段总结","cover":"/imgs/cover/default-cover.jpeg?time=67?time=79?time=83?time=90?time=101?time=114","path":"2024/05/11/springcloud/SpringCloud系列九之阶段总结/"},{"title":"SpringCloud系列(二)---注册中心和配置中心","cover":"/imgs/cover/default-cover.jpeg?time=71?time=74?time=76?time=91?time=101?time=104?time=104?time=114","path":"2023/11/30/springcloud/SpringCloud系列二之注册中心/"},{"title":"SpringCloud系列(八)---服务划分","cover":"/imgs/cover/default-cover.webp?time=67?time=79?time=82?time=90?time=105?time=114","path":"2024/02/19/springcloud/SpringCloud系列八之服务划分/"},{"title":"SpringCloud系列(五)---Redis使用","cover":"/imgs/cover/default-cover.jpeg?time=71?time=74?time=78?time=91?time=101?time=101?time=114","path":"2023/12/14/springcloud/SpringCloud系列五之Redis使用/"},{"title":"SpringCloud系列(六)---分布式主键","cover":"/imgs/cover/default-cover.webp?time=71?time=74?time=78?time=91?time=101?time=105?time=114","path":"2023/12/11/springcloud/SpringCloud系列六之分布式主键/"},{"title":"SpringCloud系列(四)---网关","cover":"/imgs/cover/default-cover.jpeg?time=71?time=74?time=78?time=91?time=101?time=106?time=114","path":"2023/12/10/springcloud/SpringCloud系列四之网关/"},{"title":"Typescript系列(二)---高级","cover":"/imgs/cover/default-cover.jpeg?time=71?time=80?time=81?time=91?time=106?time=115","path":"2024/01/04/ts/TypeScript系列二之高级/"},{"title":"Typescript系列(一)---基础","cover":"/imgs/cover/default-cover.webp?time=71?time=74?time=78?time=91?time=106?time=115","path":"2023/12/26/ts/TypeScript系列一之基础/"},{"title":"Vue系列(一)---项目创建和配置","cover":"/imgs/cover/default-cover.webp?time=85?time=87?time=87?time=97?time=107?time=108?time=115","path":"2025/06/19/web/Vue系列一之项目创建和配置/"},{"title":"Vue系列(三)---状态管理库","cover":"/imgs/cover/default-cover.webp?time=67?time=79?time=81?time=90?time=109?time=115","path":"2024/01/18/web/Vue系列三之状态管理库/"},{"title":"Vue系列(二)---路由","cover":"/imgs/cover/default-cover.jpeg?time=67?time=80?time=81?time=90?time=109?time=115","path":"2024/01/07/web/Vue系列二之路由/"},{"title":"Vue系列(四)---请求","cover":"/imgs/cover/default-cover.jpeg?time=67?time=79?time=82?time=90?time=110?time=115","path":"2024/02/01/web/Vue系列四之请求/"},{"title":"Zookeeper系列(一)---原理","cover":"/imgs/cover/default-cover.webp?time=79?time=84?time=87?time=104?time=116","path":"2024/11/28/zookeeper/Zookeeper系列一之原理/"},{"title":"Zookeeper系列(二)---安装和使用","cover":"/imgs/cover/default-cover.jpeg?time=85?time=86?time=87?time=104?time=116","path":"2025/01/10/zookeeper/Zookeeper系列二之安装和使用/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}${'?time=' + new Date().getMilliseconds()}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp'}${'?time=' + new Date().getMilliseconds()}" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg?time=125" class="main-left--avatar" alt />
+      <div class="main-left--intro">
+        <p class="main-left--name">小琳</p>
+        <div class="main-left--tags">
+          
+            <span class="main-left--tag">中二</span>
+          
+            <span class="main-left--tag">乐天派</span>
+          
+            <span class="main-left--tag">悲观主义</span>
+          
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>跳出圈子你会发现</p>
+        <p>其实你一无是处</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        
+          <a target="_blank" rel="noopener" href="https://github.com/?time=125" title="github">
+            <i class="logo xiao-lin-blog xiao-lin-blog-github"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://gitee.com/xiao-lin?time=125" title="码云">
+            <i class="logo xiao-lin-blog xiao-lin-blog-gitee"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43728193?type=blog?time=125" title="CSDN">
+            <i class="logo xiao-lin-blog xiao-lin-blog-csdn"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiao-lin-unit/?time=125" title="博客园">
+            <i class="logo xiao-lin-blog xiao-lin-blog-cnblogs"></i>
+          </a>
+        
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories?time=125">
+          <div>
+            <span>11</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags?time=125">
+          <div>
+            <span>30</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives?time=125">
+          <div>
+            <span>11 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/?time=125">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log?time=125">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link?time=125">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about?time=125">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tags?time=125">
+            <span class="header-menu--span">标签</span>
+            <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-tags-rectangle"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/categories?time=125">
+            <span class="header-menu--span">分类</span>
+            <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-categories"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools?time=125">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>33 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>655天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  
+
+<link rel="stylesheet" href="/css/partial/article.css?time=994" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">K8s系列(二)---软件安装</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span class="xiao-lin-blog xiao-lin-blog-categories">分类：</span>
+            <a class="category-link" href="/categories/k8s/">K8s</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span class="xiao-lin-blog xiao-lin-blog-tags-fill">标签：</span>
+            <a class="tag-link" href="/tags/containerd/" rel="tag">containerd</a><a class="tag-link" href="/tags/k8s/" rel="tag">k8s</a>
+          </div>
+          
+          <p class="article-info--date"><i class="xiao-lin-blog xiao-lin-blog-date-time">日期：2025-08-13 16:44:19</i></p>
+        </div>
+<!--        <img src="/1" alt="" class="article-cover">-->
+        <img src="/imgs/cover/default-cover.jpeg" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <!-- toc -->
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p><code>K8s</code>的搭建方案根据需求有不同的方式, 如单机可以使用<code>minikube</code>, 简易方案可以使用<code>k3s</code>. 本系列采用<code>kubeadm</code>搭建多台机器的大型方案</p>
+<p>因为<code>k8s</code>在<code>1.24.x</code>版本开始默认不使用<code>docker</code>,所以本次演示搭建使用<code>containerd</code>做为容器</p>
+<p>使用3台<code>Ubuntu</code>(<code>multipass</code>)系统的虚拟机</p>
+<h3 id="系统配置"><a class="markdownIt-Anchor" href="#系统配置"></a> 系统配置</h3>
+<h4 id="修改源配置"><a class="markdownIt-Anchor" href="#修改源配置"></a> 修改源配置</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> <span class="built_in">cp</span> /etc/apt/sources.list /etc/apt/sources.list.bak</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> vi /etc/apt/sources.list</span><br></pre></td></tr></table></figure>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">deb https://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse</span><br><span class="line"></span><br><span class="line">deb https://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse</span><br><span class="line"></span><br><span class="line">deb https://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse</span><br><span class="line"></span><br><span class="line"># deb https://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse</span><br><span class="line"># deb-src https://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse</span><br><span class="line"></span><br><span class="line">deb https://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt upgrade</span><br></pre></td></tr></table></figure>
+<h4 id="关闭防火墙"><a class="markdownIt-Anchor" href="#关闭防火墙"></a> 关闭防火墙</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 关闭防火墙和selinux</span></span><br><span class="line">systemctl stop firewalld &amp;&amp; systemctl <span class="built_in">disable</span> firewalld</span><br><span class="line">sed -i <span class="string">&#x27;s/enforcing/disabled/&#x27;</span> /etc/selinux/config</span><br><span class="line">setenforce 0</span><br></pre></td></tr></table></figure>
+<h4 id="关闭swap分区"><a class="markdownIt-Anchor" href="#关闭swap分区"></a> 关闭<code>swap</code>分区</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 关闭swap分区</span></span><br><span class="line"><span class="built_in">sudo</span> sed -ri <span class="string">&#x27;s/.&quot;swap.*/#&amp;/&#x27;</span> /etc/fstab</span><br><span class="line"><span class="comment"># 重启</span></span><br></pre></td></tr></table></figure>
+<h4 id="安装时间同步服务确保服务器时间准确"><a class="markdownIt-Anchor" href="#安装时间同步服务确保服务器时间准确"></a> 安装时间同步服务,确保服务器时间准确</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install -y chrony</span><br></pre></td></tr></table></figure>
+<h4 id="修改hosts"><a class="markdownIt-Anchor" href="#修改hosts"></a> 修改<code>hosts</code></h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> vi /etc/hosts</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">172.27.225.160 k8s-master</span><br><span class="line">172.27.227.1  k8s-node-01</span><br><span class="line">172.27.236.102 k8s-node-02</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意: 此处修改是为了<code>K8s</code>集群准备, <code>containerd</code>本身不需要配置该内容</p>
+</blockquote>
+<h4 id="转发ipv4并让iptables看到桥接流量"><a class="markdownIt-Anchor" href="#转发ipv4并让iptables看到桥接流量"></a> 转发<code>IPv4</code>并让<code>iptables</code>看到桥接流量</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> <span class="built_in">cat</span> &gt; /etc/sysctl.d/k8s.conf &lt;&lt; <span class="string">EOF </span></span><br><span class="line"><span class="string">overlay</span></span><br><span class="line"><span class="string">br_netfilter</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> modprobe overlay</span><br><span class="line"><span class="built_in">sudo</span> modprobe br_netfilter</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置所需的 sysctl 参数</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">cat</span> &gt; /etc/sysctl.d/k8s.conf &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-iptables  = 1</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-ip6tables = 1</span></span><br><span class="line"><span class="string">net.ipv4.ip_forward                 = 1</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 应用 sysctl 参数</span></span><br><span class="line"><span class="built_in">sudo</span> sysctl --system</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检验配置是否生效</span></span><br><span class="line">lsmod | grep br_netfilter</span><br><span class="line">lsmod | grep overlay</span><br><span class="line"></span><br><span class="line">sysctl net.bridge.bridge-nf-call-iptables net.bridge.bridge-nf-call-ip6tables net.ipv4.ip_forward</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意: 此处修改是为了<code>K8s</code>集群准备</p>
+</blockquote>
+<h3 id="安装软件"><a class="markdownIt-Anchor" href="#安装软件"></a> 安装软件</h3>
+<h4 id="安装containerd"><a class="markdownIt-Anchor" href="#安装containerd"></a> 安装<code>containerd</code></h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 官方安装教程：https://github.com/containerd/containerd/blob/main/docs/getting-started.md</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载安装containerd</span></span><br><span class="line"><span class="built_in">cd</span> /usr/local/src</span><br><span class="line"><span class="built_in">sudo</span> wget https://github.com/containerd/containerd/releases/download/v2.1.4/containerd-2.1.4-linux-amd64.tar.gz</span><br><span class="line"><span class="built_in">sudo</span> tar Cxzvf /usr/local containerd-2.1.4-linux-amd64.tar.gz</span><br></pre></td></tr></table></figure>
+<h4 id="配置通过systemd启动containd"><a class="markdownIt-Anchor" href="#配置通过systemd启动containd"></a> 配置通过<code>systemd</code>启动<code>containd</code></h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /usr/local/src</span><br><span class="line"><span class="built_in">sudo</span> wget https://raw.githubusercontent.com/containerd/containerd/main/containerd.service -o /usr/lib/systemd/system/containerd.service</span><br><span class="line"><span class="built_in">sudo</span> systemctl daemon-reload</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> containerd</span><br></pre></td></tr></table></figure>
+<h4 id="安装-runc"><a class="markdownIt-Anchor" href="#安装-runc"></a> 安装 <code>runc</code></h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#版本说明：https://github.com/containerd/containerd/blob/release/1.6/script/setup/runc-version</span></span><br><span class="line"><span class="built_in">cd</span> /usr/local/src</span><br><span class="line"><span class="built_in">sudo</span> wget https://github.com/opencontainers/runc/releases/download/v1.3.0/runc.amd64</span><br><span class="line"><span class="built_in">sudo</span> install -m 755 runc.amd64 /usr/local/sbin/runc</span><br></pre></td></tr></table></figure>
+<h4 id="安装-cni-plugins"><a class="markdownIt-Anchor" href="#安装-cni-plugins"></a> 安装 <code>CNI plugins</code></h4>
+<p>这是容器网络接口的基础插件, 为容器提供基础的网络功能</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 版本说明：https://github.com/containerd/containerd/blob/release/1.6/go.mod</span></span><br><span class="line"><span class="built_in">sudo</span> wget https://github.com/containernetworking/plugins/releases/download/v1.7.1/cni-plugins-linux-amd64-v1.7.1.tgz</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">mkdir</span> -p /opt/cni/bin</span><br><span class="line"><span class="built_in">sudo</span> tar Cxzvf /opt/cni/bin cni-plugins-linux-amd64-v1.7.1.tgz</span><br></pre></td></tr></table></figure>
+<h4 id="生成containerd默认配置文件"><a class="markdownIt-Anchor" href="#生成containerd默认配置文件"></a> 生成<code>containerd</code>默认配置文件</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成 containerd 默认配置文件</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">mkdir</span> /etc/containerd</span><br><span class="line"><span class="comment"># 这一步如果出现权限拒绝可以直接到root用户下执行</span></span><br><span class="line"><span class="built_in">sudo</span> containerd config default &gt; /etc/containerd/config.toml</span><br></pre></td></tr></table></figure>
+<h4 id="修改containerd配置文件"><a class="markdownIt-Anchor" href="#修改containerd配置文件"></a> 修改<code>containerd</code>配置文件</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改配置文件</span></span><br><span class="line"><span class="comment"># 注意配置文件中标记的version号, 根据version号找对应的配置内容</span></span><br><span class="line"><span class="comment"># 文档：https://github.com/containerd/containerd/blob/main/docs/hosts.md</span></span><br><span class="line"><span class="built_in">sudo</span> vi /etc/containerd/config.toml</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加一下配置, 注意格式</span></span><br><span class="line">[plugins.<span class="string">&quot;io.containerd.cri.v1.images&quot;</span>.registry]</span><br><span class="line">   config_path = <span class="string">&quot;/etc/containerd/certs.d&quot;</span></span><br><span class="line"></span><br><span class="line">[plugins.<span class="string">&quot;io.containerd.cri.v1.images&quot;</span>.pinned_images]</span><br><span class="line">  sandbox = <span class="string">&#x27;registry.aliyuncs.com/google_containers/pause:3.10&#x27;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version</span> = <span class="number">3</span></span><br><span class="line"><span class="attr">root</span> = <span class="string">&#x27;/var/lib/containerd&#x27;</span></span><br><span class="line"><span class="attr">state</span> = <span class="string">&#x27;/run/containerd&#x27;</span></span><br><span class="line"><span class="attr">temp</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="attr">disabled_plugins</span> = []</span><br><span class="line"><span class="attr">required_plugins</span> = []</span><br><span class="line"><span class="attr">oom_score</span> = <span class="number">0</span></span><br><span class="line"><span class="attr">imports</span> = []</span><br><span class="line"></span><br><span class="line"><span class="section">[grpc]</span></span><br><span class="line">  <span class="attr">address</span> = <span class="string">&#x27;/run/containerd/containerd.sock&#x27;</span></span><br><span class="line">  <span class="attr">tcp_address</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">  <span class="attr">tcp_tls_ca</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">  <span class="attr">tcp_tls_cert</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">  <span class="attr">tcp_tls_key</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">  <span class="attr">uid</span> = <span class="number">0</span></span><br><span class="line">  <span class="attr">gid</span> = <span class="number">0</span></span><br><span class="line">  <span class="attr">max_recv_message_size</span> = <span class="number">16777216</span></span><br><span class="line">  <span class="attr">max_send_message_size</span> = <span class="number">16777216</span></span><br><span class="line"></span><br><span class="line"><span class="section">[ttrpc]</span></span><br><span class="line">  <span class="attr">address</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">  <span class="attr">uid</span> = <span class="number">0</span></span><br><span class="line">  <span class="attr">gid</span> = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="section">[debug]</span></span><br><span class="line">  <span class="attr">address</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">  <span class="attr">uid</span> = <span class="number">0</span></span><br><span class="line">  <span class="attr">gid</span> = <span class="number">0</span></span><br><span class="line">  <span class="attr">level</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">  <span class="attr">format</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="section">[metrics]</span></span><br><span class="line">  <span class="attr">address</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">  <span class="attr">grpc_histogram</span> = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line"><span class="section">[plugins]</span></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.cri.v1.images&#x27;]</span></span><br><span class="line">    <span class="attr">snapshotter</span> = <span class="string">&#x27;overlayfs&#x27;</span></span><br><span class="line">    <span class="attr">disable_snapshot_annotations</span> = <span class="literal">true</span></span><br><span class="line">    <span class="attr">discard_unpacked_layers</span> = <span class="literal">false</span></span><br><span class="line">    <span class="attr">max_concurrent_downloads</span> = <span class="number">3</span></span><br><span class="line">    <span class="attr">concurrent_layer_fetch_buffer</span> = <span class="number">0</span></span><br><span class="line">    <span class="attr">image_pull_progress_timeout</span> = <span class="string">&#x27;5m0s&#x27;</span></span><br><span class="line">    <span class="attr">image_pull_with_sync_fs</span> = <span class="literal">false</span></span><br><span class="line">    <span class="attr">stats_collect_period</span> = <span class="number">10</span></span><br><span class="line">    <span class="attr">use_local_image_pull</span> = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">    <span class="section">[plugins.&#x27;io.containerd.cri.v1.images&#x27;.pinned_images]</span></span><br><span class="line">      <span class="attr">sandbox</span> = <span class="string">&#x27;registry.aliyuncs.com/google_containers/pause:3.10&#x27;</span></span><br><span class="line">      <span class="comment"># sandbox = &#x27;registry.k8s.io/pause:3.10&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="section">[plugins.&#x27;io.containerd.cri.v1.images&#x27;.registry]</span></span><br><span class="line">      <span class="attr">config_path</span> = <span class="string">&#x27;/etc/containerd/certs.d&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="section">[plugins.&#x27;io.containerd.cri.v1.images&#x27;.image_decryption]</span></span><br><span class="line">      <span class="attr">key_model</span> = <span class="string">&#x27;node&#x27;</span></span><br><span class="line"></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.cri.v1.runtime&#x27;]</span></span><br><span class="line">    <span class="attr">enable_selinux</span> = <span class="literal">false</span></span><br><span class="line">    <span class="attr">selinux_category_range</span> = <span class="number">1024</span></span><br><span class="line">    <span class="attr">max_container_log_line_size</span> = <span class="number">16384</span></span><br><span class="line">    <span class="attr">disable_apparmor</span> = <span class="literal">false</span></span><br><span class="line">    <span class="attr">restrict_oom_score_adj</span> = <span class="literal">false</span></span><br><span class="line">    <span class="attr">disable_proc_mount</span> = <span class="literal">false</span></span><br><span class="line">    <span class="attr">unset_seccomp_profile</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="attr">tolerate_missing_hugetlb_controller</span> = <span class="literal">true</span></span><br><span class="line">    <span class="attr">disable_hugetlb_controller</span> = <span class="literal">true</span></span><br><span class="line">    <span class="attr">device_ownership_from_security_context</span> = <span class="literal">false</span></span><br><span class="line">    <span class="attr">ignore_image_defined_volumes</span> = <span class="literal">false</span></span><br><span class="line">    <span class="attr">netns_mounts_under_state_dir</span> = <span class="literal">false</span></span><br><span class="line">    <span class="attr">enable_unprivileged_ports</span> = <span class="literal">true</span></span><br><span class="line">    <span class="attr">enable_unprivileged_icmp</span> = <span class="literal">true</span></span><br><span class="line">    <span class="attr">enable_cdi</span> = <span class="literal">true</span></span><br><span class="line">    <span class="attr">cdi_spec_dirs</span> = [<span class="string">&#x27;/etc/cdi&#x27;</span>, <span class="string">&#x27;/var/run/cdi&#x27;</span>]</span><br><span class="line">    <span class="attr">drain_exec_sync_io_timeout</span> = <span class="string">&#x27;0s&#x27;</span></span><br><span class="line">    <span class="attr">ignore_deprecation_warnings</span> = []</span><br><span class="line"></span><br><span class="line">    <span class="section">[plugins.&#x27;io.containerd.cri.v1.runtime&#x27;.containerd]</span></span><br><span class="line">      <span class="attr">default_runtime_name</span> = <span class="string">&#x27;runc&#x27;</span></span><br><span class="line">      <span class="attr">ignore_blockio_not_enabled_errors</span> = <span class="literal">false</span></span><br><span class="line">      <span class="attr">ignore_rdt_not_enabled_errors</span> = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">      <span class="section">[plugins.&#x27;io.containerd.cri.v1.runtime&#x27;.containerd.runtimes]</span></span><br><span class="line">        <span class="section">[plugins.&#x27;io.containerd.cri.v1.runtime&#x27;.containerd.runtimes.runc]</span></span><br><span class="line">          <span class="attr">runtime_type</span> = <span class="string">&#x27;io.containerd.runc.v2&#x27;</span></span><br><span class="line">          <span class="attr">runtime_path</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">          <span class="attr">pod_annotations</span> = []</span><br><span class="line">          <span class="attr">container_annotations</span> = []</span><br><span class="line">          <span class="attr">privileged_without_host_devices</span> = <span class="literal">false</span></span><br><span class="line">          <span class="attr">privileged_without_host_devices_all_devices_allowed</span> = <span class="literal">false</span></span><br><span class="line">          <span class="attr">cgroup_writable</span> = <span class="literal">false</span></span><br><span class="line">          <span class="attr">base_runtime_spec</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">          <span class="attr">cni_conf_dir</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">          <span class="attr">cni_max_conf_num</span> = <span class="number">0</span></span><br><span class="line">          <span class="attr">snapshotter</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">          <span class="attr">sandboxer</span> = <span class="string">&#x27;podsandbox&#x27;</span></span><br><span class="line">          <span class="attr">io_type</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">          <span class="section">[plugins.&#x27;io.containerd.cri.v1.runtime&#x27;.containerd.runtimes.runc.options]</span></span><br><span class="line">            <span class="attr">BinaryName</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">            <span class="attr">CriuImagePath</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">            <span class="attr">CriuWorkPath</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">            <span class="attr">IoGid</span> = <span class="number">0</span></span><br><span class="line">            <span class="attr">IoUid</span> = <span class="number">0</span></span><br><span class="line">            <span class="attr">NoNewKeyring</span> = <span class="literal">false</span></span><br><span class="line">            <span class="attr">Root</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">            <span class="attr">ShimCgroup</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">            <span class="attr">SystemdCgroup</span> = <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">    <span class="section">[plugins.&#x27;io.containerd.cri.v1.runtime&#x27;.cni]</span></span><br><span class="line">      <span class="attr">bin_dir</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">      <span class="attr">bin_dirs</span> = [<span class="string">&#x27;/opt/cni/bin&#x27;</span>]</span><br><span class="line">      <span class="attr">conf_dir</span> = <span class="string">&#x27;/etc/cni/net.d&#x27;</span></span><br><span class="line">      <span class="attr">max_conf_num</span> = <span class="number">1</span></span><br><span class="line">      <span class="attr">setup_serially</span> = <span class="literal">false</span></span><br><span class="line">      <span class="attr">conf_template</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">      <span class="attr">ip_pref</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">      <span class="attr">use_internal_loopback</span> = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.differ.v1.erofs&#x27;]</span></span><br><span class="line">    <span class="attr">mkfs_options</span> = []</span><br><span class="line"></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.gc.v1.scheduler&#x27;]</span></span><br><span class="line">    <span class="attr">pause_threshold</span> = <span class="number">0.02</span></span><br><span class="line">    <span class="attr">deletion_threshold</span> = <span class="number">0</span></span><br><span class="line">    <span class="attr">mutation_threshold</span> = <span class="number">100</span></span><br><span class="line">    <span class="attr">schedule_delay</span> = <span class="string">&#x27;0s&#x27;</span></span><br><span class="line">    <span class="attr">startup_delay</span> = <span class="string">&#x27;100ms&#x27;</span></span><br><span class="line"></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.grpc.v1.cri&#x27;]</span></span><br><span class="line">    <span class="attr">disable_tcp_service</span> = <span class="literal">true</span></span><br><span class="line">    <span class="attr">stream_server_address</span> = <span class="string">&#x27;127.0.0.1&#x27;</span></span><br><span class="line">    <span class="attr">stream_server_port</span> = <span class="string">&#x27;0&#x27;</span></span><br><span class="line">    <span class="attr">stream_idle_timeout</span> = <span class="string">&#x27;4h0m0s&#x27;</span></span><br><span class="line">    <span class="attr">enable_tls_streaming</span> = <span class="literal">false</span></span><br><span class="line">    <span class="section">[plugins.&#x27;io.containerd.grpc.v1.cri&#x27;.x509_key_pair_streaming]</span></span><br><span class="line">      <span class="attr">tls_cert_file</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">      <span class="attr">tls_key_file</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.image-verifier.v1.bindir&#x27;]</span></span><br><span class="line">    <span class="attr">bin_dir</span> = <span class="string">&#x27;/opt/containerd/image-verifier/bin&#x27;</span></span><br><span class="line">    <span class="attr">max_verifiers</span> = <span class="number">10</span></span><br><span class="line">    <span class="attr">per_verifier_timeout</span> = <span class="string">&#x27;10s&#x27;</span></span><br><span class="line"></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.internal.v1.opt&#x27;]</span></span><br><span class="line">    <span class="attr">path</span> = <span class="string">&#x27;/opt/containerd&#x27;</span></span><br><span class="line"></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.internal.v1.tracing&#x27;]</span></span><br><span class="line"></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.metadata.v1.bolt&#x27;]</span></span><br><span class="line">    <span class="attr">content_sharing_policy</span> = <span class="string">&#x27;shared&#x27;</span></span><br><span class="line">    <span class="attr">no_sync</span> = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.monitor.container.v1.restart&#x27;]</span></span><br><span class="line">    <span class="attr">interval</span> = <span class="string">&#x27;10s&#x27;</span></span><br><span class="line"></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.monitor.task.v1.cgroups&#x27;]</span></span><br><span class="line">    <span class="attr">no_prometheus</span> = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.nri.v1.nri&#x27;]</span></span><br><span class="line">    <span class="attr">disable</span> = <span class="literal">false</span></span><br><span class="line">    <span class="attr">socket_path</span> = <span class="string">&#x27;/var/run/nri/nri.sock&#x27;</span></span><br><span class="line">    <span class="attr">plugin_path</span> = <span class="string">&#x27;/opt/nri/plugins&#x27;</span></span><br><span class="line">    <span class="attr">plugin_config_path</span> = <span class="string">&#x27;/etc/nri/conf.d&#x27;</span></span><br><span class="line">    <span class="attr">plugin_registration_timeout</span> = <span class="string">&#x27;5s&#x27;</span></span><br><span class="line">    <span class="attr">plugin_request_timeout</span> = <span class="string">&#x27;2s&#x27;</span></span><br><span class="line">    <span class="attr">disable_connections</span> = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.runtime.v2.task&#x27;]</span></span><br><span class="line">    <span class="attr">platforms</span> = [<span class="string">&#x27;linux/amd64&#x27;</span>]</span><br><span class="line"></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.service.v1.diff-service&#x27;]</span></span><br><span class="line">    <span class="attr">default</span> = [<span class="string">&#x27;walking&#x27;</span>]</span><br><span class="line">    <span class="attr">sync_fs</span> = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.service.v1.tasks-service&#x27;]</span></span><br><span class="line">    <span class="attr">blockio_config_file</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="attr">rdt_config_file</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.shim.v1.manager&#x27;]</span></span><br><span class="line">    <span class="attr">env</span> = []</span><br><span class="line"></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.snapshotter.v1.blockfile&#x27;]</span></span><br><span class="line">    <span class="attr">root_path</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="attr">scratch_file</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="attr">fs_type</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="attr">mount_options</span> = []</span><br><span class="line">    <span class="attr">recreate_scratch</span> = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.snapshotter.v1.btrfs&#x27;]</span></span><br><span class="line">    <span class="attr">root_path</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.snapshotter.v1.devmapper&#x27;]</span></span><br><span class="line">    <span class="attr">root_path</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="attr">pool_name</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="attr">base_image_size</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="attr">async_remove</span> = <span class="literal">false</span></span><br><span class="line">    <span class="attr">discard_blocks</span> = <span class="literal">false</span></span><br><span class="line">    <span class="attr">fs_type</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="attr">fs_options</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.snapshotter.v1.erofs&#x27;]</span></span><br><span class="line">    <span class="attr">root_path</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="attr">ovl_mount_options</span> = []</span><br><span class="line">    <span class="attr">enable_fsverity</span> = <span class="literal">false</span></span><br><span class="line">    <span class="attr">set_immutable</span> = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.snapshotter.v1.native&#x27;]</span></span><br><span class="line">    <span class="attr">root_path</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.snapshotter.v1.overlayfs&#x27;]</span></span><br><span class="line">    <span class="attr">root_path</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="attr">upperdir_label</span> = <span class="literal">false</span></span><br><span class="line">    <span class="attr">sync_remove</span> = <span class="literal">false</span></span><br><span class="line">    <span class="attr">slow_chown</span> = <span class="literal">false</span></span><br><span class="line">    <span class="attr">mount_options</span> = []</span><br><span class="line"></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.snapshotter.v1.zfs&#x27;]</span></span><br><span class="line">    <span class="attr">root_path</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.tracing.processor.v1.otlp&#x27;]</span></span><br><span class="line"></span><br><span class="line">  <span class="section">[plugins.&#x27;io.containerd.transfer.v1.local&#x27;]</span></span><br><span class="line">    <span class="attr">max_concurrent_downloads</span> = <span class="number">3</span></span><br><span class="line">    <span class="attr">concurrent_layer_fetch_buffer</span> = <span class="number">0</span></span><br><span class="line">    <span class="attr">max_concurrent_uploaded_layers</span> = <span class="number">3</span></span><br><span class="line">    <span class="attr">check_platform_supported</span> = <span class="literal">false</span></span><br><span class="line">    <span class="attr">config_path</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="section">[cgroup]</span></span><br><span class="line">  <span class="attr">path</span> = <span class="string">&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="section">[timeouts]</span></span><br><span class="line">  <span class="attr">&#x27;io.containerd.timeout.bolt.open&#x27;</span> = <span class="string">&#x27;0s&#x27;</span></span><br><span class="line">  <span class="attr">&#x27;io.containerd.timeout.cri.defercleanup&#x27;</span> = <span class="string">&#x27;1m0s&#x27;</span></span><br><span class="line">  <span class="attr">&#x27;io.containerd.timeout.metrics.shimstats&#x27;</span> = <span class="string">&#x27;2s&#x27;</span></span><br><span class="line">  <span class="attr">&#x27;io.containerd.timeout.shim.cleanup&#x27;</span> = <span class="string">&#x27;5s&#x27;</span></span><br><span class="line">  <span class="attr">&#x27;io.containerd.timeout.shim.load&#x27;</span> = <span class="string">&#x27;5s&#x27;</span></span><br><span class="line">  <span class="attr">&#x27;io.containerd.timeout.shim.shutdown&#x27;</span> = <span class="string">&#x27;3s&#x27;</span></span><br><span class="line">  <span class="attr">&#x27;io.containerd.timeout.task.state&#x27;</span> = <span class="string">&#x27;2s&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="section">[stream_processors]</span></span><br><span class="line">  <span class="section">[stream_processors.&#x27;io.containerd.ocicrypt.decoder.v1.tar&#x27;]</span></span><br><span class="line">    <span class="attr">accepts</span> = [<span class="string">&#x27;application/vnd.oci.image.layer.v1.tar+encrypted&#x27;</span>]</span><br><span class="line">    <span class="attr">returns</span> = <span class="string">&#x27;application/vnd.oci.image.layer.v1.tar&#x27;</span></span><br><span class="line">    <span class="attr">path</span> = <span class="string">&#x27;ctd-decoder&#x27;</span></span><br><span class="line">    <span class="attr">args</span> = [<span class="string">&#x27;--decryption-keys-path&#x27;</span>, <span class="string">&#x27;/etc/containerd/ocicrypt/keys&#x27;</span>]</span><br><span class="line">    <span class="attr">env</span> = [<span class="string">&#x27;OCICRYPT_KEYPROVIDER_CONFIG=/etc/containerd/ocicrypt/ocicrypt_keyprovider.conf&#x27;</span>]</span><br><span class="line"></span><br><span class="line">  <span class="section">[stream_processors.&#x27;io.containerd.ocicrypt.decoder.v1.tar.gzip&#x27;]</span></span><br><span class="line">    <span class="attr">accepts</span> = [<span class="string">&#x27;application/vnd.oci.image.layer.v1.tar+gzip+encrypted&#x27;</span>]</span><br><span class="line">    <span class="attr">returns</span> = <span class="string">&#x27;application/vnd.oci.image.layer.v1.tar+gzip&#x27;</span></span><br><span class="line">    <span class="attr">path</span> = <span class="string">&#x27;ctd-decoder&#x27;</span></span><br><span class="line">    <span class="attr">args</span> = [<span class="string">&#x27;--decryption-keys-path&#x27;</span>, <span class="string">&#x27;/etc/containerd/ocicrypt/keys&#x27;</span>]</span><br><span class="line">    <span class="attr">env</span> = [<span class="string">&#x27;OCICRYPT_KEYPROVIDER_CONFIG=/etc/containerd/ocicrypt/ocicrypt_keyprovider.conf&#x27;</span>]</span><br></pre></td></tr></table></figure>
+<h4 id="添加host-registry"><a class="markdownIt-Anchor" href="#添加host-registry"></a> 添加<code>host registry</code></h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> <span class="built_in">mkdir</span> -p /etc/containerd/certs.d</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">mkdir</span> -p /etc/containerd/certs.d/docker.io</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">mkdir</span> -p /etc/containerd/certs.d/_default</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">touch</span> /etc/containerd/certs.d/docker.io/hosts.toml</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">touch</span> /etc/containerd/certs.d/_default/hosts.toml</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> vi /etc/containerd/certs.d/docker.io/hosts.toml</span><br><span class="line">server = <span class="string">&quot;https://registry-1.docker.io&quot;</span></span><br><span class="line"></span><br><span class="line">[host.<span class="string">&quot;https://m.daocloud.io/docker.io&quot;</span>]</span><br><span class="line">  capabilities = [<span class="string">&quot;pull&quot;</span>, <span class="string">&quot;resolve&quot;</span>]</span><br></pre></td></tr></table></figure>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/containerd/certs.d/_default/host.toml</span><br><span class="line"></span><br><span class="line"><span class="attr">server</span> = <span class="string">&quot;https://registry-1.docker.io&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="section">[host.&quot;http://192.168.31.250:5000&quot;]</span></span><br><span class="line">  <span class="attr">capabilities</span> = [<span class="string">&quot;pull&quot;</span>, <span class="string">&quot;resolve&quot;</span>, <span class="string">&quot;push&quot;</span>]</span><br><span class="line">  <span class="attr">skip_verify</span> = <span class="literal">true</span></span><br><span class="line"><span class="section">[host.&quot;https://docker.m.daocloud.io&quot;]</span></span><br><span class="line">  <span class="attr">capabilities</span> = [<span class="string">&quot;pull&quot;</span>, <span class="string">&quot;resolve&quot;</span>]</span><br></pre></td></tr></table></figure>
+<p><img src="containerd%E9%85%8D%E7%BD%AE%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84.png" alt="containerd配置目录结构" /></p>
+<blockquote>
+<p>配置方式可以查看</p>
+<p><code>https://github.com/containerd/containerd/blob/v2.1.4/docs/hosts.md</code></p>
+</blockquote>
+<h4 id="启动containerd"><a class="markdownIt-Anchor" href="#启动containerd"></a> 启动<code>containerd</code></h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动 containerd</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart containerd</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动成功后可以查看到监听的端口</span></span><br><span class="line"><span class="built_in">sudo</span> netstat -nlput | grep containerd</span><br></pre></td></tr></table></figure>
+<h4 id="安装cli工具可选"><a class="markdownIt-Anchor" href="#安装cli工具可选"></a> 安装<code>cli</code>工具(可选)</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装cli工具</span></span><br><span class="line"><span class="comment"># 安装 containerd 的 cli 管理工具（此步骤是非必选项）</span></span><br><span class="line"><span class="comment"># 官方文档https://github.com/kubernetes-sigs/cri-tools/blob/master/docs/crictl.md</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 1、下载安装</span></span><br><span class="line"><span class="built_in">cd</span> /usr/local/src</span><br><span class="line"><span class="built_in">sudo</span> wget https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.26.0/crictl-v1.26.0-linux-amd64.tar.gz</span><br><span class="line"><span class="built_in">sudo</span> tar Czxvf crictl-v1.26.0-linux-amd64.tar.gz /usr/local/bin</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2、创建配置文件，运行 crictl config 命令可获取参数说明</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/crictl.yaml</span></span><br><span class="line"><span class="string">runtime-endpoint: unix:///run/containerd/containerd.sock</span></span><br><span class="line"><span class="string">image-endpoint: unix:///run/containerd/containerd.sock</span></span><br><span class="line"><span class="string">timeout: 2</span></span><br><span class="line"><span class="string">debug: false</span></span><br><span class="line"><span class="string">pull-image-on-create: false</span></span><br><span class="line"><span class="string">disable-pull-on-run: false</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3、测试</span></span><br><span class="line"><span class="built_in">sudo</span> crictl pods</span><br><span class="line"></span><br><span class="line"><span class="comment"># 可使用 crictl config --set debug=true 来开启调试模式</span></span><br><span class="line"><span class="comment"># 通过命令 crictl config --get debug 查看当前是否处于debug模式</span></span><br></pre></td></tr></table></figure>
+<p>到此, 我们安装并配置了<code>containerd</code>容器, <code>runc</code>运行时, <code>CNI</code>基础插件.</p>
+<p>类似于<code>docker</code>, 此时即可根据镜像启动容器</p>
+<p>本系列主要目的是搭建一个<code>K8s</code>环境, 所以对<code>containerd</code>的使用不做描述</p>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2025/08/13/k8s/K8s系列二之容器安装/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text"> 前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E9%85%8D%E7%BD%AE"><span class="toc-number">2.</span> <span class="toc-text"> 系统配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E6%BA%90%E9%85%8D%E7%BD%AE"><span class="toc-number">2.1.</span> <span class="toc-text"> 修改源配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E9%97%AD%E9%98%B2%E7%81%AB%E5%A2%99"><span class="toc-number">2.2.</span> <span class="toc-text"> 关闭防火墙</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E9%97%ADswap%E5%88%86%E5%8C%BA"><span class="toc-number">2.3.</span> <span class="toc-text"> 关闭swap分区</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E6%97%B6%E9%97%B4%E5%90%8C%E6%AD%A5%E6%9C%8D%E5%8A%A1%E7%A1%AE%E4%BF%9D%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%97%B6%E9%97%B4%E5%87%86%E7%A1%AE"><span class="toc-number">2.4.</span> <span class="toc-text"> 安装时间同步服务,确保服务器时间准确</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9hosts"><span class="toc-number">2.5.</span> <span class="toc-text"> 修改hosts</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BD%AC%E5%8F%91ipv4%E5%B9%B6%E8%AE%A9iptables%E7%9C%8B%E5%88%B0%E6%A1%A5%E6%8E%A5%E6%B5%81%E9%87%8F"><span class="toc-number">2.6.</span> <span class="toc-text"> 转发IPv4并让iptables看到桥接流量</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E8%BD%AF%E4%BB%B6"><span class="toc-number">3.</span> <span class="toc-text"> 安装软件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85containerd"><span class="toc-number">3.1.</span> <span class="toc-text"> 安装containerd</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E9%80%9A%E8%BF%87systemd%E5%90%AF%E5%8A%A8containd"><span class="toc-number">3.2.</span> <span class="toc-text"> 配置通过systemd启动containd</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-runc"><span class="toc-number">3.3.</span> <span class="toc-text"> 安装 runc</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-cni-plugins"><span class="toc-number">3.4.</span> <span class="toc-text"> 安装 CNI plugins</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%9F%E6%88%90containerd%E9%BB%98%E8%AE%A4%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">3.5.</span> <span class="toc-text"> 生成containerd默认配置文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9containerd%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">3.6.</span> <span class="toc-text"> 修改containerd配置文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0host-registry"><span class="toc-number">3.7.</span> <span class="toc-text"> 添加host registry</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8containerd"><span class="toc-number">3.8.</span> <span class="toc-text"> 启动containerd</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85cli%E5%B7%A5%E5%85%B7%E5%8F%AF%E9%80%89"><span class="toc-number">3.9.</span> <span class="toc-text"> 安装cli工具(可选)</span></a></li></ol></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2025/08/14/k8s/K8s系列三之搭建/">K8s系列(三)---搭建</a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2025/08/12/k8s/K8s系列一之基本概念/">K8s系列(一)---基本概念</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2025/08/13/k8s/K8s系列二之容器安装/'
+  })
+</script>
+
+
+<script>
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        let href = decodeURIComponent(link.href);
+        href = href.substring(href.indexOf('#'));
+        const target = $(href)[0];
+        const top = target.offsetTop;
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      我们在绵延的海滩上捡贝壳，今天捡到了不必欣喜，因为海很大，今天没捡到，也不必失落，因为海很大。 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">我好像没有网络备案</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"自転车","artist":"オレスカバンド","url":"/music/自転车-オレスカバンド.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"撞地球","artist":"鱼儿七","url":"/music/撞地球-鱼儿七.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"晴天","artist":"周杰伦","url":"/music/晴天-周杰伦.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"告白气球","artist":"周杰伦","url":"/music/告白气球-周杰伦.mp3","cover":"/imgs/music-bg1.jpg"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>
