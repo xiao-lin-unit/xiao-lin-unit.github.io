@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>小琳的星空 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico?time=897" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css?time=897" />
+  <link rel="stylesheet" href="/css/layout.css?time=897" />
+  <link rel="stylesheet" href="/css/iconfont.css?time=897" />
+  <link rel="stylesheet" href="/css/APlayer.min.css?time=897" />
+  <script src="/js/APlayer.min.js?time=897"></script>
+  <script src="/js/jquery.min.js?time=897"></script>
+  <script src="/js/jquery.pjax.min.js?time=897"></script>
+
+  <script src="/js/Valine.min.js?time=897"></script>
+<!--  <script src='https://unpkg.com/valine/dist/Valine.min.js'></script>-->
+  <script>
+    document.title = `小琳的星空`
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="/?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/">-->
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="/log?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/log?time=895">-->
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="/link?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/link?time=895">-->
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="/about?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/about?time=895">-->
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"Promise","cover":"/imgs/cover/default-cover.jpeg?time=843?time=846?time=847?time=860?time=870?time=871","path":"2023/11/24/js/Promise/"},{"title":"Docker系列(一)---安装和基本使用","cover":"/imgs/cover/default-cover.jpeg?time=855?time=858?time=860?time=865?time=872?time=872","path":"2025/08/05/docker/Docker系列一之安装和基本使用/"},{"title":"Docker系列(三)---项目部署","cover":"/imgs/cover/default-cover.webp?time=855?time=858?time=860?time=865?time=872","path":"2025/08/11/docker/Docker系列三之项目部署/"},{"title":"MySQL系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=843?time=845?time=847?time=861?time=870?time=873","path":"2023/11/27/mysql/MySQL系列一之安装/"},{"title":"Docker系列(二)---进阶使用","cover":"/imgs/cover/default-cover.webp?time=855?time=858?time=860?time=865?time=872?time=872","path":"2025/08/07/docker/Docker系列二之进阶使用/"},{"title":"MySQL系列(三)---索引","cover":"/imgs/cover/default-cover.webp?time=837?time=849?time=853?time=861?time=868?time=873","path":"2024/04/29/mysql/MySQL系列三之索引/"},{"title":"MySQL系列(二)---SQL","cover":"/imgs/cover/default-cover.jpeg?time=837?time=849?time=852?time=861?time=868?time=873","path":"2024/02/26/mysql/MySQL系列二之SQL/"},{"title":"K8s系列(一)---基本概念","cover":"/imgs/cover/default-cover.webp?time=855?time=858?time=862?time=865?time=874","path":"2025/08/12/k8s/K8s系列一之基本概念/"},{"title":"K8s系列(三)---搭建","cover":"/imgs/cover/default-cover.webp?time=855?time=858?time=862?time=865?time=874?time=875","path":"2025/08/14/k8s/K8s系列三之搭建/"},{"title":"K8s系列---番外篇","cover":"/imgs/cover/default-cover.jpeg?time=855?time=859?time=862?time=865?time=874?time=875?time=875","path":"2025/09/06/k8s/K8s系列之番外篇/"},{"title":"K8s系列(二)---软件安装","cover":"/imgs/cover/default-cover.jpeg?time=855?time=858?time=862?time=865?time=874?time=875","path":"2025/08/13/k8s/K8s系列二之容器安装/"},{"title":"K8s系列(四)---常用命令","cover":"/imgs/cover/default-cover.jpeg?time=855?time=859?time=862?time=865?time=874","path":"2025/09/07/k8s/K8s系列四之常用命令/"},{"title":"K8s系列(五)---资源部署","cover":"/imgs/cover/default-cover.jpeg?time=855?time=859?time=862?time=865?time=874","path":"2025/09/07/k8s/K8s系列五之资源部署/"},{"title":"NPM和PNPM的安装及配置","cover":"/imgs/cover/default-cover.webp?time=841?time=845?time=848?time=862?time=869?time=876?time=876?time=876","path":"2023/12/26/node/npm和pnpm安装及配置/"},{"title":"博客搭建","cover":"/imgs/cover/default-cover.webp?time=843?time=846?time=847?time=863?time=870?time=871?time=877","path":"2023/11/22/other/博客搭建/"},{"title":"项目对接招商银行CBS","cover":"/imgs/cover/default-cover.webp?time=837?time=849?time=852?time=863?time=868?time=877","path":"2024/02/21/other/项目对接招商银行CBS/"},{"title":"项目对接海康SDK","cover":"/imgs/cover/default-cover.webp?time=837?time=849?time=852?time=863?time=868?time=878","path":"2024/02/21/other/项目对接海康SDK/"},{"title":"Redis系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=841?time=845?time=848?time=863?time=869?time=878","path":"2023/12/12/redis/Redis系列一之安装/"},{"title":"SpringCloud系列(一)---项目创建","cover":"/imgs/cover/default-cover.webp?time=843?time=845?time=847?time=864?time=870?time=879","path":"2023/11/25/springcloud/SpringCloud系列一之基础服务/"},{"title":"SpringCloud系列(三)---服务熔断与降级","cover":"/imgs/cover/default-cover.webp?time=843?time=845?time=848?time=864?time=870?time=879?time=880?time=880","path":"2023/12/02/springcloud/SpringCloud系列三之服务熔断与降级/"},{"title":"SpringCloud系列(七)---认证和授权","cover":"/imgs/cover/default-cover.jpeg?time=837?time=849?time=852?time=864?time=868?time=880","path":"2024/02/03/springcloud/SpringCloud系列七之认证和授权/"},{"title":"SpringCloud系列(二)---注册中心和配置中心","cover":"/imgs/cover/default-cover.jpeg?time=843?time=845?time=847?time=864?time=870?time=879?time=881?time=881","path":"2023/11/30/springcloud/SpringCloud系列二之注册中心/"},{"title":"SpringCloud系列(九)---阶段总结","cover":"/imgs/cover/default-cover.jpeg?time=837?time=849?time=854?time=864?time=868?time=879","path":"2024/05/11/springcloud/SpringCloud系列九之阶段总结/"},{"title":"SpringCloud系列(五)---Redis使用","cover":"/imgs/cover/default-cover.jpeg?time=841?time=845?time=848?time=864?time=869?time=878?time=879","path":"2023/12/14/springcloud/SpringCloud系列五之Redis使用/"},{"title":"SpringCloud系列(八)---服务划分","cover":"/imgs/cover/default-cover.webp?time=837?time=849?time=852?time=864?time=868?time=882","path":"2024/02/19/springcloud/SpringCloud系列八之服务划分/"},{"title":"SpringCloud系列(四)---网关","cover":"/imgs/cover/default-cover.jpeg?time=841?time=845?time=848?time=864?time=869?time=879?time=882","path":"2023/12/10/springcloud/SpringCloud系列四之网关/"},{"title":"SpringCloud系列(六)---分布式主键","cover":"/imgs/cover/default-cover.webp?time=841?time=845?time=848?time=864?time=869?time=879?time=883","path":"2023/12/11/springcloud/SpringCloud系列六之分布式主键/"},{"title":"Typescript系列(一)---基础","cover":"/imgs/cover/default-cover.webp?time=841?time=845?time=848?time=865?time=869?time=884","path":"2023/12/26/ts/TypeScript系列一之基础/"},{"title":"Typescript系列(二)---高级","cover":"/imgs/cover/default-cover.jpeg?time=841?time=851?time=851?time=865?time=869?time=884","path":"2024/01/04/ts/TypeScript系列二之高级/"},{"title":"Vue系列(一)---项目创建和配置","cover":"/imgs/cover/default-cover.webp?time=837?time=856?time=858?time=867?time=868?time=876?time=885?time=885","path":"2025/06/19/web/Vue系列一之项目创建和配置/"},{"title":"Vue系列(三)---状态管理库","cover":"/imgs/cover/default-cover.webp?time=841?time=849?time=851?time=867?time=869?time=886","path":"2024/01/18/web/Vue系列三之状态管理库/"},{"title":"Vue系列(二)---路由","cover":"/imgs/cover/default-cover.jpeg?time=841?time=851?time=851?time=867?time=869?time=886","path":"2024/01/07/web/Vue系列二之路由/"},{"title":"Vue系列(四)---请求","cover":"/imgs/cover/default-cover.jpeg?time=841?time=849?time=852?time=867?time=869?time=886","path":"2024/02/01/web/Vue系列四之请求/"},{"title":"Zookeeper系列(二)---安装和使用","cover":"/imgs/cover/default-cover.jpeg?time=837?time=856?time=857?time=867?time=868?time=881","path":"2025/01/10/zookeeper/Zookeeper系列二之安装和使用/"},{"title":"","path":"2025/09/07/k8s/K8s系列五之资源部署/K8s资源清单/"},{"title":"Zookeeper系列(一)---原理","cover":"/imgs/cover/default-cover.webp?time=837?time=849?time=854?time=867?time=868?time=881","path":"2024/11/28/zookeeper/Zookeeper系列一之原理/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}${'?time=' + new Date().getMilliseconds()}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp'}${'?time=' + new Date().getMilliseconds()}" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg?time=895" class="main-left--avatar" alt />
+      <div class="main-left--intro">
+        <p class="main-left--name">小琳</p>
+        <div class="main-left--tags">
+          
+            <span class="main-left--tag">中二</span>
+          
+            <span class="main-left--tag">乐天派</span>
+          
+            <span class="main-left--tag">悲观主义</span>
+          
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>跳出圈子你会发现</p>
+        <p>其实你一无是处</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        
+          <a target="_blank" rel="noopener" href="https://github.com/?time=895" title="github">
+            <i class="logo xiao-lin-blog xiao-lin-blog-github"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://gitee.com/xiao-lin?time=895" title="码云">
+            <i class="logo xiao-lin-blog xiao-lin-blog-gitee"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43728193?type=blog?time=895" title="CSDN">
+            <i class="logo xiao-lin-blog xiao-lin-blog-csdn"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiao-lin-unit/?time=895" title="博客园">
+            <i class="logo xiao-lin-blog xiao-lin-blog-cnblogs"></i>
+          </a>
+        
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories?time=895">
+          <div>
+            <span>11</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags?time=895">
+          <div>
+            <span>30</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives?time=895">
+          <div>
+            <span>11 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/?time=895">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log?time=895">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link?time=895">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about?time=895">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tags?time=895">
+            <span class="header-menu--span">标签</span>
+            <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-tags-rectangle"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/categories?time=895">
+            <span class="header-menu--span">分类</span>
+            <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-categories"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools?time=895">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>36 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>665天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  
+
+<link rel="stylesheet" href="/css/partial/article.css?time=769" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">K8s系列(四)---常用命令</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span class="xiao-lin-blog xiao-lin-blog-categories">分类：</span>
+            <a class="category-link" href="/categories/k8s/">K8s</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span class="xiao-lin-blog xiao-lin-blog-tags-fill">标签：</span>
+            <a class="tag-link" href="/tags/k8s/" rel="tag">k8s</a>
+          </div>
+          
+          <p class="article-info--date"><i class="xiao-lin-blog xiao-lin-blog-date-time">日期：2025-09-07 13:44:19</i></p>
+        </div>
+<!--        <img src="/1" alt="" class="article-cover">-->
+        <img src="/imgs/cover/default-cover.jpeg" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <!-- toc -->
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p><code>k8s</code>使用<code>kubectl</code>命令行工具执行各种操作, 其基本使用格式</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl [<span class="built_in">command</span>] [TYPE] [NAME] [flags]</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>[TYPE]的常用的选项及别名如下</p>
+<p><code>pods</code>: <code>po</code></p>
+<p><code>deployments</code>: <code>deploy</code></p>
+<p><code>services</code>: <code>svc</code></p>
+<p><code>namespace</code>: <code>ns</code></p>
+<p><code>nodes</code>: <code>no</code></p>
+<p><code>ReplicaSet</code>: <code>rc</code></p>
+</blockquote>
+<blockquote>
+<p>[COMMAND]的选项可以到<a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/reference/kubectl/generated/">Kubernetes官网</a>查看, 本篇只讲几个常用命令</p>
+</blockquote>
+<h3 id="常用命令"><a class="markdownIt-Anchor" href="#常用命令"></a> 常用命令</h3>
+<h4 id="基于配置应用部署"><a class="markdownIt-Anchor" href="#基于配置应用部署"></a> 基于配置应用部署</h4>
+<p>这个命令使用频率非常高, 所以先放在首位, 这个命令的作用是基于文件创建或者修改资源</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f filename</span><br><span class="line"></span><br><span class="line">kubectl apply -f ./my.yaml</span><br></pre></td></tr></table></figure>
+<h4 id="创建对象"><a class="markdownIt-Anchor" href="#创建对象"></a> 创建对象</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f FILENAME</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建资源</span></span><br><span class="line">kubectl create -f ./my.yaml</span><br><span class="line">kubectl create -f ./my.json</span><br><span class="line"><span class="comment"># 创建多个资源</span></span><br><span class="line">kubectl create -f ./my1.yaml ./my2.yaml</span><br><span class="line"><span class="comment"># 使用目录下的配置创建资源</span></span><br><span class="line">kubectl create -f ./dir</span><br><span class="line"><span class="comment"># 使用远程配置文件创建资源</span></span><br><span class="line">kubectl create -f https://example.com/example.yaml</span><br><span class="line"></span><br><span class="line"><span class="comment"># 基于传入到标准输入的 JSON 创建一个 Pod</span></span><br><span class="line"><span class="built_in">cat</span> pod.json | kubectl create -f -</span><br><span class="line"><span class="comment"># 以 JSON 编辑 registry.yaml 中的数据，然后使用已编辑的数据来创建资源</span></span><br><span class="line">kubectl create -f registry.yaml --edit -o json</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用run创建并运行一个镜像资源</span></span><br><span class="line">kubectl run NAME --image=image [--<span class="built_in">env</span>=<span class="string">&quot;key=value&quot;</span>] [--port=port] [--dry-run=server|client] [--overrides=inline-json] [--<span class="built_in">command</span>] -- [COMMAND] [args...]</span><br><span class="line"></span><br><span class="line">kubectl run nginx --image=nginx</span><br></pre></td></tr></table></figure>
+<p>根据资源也可以获取到对应的配置文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">kubectl explain TYPE [--recursive=FALSE|TRUE] [--api-version=api-version-group] [-o|--output=plaintext|plaintext-openapiv2]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取资源及其字段的文档</span></span><br><span class="line">kubectl explain pods</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 获取资源中的所有字段</span></span><br><span class="line">kubectl explain pods --recursive</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 获取被支持的 API 版本中 Deployment 的解释</span></span><br><span class="line">kubectl explain deployments --api-version=apps/v1</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 获取资源中特定字段的文档</span></span><br><span class="line">kubectl explain pods.spec.containers</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 获取资源的不同格式的文档</span></span><br><span class="line">kubectl explain deployment --output=plaintext-openapiv2</span><br></pre></td></tr></table></figure>
+<h3 id="查询资源"><a class="markdownIt-Anchor" href="#查询资源"></a> 查询资源</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">kubectl get [(-o|--output=)json|yaml|name|go-template|go-template-file|template|templatefile|jsonpath|jsonpath-as-json|jsonpath-file|custom-columns|custom-columns-file|wide] (TYPE[.VERSION][.GROUP] [NAME | -l label] | TYPE[.VERSION][.GROUP]/NAME ...) [flags]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 以 ps 输出格式列举所有 Pod</span></span><br><span class="line">kubectl get pods</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 以 ps 输出格式列举所有 Pod，并提供更多信息（如节点名称）</span></span><br><span class="line">kubectl get pods -o wide</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 以 ps 输出格式列举指定名称的单个副本控制器</span></span><br><span class="line">kubectl get replicationcontroller web</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 以 JSON 输出格式列举 &quot;apps&quot; API 组 &quot;v1&quot; 版本中的 Deployment</span></span><br><span class="line">kubectl get deployments.v1.apps -o json</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 以 JSON 输出格式列举单个 Pod</span></span><br><span class="line">kubectl get -o json pod web-pod-13je7</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 以 JSON 输出格式列举在 &quot;pod.yaml&quot; 中以 type 和 name 指定的 Pod</span></span><br><span class="line">kubectl get -f pod.yaml -o json</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 列举 kustomization.yaml 所在目录（例如 dir/kustomization.yaml）中的资源</span></span><br><span class="line">kubectl get -k <span class="built_in">dir</span>/</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 仅返回指定 Pod 的 phase 值</span></span><br><span class="line">kubectl get -o template pod/web-pod-13je7 --template=&#123;&#123;.status.phase&#125;&#125;</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 在自定义列中列举资源信息</span></span><br><span class="line">kubectl get pod test-pod -o custom-columns=CONTAINER:.spec.containers[0].name,IMAGE:.spec.containers[0].image</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 以 ps 输出格式同时列举所有副本控制器和服务</span></span><br><span class="line">kubectl get rc,services</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 按类型和名称列举一个或多个资源</span></span><br><span class="line">kubectl get rc/web service/frontend pods/web-pod-13je7</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 列举单个 Pod 的 “status” 子资源</span></span><br><span class="line">kubectl get pod web-pod-13je7 --subresource status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 列出 “backend” 命名空间中的所有 Deployment</span></span><br><span class="line">kubectl get deployments.apps --namespace backend</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 列出所有命名空间中存在的所有 Pod</span></span><br><span class="line">kubectl get pods --all-namespaces</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取信息时可以指定格式化输出方式</span></span><br><span class="line"><span class="comment"># -o json 以json格式输出</span></span><br><span class="line"><span class="comment"># -o name 仅打印资源名称</span></span><br><span class="line"><span class="comment"># -o wide 以纯文本格式输出</span></span><br><span class="line"><span class="comment"># -o yaml 以yaml格式输出</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="更新资源"><a class="markdownIt-Anchor" href="#更新资源"></a> 更新资源</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">kubectl edit (RESOURCE/NAME | -f FILENAME)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编辑名为 &quot;registry&quot; 的 Service</span></span><br><span class="line">kubectl edit svc/registry</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编辑资源配置文件</span></span><br><span class="line">kubectl edit -f ./my.yaml</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 使用替代编辑器</span></span><br><span class="line">KUBE_EDITOR=<span class="string">&quot;nano&quot;</span> kubectl edit svc/registry</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 使用 v1 API 格式编辑 JSON 中的 Job &quot;myjob&quot;</span></span><br><span class="line">kubectl edit job.v1.batch/myjob -o json</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 在 YAML 中编辑 Deployment &quot;mydeployment&quot; 并将修改后的配置保存在其注解中</span></span><br><span class="line">kubectl edit deployment/mydeployment -o yaml --save-config</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 编辑 &quot;mydeployment&quot; Deployment 的 &quot;status&quot; 子资源</span></span><br><span class="line">kubectl edit deployment mydeployment --subresource=<span class="string">&#x27;status&#x27;</span></span><br></pre></td></tr></table></figure>
+<h3 id="删除资源"><a class="markdownIt-Anchor" href="#删除资源"></a> 删除资源</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete ([-f FILENAME] | [-k DIRECTORY] | TYPE [(NAME | -l label | --all)])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 pod.json 中指定的类型和名称删除一个 Pod</span></span><br><span class="line">kubectl delete -f ./pod.json</span><br><span class="line"></span><br><span class="line"><span class="comment"># 基于包含 kustomization.yaml 的目录（例如 dir/kustomization.yaml）中的内容删除资源</span></span><br><span class="line">kubectl delete -k <span class="built_in">dir</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除所有以 &#x27;.json&#x27; 结尾的文件中的资源</span></span><br><span class="line">kubectl delete -f <span class="string">&#x27;*.json&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 基于传递到标准输入的 JSON 中的类型和名称删除一个 Pod</span></span><br><span class="line"><span class="built_in">cat</span> pod.json | kubectl delete -f -</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除名称为 &quot;baz&quot; 和 &quot;foo&quot; 的 Pod 和 Service</span></span><br><span class="line">kubectl delete pod,service baz foo</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除打了标签 name=myLabel 的 Pod 和 Service</span></span><br><span class="line">kubectl delete pods,services -l name=myLabel</span><br><span class="line"></span><br><span class="line"><span class="comment"># 以最小延迟删除一个 Pod</span></span><br><span class="line">kubectl delete pod foo --now</span><br><span class="line"></span><br><span class="line"><span class="comment"># 强制删除一个死节点上的 Pod</span></span><br><span class="line">kubectl delete pod foo --force</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除所有 Pod</span></span><br><span class="line">kubectl delete pods --all</span><br><span class="line"></span><br><span class="line"><span class="comment"># 仅在用户确认删除的情况下删除所有 Pod</span></span><br><span class="line">kubectl delete pods --all --interactive</span><br></pre></td></tr></table></figure>
+<h3 id="管理资源上线"><a class="markdownIt-Anchor" href="#管理资源上线"></a> 管理资源上线</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">kubectl rollout SUBCOMMAND</span><br><span class="line"></span><br><span class="line"><span class="comment"># SUBCOMMAND选项有</span></span><br><span class="line"><span class="comment"># history: 查看上线历史记录</span></span><br><span class="line"><span class="comment"># pause: 将资源标记为已暂停</span></span><br><span class="line"><span class="comment"># restart: 重启资源</span></span><br><span class="line"><span class="comment"># resume: 恢复暂停的资源</span></span><br><span class="line"><span class="comment"># status: 显示状态</span></span><br><span class="line"><span class="comment"># undo: 撤销上一次上线</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 回滚到先前的 Deployment 版本</span></span><br><span class="line">kubectl rollout undo deployment/abc</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 检查 Daemonset 的部署状态</span></span><br><span class="line">kubectl rollout status daemonset/foo</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 重启 Deployment</span></span><br><span class="line">kubectl rollout restart deployment/abc</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 重启带有 &#x27;app=nginx&#x27; 标签的 Deployment</span></span><br><span class="line">kubectl rollout restart deployment --selector=app=nginx</span><br></pre></td></tr></table></figure>
+<h3 id="配置资源"><a class="markdownIt-Anchor" href="#配置资源"></a> 配置资源</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kubectl <span class="built_in">set</span> SUBCOMMAND</span><br><span class="line"><span class="comment"># SUBCOMMAND选项有</span></span><br><span class="line"><span class="comment"># env: 更新pod模板的环境变量</span></span><br><span class="line"><span class="comment"># image: 更新pod模板的镜像</span></span><br><span class="line"><span class="comment"># resources: 使用pod模板更新对象的资源请求/限制</span></span><br><span class="line"><span class="comment"># selector: 设置资源上的选择器</span></span><br><span class="line"><span class="comment"># serviceaccount: 更新资源的服务账户</span></span><br><span class="line"><span class="comment"># subject: 更新角色绑定或集群角色绑定中的用户, 组或服务账户</span></span><br></pre></td></tr></table></figure>
+<h3 id="修改kubeconfig文件"><a class="markdownIt-Anchor" href="#修改kubeconfig文件"></a> 修改<code>kubeconfig</code>文件</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">kubectl config SUBCOMMAND</span><br><span class="line"><span class="comment"># SUBCOMMAND选项有</span></span><br><span class="line"><span class="comment"># current-context: 显示当前上下文</span></span><br><span class="line"><span class="comment"># delete-cluster: 从kubeconfig删除出指定集群信息</span></span><br><span class="line"><span class="comment"># delete-context: 从kubeconfig删除指定的上下文信息</span></span><br><span class="line"><span class="comment"># delect-user: 从kubeconfig中删除指定的用户信息</span></span><br><span class="line"><span class="comment"># get-clusters: 显示kubeconfig中指定的集群信息</span></span><br><span class="line"><span class="comment"># get-contexts: 显示kubeconfig中指定的上下文信息</span></span><br><span class="line"><span class="comment"># get-users: 显示kubeconfig中指定的用户信息</span></span><br><span class="line"><span class="comment"># rename-context: 重命名kubeconfig文件的上下文</span></span><br><span class="line"><span class="comment"># set: 在kubeconfig中设置单个值</span></span><br><span class="line"><span class="comment"># set-cluser: 在kubeconfig中设置集群条目</span></span><br><span class="line"><span class="comment"># set-context: 在kubeconfig中设置上下文条目</span></span><br><span class="line"><span class="comment"># setcredentials: 在kubeconfig中设置用户条目</span></span><br><span class="line"><span class="comment"># unset: 取消设置kubeconfig文件中的单个值</span></span><br><span class="line"><span class="comment"># use-context: 设置在kubeconfig文件中的当前上下文</span></span><br><span class="line"><span class="comment"># view: 显示合并的kubeconfig设置或指定的kubeconfig文件</span></span><br></pre></td></tr></table></figure>
+<h3 id="显示资源细节"><a class="markdownIt-Anchor" href="#显示资源细节"></a> 显示资源细节</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe TYPE NAME_PREFIX</span><br><span class="line">kubectl describe (-f FILENAME | TYPE [NAME_PREFIX | -l label] | TYPE/NAME)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 描述一个节点</span></span><br><span class="line">kubectl describe nodes kubernetes-node-emt8.c.myproject.internal</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 描述一个 Pod</span></span><br><span class="line">kubectl describe pods/nginx</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 描述在 &quot;pod.json&quot; 中通过类别和名称标识的 Pod</span></span><br><span class="line">kubectl describe -f pod.json</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 描述所有 Pod</span></span><br><span class="line">kubectl describe pods</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 描述带标签 name=myLabel 的 Pod</span></span><br><span class="line">kubectl describe pods -l name=myLabel</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 描述由 “frontend” 副本控制器管理的所有 Pod</span></span><br><span class="line"><span class="comment"># （副本控制器所创建的 Pod 在 Pod 名称中带有此副本控制器的名称作为前缀）</span></span><br><span class="line">kubectl describe pods frontend</span><br></pre></td></tr></table></figure>
+<h3 id="扩缩容"><a class="markdownIt-Anchor" href="#扩缩容"></a> 扩缩容</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">kubectl scale [--resource-version=version] [--current-replicas=count] --replicas=COUNT (-f FILENAME | TYPE NAME)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将名为 “foo” 的 ReplicaSet 扩缩容到 3 个副本</span></span><br><span class="line">kubectl scale --replicas=3 rs/foo</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 将 &quot;foo.yaml&quot; 中以 type 和 name 指定的某资源扩缩容到 3 个副本</span></span><br><span class="line">kubectl scale --replicas=3 -f foo.yaml</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 如果名为 mysql 的 Deployment 当前有 2 个副本，则将 mysql 扩容到 3 个副本</span></span><br><span class="line">kubectl scale --current-replicas=2 --replicas=3 deployment/mysql</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 扩缩容多个 ReplicationController</span></span><br><span class="line">kubectl scale --replicas=5 rc/example1 rc/example2 rc/example3</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 将名为 “web” 的 StatefulSet 扩缩容到 3 个副本</span></span><br><span class="line">kubectl scale --replicas=3 statefulset/web</span><br></pre></td></tr></table></figure>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2025/09/07/k8s/K8s系列四之常用命令/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text"> 前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">2.</span> <span class="toc-text"> 常用命令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E9%85%8D%E7%BD%AE%E5%BA%94%E7%94%A8%E9%83%A8%E7%BD%B2"><span class="toc-number">2.1.</span> <span class="toc-text"> 基于配置应用部署</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1"><span class="toc-number">2.2.</span> <span class="toc-text"> 创建对象</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E8%B5%84%E6%BA%90"><span class="toc-number">3.</span> <span class="toc-text"> 查询资源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E8%B5%84%E6%BA%90"><span class="toc-number">4.</span> <span class="toc-text"> 更新资源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E8%B5%84%E6%BA%90"><span class="toc-number">5.</span> <span class="toc-text"> 删除资源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%A1%E7%90%86%E8%B5%84%E6%BA%90%E4%B8%8A%E7%BA%BF"><span class="toc-number">6.</span> <span class="toc-text"> 管理资源上线</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E8%B5%84%E6%BA%90"><span class="toc-number">7.</span> <span class="toc-text"> 配置资源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9kubeconfig%E6%96%87%E4%BB%B6"><span class="toc-number">8.</span> <span class="toc-text"> 修改kubeconfig文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%98%BE%E7%A4%BA%E8%B5%84%E6%BA%90%E7%BB%86%E8%8A%82"><span class="toc-number">9.</span> <span class="toc-text"> 显示资源细节</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A9%E7%BC%A9%E5%AE%B9"><span class="toc-number">10.</span> <span class="toc-text"> 扩缩容</span></a></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2025/09/07/k8s/K8s系列五之资源部署/K8s资源清单/"></a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2025/09/06/k8s/K8s系列之番外篇/">K8s系列---番外篇</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2025/09/07/k8s/K8s系列四之常用命令/'
+  })
+</script>
+
+
+<script>
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        let href = decodeURIComponent(link.href);
+        href = href.substring(href.indexOf('#'));
+        const target = $(href)[0];
+        const top = target.offsetTop;
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      我们在绵延的海滩上捡贝壳，今天捡到了不必欣喜，因为海很大，今天没捡到，也不必失落，因为海很大。 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">我好像没有网络备案</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"自転车","artist":"オレスカバンド","url":"/music/自転车-オレスカバンド.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"撞地球","artist":"鱼儿七","url":"/music/撞地球-鱼儿七.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"晴天","artist":"周杰伦","url":"/music/晴天-周杰伦.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"告白气球","artist":"周杰伦","url":"/music/告白气球-周杰伦.mp3","cover":"/imgs/music-bg1.jpg"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>

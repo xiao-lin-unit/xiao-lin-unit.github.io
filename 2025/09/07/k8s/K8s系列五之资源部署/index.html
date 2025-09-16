@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>小琳的星空 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico?time=897" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css?time=897" />
+  <link rel="stylesheet" href="/css/layout.css?time=897" />
+  <link rel="stylesheet" href="/css/iconfont.css?time=897" />
+  <link rel="stylesheet" href="/css/APlayer.min.css?time=897" />
+  <script src="/js/APlayer.min.js?time=897"></script>
+  <script src="/js/jquery.min.js?time=897"></script>
+  <script src="/js/jquery.pjax.min.js?time=897"></script>
+
+  <script src="/js/Valine.min.js?time=897"></script>
+<!--  <script src='https://unpkg.com/valine/dist/Valine.min.js'></script>-->
+  <script>
+    document.title = `小琳的星空`
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="/?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/">-->
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="/log?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/log?time=895">-->
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="/link?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/link?time=895">-->
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="/about?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/about?time=895">-->
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"Promise","cover":"/imgs/cover/default-cover.jpeg?time=843?time=846?time=847?time=860?time=870?time=871","path":"2023/11/24/js/Promise/"},{"title":"Docker系列(一)---安装和基本使用","cover":"/imgs/cover/default-cover.jpeg?time=855?time=858?time=860?time=865?time=872?time=872","path":"2025/08/05/docker/Docker系列一之安装和基本使用/"},{"title":"Docker系列(三)---项目部署","cover":"/imgs/cover/default-cover.webp?time=855?time=858?time=860?time=865?time=872","path":"2025/08/11/docker/Docker系列三之项目部署/"},{"title":"MySQL系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=843?time=845?time=847?time=861?time=870?time=873","path":"2023/11/27/mysql/MySQL系列一之安装/"},{"title":"Docker系列(二)---进阶使用","cover":"/imgs/cover/default-cover.webp?time=855?time=858?time=860?time=865?time=872?time=872","path":"2025/08/07/docker/Docker系列二之进阶使用/"},{"title":"MySQL系列(三)---索引","cover":"/imgs/cover/default-cover.webp?time=837?time=849?time=853?time=861?time=868?time=873","path":"2024/04/29/mysql/MySQL系列三之索引/"},{"title":"MySQL系列(二)---SQL","cover":"/imgs/cover/default-cover.jpeg?time=837?time=849?time=852?time=861?time=868?time=873","path":"2024/02/26/mysql/MySQL系列二之SQL/"},{"title":"K8s系列(一)---基本概念","cover":"/imgs/cover/default-cover.webp?time=855?time=858?time=862?time=865?time=874","path":"2025/08/12/k8s/K8s系列一之基本概念/"},{"title":"K8s系列(三)---搭建","cover":"/imgs/cover/default-cover.webp?time=855?time=858?time=862?time=865?time=874?time=875","path":"2025/08/14/k8s/K8s系列三之搭建/"},{"title":"K8s系列---番外篇","cover":"/imgs/cover/default-cover.jpeg?time=855?time=859?time=862?time=865?time=874?time=875?time=875","path":"2025/09/06/k8s/K8s系列之番外篇/"},{"title":"K8s系列(二)---软件安装","cover":"/imgs/cover/default-cover.jpeg?time=855?time=858?time=862?time=865?time=874?time=875","path":"2025/08/13/k8s/K8s系列二之容器安装/"},{"title":"K8s系列(四)---常用命令","cover":"/imgs/cover/default-cover.jpeg?time=855?time=859?time=862?time=865?time=874","path":"2025/09/07/k8s/K8s系列四之常用命令/"},{"title":"K8s系列(五)---资源部署","cover":"/imgs/cover/default-cover.jpeg?time=855?time=859?time=862?time=865?time=874","path":"2025/09/07/k8s/K8s系列五之资源部署/"},{"title":"NPM和PNPM的安装及配置","cover":"/imgs/cover/default-cover.webp?time=841?time=845?time=848?time=862?time=869?time=876?time=876?time=876","path":"2023/12/26/node/npm和pnpm安装及配置/"},{"title":"博客搭建","cover":"/imgs/cover/default-cover.webp?time=843?time=846?time=847?time=863?time=870?time=871?time=877","path":"2023/11/22/other/博客搭建/"},{"title":"项目对接招商银行CBS","cover":"/imgs/cover/default-cover.webp?time=837?time=849?time=852?time=863?time=868?time=877","path":"2024/02/21/other/项目对接招商银行CBS/"},{"title":"项目对接海康SDK","cover":"/imgs/cover/default-cover.webp?time=837?time=849?time=852?time=863?time=868?time=878","path":"2024/02/21/other/项目对接海康SDK/"},{"title":"Redis系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=841?time=845?time=848?time=863?time=869?time=878","path":"2023/12/12/redis/Redis系列一之安装/"},{"title":"SpringCloud系列(一)---项目创建","cover":"/imgs/cover/default-cover.webp?time=843?time=845?time=847?time=864?time=870?time=879","path":"2023/11/25/springcloud/SpringCloud系列一之基础服务/"},{"title":"SpringCloud系列(三)---服务熔断与降级","cover":"/imgs/cover/default-cover.webp?time=843?time=845?time=848?time=864?time=870?time=879?time=880?time=880","path":"2023/12/02/springcloud/SpringCloud系列三之服务熔断与降级/"},{"title":"SpringCloud系列(七)---认证和授权","cover":"/imgs/cover/default-cover.jpeg?time=837?time=849?time=852?time=864?time=868?time=880","path":"2024/02/03/springcloud/SpringCloud系列七之认证和授权/"},{"title":"SpringCloud系列(二)---注册中心和配置中心","cover":"/imgs/cover/default-cover.jpeg?time=843?time=845?time=847?time=864?time=870?time=879?time=881?time=881","path":"2023/11/30/springcloud/SpringCloud系列二之注册中心/"},{"title":"SpringCloud系列(九)---阶段总结","cover":"/imgs/cover/default-cover.jpeg?time=837?time=849?time=854?time=864?time=868?time=879","path":"2024/05/11/springcloud/SpringCloud系列九之阶段总结/"},{"title":"SpringCloud系列(五)---Redis使用","cover":"/imgs/cover/default-cover.jpeg?time=841?time=845?time=848?time=864?time=869?time=878?time=879","path":"2023/12/14/springcloud/SpringCloud系列五之Redis使用/"},{"title":"SpringCloud系列(八)---服务划分","cover":"/imgs/cover/default-cover.webp?time=837?time=849?time=852?time=864?time=868?time=882","path":"2024/02/19/springcloud/SpringCloud系列八之服务划分/"},{"title":"SpringCloud系列(四)---网关","cover":"/imgs/cover/default-cover.jpeg?time=841?time=845?time=848?time=864?time=869?time=879?time=882","path":"2023/12/10/springcloud/SpringCloud系列四之网关/"},{"title":"SpringCloud系列(六)---分布式主键","cover":"/imgs/cover/default-cover.webp?time=841?time=845?time=848?time=864?time=869?time=879?time=883","path":"2023/12/11/springcloud/SpringCloud系列六之分布式主键/"},{"title":"Typescript系列(一)---基础","cover":"/imgs/cover/default-cover.webp?time=841?time=845?time=848?time=865?time=869?time=884","path":"2023/12/26/ts/TypeScript系列一之基础/"},{"title":"Typescript系列(二)---高级","cover":"/imgs/cover/default-cover.jpeg?time=841?time=851?time=851?time=865?time=869?time=884","path":"2024/01/04/ts/TypeScript系列二之高级/"},{"title":"Vue系列(一)---项目创建和配置","cover":"/imgs/cover/default-cover.webp?time=837?time=856?time=858?time=867?time=868?time=876?time=885?time=885","path":"2025/06/19/web/Vue系列一之项目创建和配置/"},{"title":"Vue系列(三)---状态管理库","cover":"/imgs/cover/default-cover.webp?time=841?time=849?time=851?time=867?time=869?time=886","path":"2024/01/18/web/Vue系列三之状态管理库/"},{"title":"Vue系列(二)---路由","cover":"/imgs/cover/default-cover.jpeg?time=841?time=851?time=851?time=867?time=869?time=886","path":"2024/01/07/web/Vue系列二之路由/"},{"title":"Vue系列(四)---请求","cover":"/imgs/cover/default-cover.jpeg?time=841?time=849?time=852?time=867?time=869?time=886","path":"2024/02/01/web/Vue系列四之请求/"},{"title":"Zookeeper系列(二)---安装和使用","cover":"/imgs/cover/default-cover.jpeg?time=837?time=856?time=857?time=867?time=868?time=881","path":"2025/01/10/zookeeper/Zookeeper系列二之安装和使用/"},{"title":"","path":"2025/09/07/k8s/K8s系列五之资源部署/K8s资源清单/"},{"title":"Zookeeper系列(一)---原理","cover":"/imgs/cover/default-cover.webp?time=837?time=849?time=854?time=867?time=868?time=881","path":"2024/11/28/zookeeper/Zookeeper系列一之原理/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}${'?time=' + new Date().getMilliseconds()}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp'}${'?time=' + new Date().getMilliseconds()}" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg?time=895" class="main-left--avatar" alt />
+      <div class="main-left--intro">
+        <p class="main-left--name">小琳</p>
+        <div class="main-left--tags">
+          
+            <span class="main-left--tag">中二</span>
+          
+            <span class="main-left--tag">乐天派</span>
+          
+            <span class="main-left--tag">悲观主义</span>
+          
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>跳出圈子你会发现</p>
+        <p>其实你一无是处</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        
+          <a target="_blank" rel="noopener" href="https://github.com/?time=895" title="github">
+            <i class="logo xiao-lin-blog xiao-lin-blog-github"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://gitee.com/xiao-lin?time=895" title="码云">
+            <i class="logo xiao-lin-blog xiao-lin-blog-gitee"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43728193?type=blog?time=895" title="CSDN">
+            <i class="logo xiao-lin-blog xiao-lin-blog-csdn"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiao-lin-unit/?time=895" title="博客园">
+            <i class="logo xiao-lin-blog xiao-lin-blog-cnblogs"></i>
+          </a>
+        
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories?time=895">
+          <div>
+            <span>11</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags?time=895">
+          <div>
+            <span>30</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives?time=895">
+          <div>
+            <span>11 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/?time=895">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log?time=895">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link?time=895">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about?time=895">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tags?time=895">
+            <span class="header-menu--span">标签</span>
+            <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-tags-rectangle"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/categories?time=895">
+            <span class="header-menu--span">分类</span>
+            <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-categories"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools?time=895">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>36 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>665天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  
+
+<link rel="stylesheet" href="/css/partial/article.css?time=743" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">K8s系列(五)---资源部署</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span class="xiao-lin-blog xiao-lin-blog-categories">分类：</span>
+            <a class="category-link" href="/categories/k8s/">K8s</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span class="xiao-lin-blog xiao-lin-blog-tags-fill">标签：</span>
+            <a class="tag-link" href="/tags/k8s/" rel="tag">k8s</a>
+          </div>
+          
+          <p class="article-info--date"><i class="xiao-lin-blog xiao-lin-blog-date-time">日期：2025-09-07 15:44:19</i></p>
+        </div>
+<!--        <img src="/1" alt="" class="article-cover">-->
+        <img src="/imgs/cover/default-cover.jpeg" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <!-- toc -->
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>前文中我们了解了<code>k8s</code>中的常用命令, 可能并没有实操. 其中有许多命令带有<code>yaml</code>的配置文件, 到此我们还没有学习这个配置文件如何编写, 此篇就来深入<code>pod</code>做仔细讲解</p>
+<h3 id="gitops部署"><a class="markdownIt-Anchor" href="#gitops部署"></a> <code>GitOps</code>部署</h3>
+<p>项目中大多使用<code>git</code>仓库作为<code>pod</code>配置文件的来源,  便于管理, 只需要对应修改提交到仓库即可做到有效控制</p>
+<p>本篇也将使用<code>git</code>仓库作为配置来源(主要是不想在虚拟机上使用<code>vi</code>写配置, 直接用<code>ide</code>写比较方便, 在学习, 开发, 测试时不推荐, 因为在应用<code>yaml</code>配置时可能会出现报错, 但是使用这种方式发现不了).</p>
+<blockquote>
+<p>注意: <code>GitOps</code>这种部署方式可能会出现滞后性, 原因是读取配置是周期性的. 可以通过配置<code>Webhook</code>进行实时同步</p>
+</blockquote>
+<p>使用<code>gitee</code>作为配置文件存储</p>
+<ol>
+<li>
+<p>创建<code>git</code>仓库</p>
+<p>目录结构大致如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">manifests/</span><br><span class="line">├── base/              	# 基础配置（通用模板，无环境差异）</span><br><span class="line">│   ├── nginx/</span><br><span class="line">│   │   ├── deployment.yaml  # Nginx 部署的通用配置</span><br><span class="line">│   │   └── service.yaml     # Nginx 服务的通用配置</span><br><span class="line">│   └── redis/</span><br><span class="line">│       └── statefulset.yaml</span><br><span class="line">└── overlays/          	# 环境差异配置（通过 kustomize 叠加）</span><br><span class="line">    ├── prod/          	# 生产环境（资源限制更高、镜像版本不同）</span><br><span class="line">    │   ├── nginx/</span><br><span class="line">    │   └── redis/</span><br><span class="line">    ├── test/         	# 测试环境（资源限制更高、镜像版本不同）</span><br><span class="line">    │   ├── nginx/</span><br><span class="line">    │   └── redis/</span><br><span class="line">    └── dev/ </span><br><span class="line">    	├── nginx/		# 开发环境（资源限制低、使用测试镜像）</span><br><span class="line">        └── redis/</span><br></pre></td></tr></table></figure>
+<p>以上只是结构示例, 此种方式可以将基础内容配置好, 根据环境做定制化配置</p>
+</li>
+<li>
+<p>安装<code>GitOps</code>工具, 使用<code>ArgoCD</code></p>
+<ul>
+<li>
+<p>安装<code>ArgoCD</code></p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建命名空间</span></span><br><span class="line">kubectl create namespace argocd</span><br><span class="line"></span><br><span class="line"><span class="comment"># 部署 ArgoCD（使用官方 manifest）</span></span><br><span class="line">kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>验证<code>ArgoCD</code>组件运行</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods -n argocd</span><br><span class="line"><span class="comment"># 确保所有 pod 处于 Running 状态（如 argocd-server、argocd-application-controller 等）</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>暴露<code>ArgoCD</code>控制台</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl patch service argocd-server -n argocd -p <span class="string">&#x27;&#123;&quot;spec&quot;:&#123;&quot;type&quot;:&quot;NodePort&quot;&#125;&#125;&#x27;</span></span><br><span class="line"><span class="comment"># 查看暴露的端口（如 30080）</span></span><br><span class="line">kubectl get service argocd-server -n argocd</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>配置<code>ArgoCD</code>访问<code>Gitee</code>仓库</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 需要现在gitee上创建token, 注意权限, 要能访问你的文件仓库</span></span><br><span class="line"><span class="comment"># 创建 Secret</span></span><br><span class="line">kubectl create secret generic gitee-creds -n argocd \</span><br><span class="line">  --from-literal=<span class="built_in">type</span>=git \</span><br><span class="line">  --from-literal=url=https://gitee.com \</span><br><span class="line">  --from-literal=username=&lt;your-github-username&gt; \</span><br><span class="line">  --from-literal=password=&lt;your-github-token&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>定义<code>ArgoCD</code>应用</p>
+<ul>
+<li>
+<p>创建<code>Application</code>配置文件</p>
+<p>自定义<code>k8s</code>工作目录, 创建一个<code>argocd</code>目录, 在该目录下创建<code>argocd</code>的应用配置文件</p>
+</li>
+</ul>
+<p>如创建一个<code>nginx-dev.yaml</code></p>
+   <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">   <span class="attr">apiVersion:</span> <span class="string">argoproj.io/v1alpha1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Application</span></span><br><span class="line">   <span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx-dev</span> <span class="comment"># 应用名称</span></span><br><span class="line">     <span class="attr">namespace:</span> <span class="string">argocd</span> <span class="comment"># 必须在 argocd 命名空间</span></span><br><span class="line">   <span class="attr">spec:</span></span><br><span class="line">     <span class="attr">project:</span> <span class="string">default</span> <span class="comment"># argocd 项目</span></span><br><span class="line">     <span class="attr">source:</span></span><br><span class="line">       <span class="attr">repoURL:</span> <span class="string">https://gitee.com/xiao-lin/k8s-files.git</span> <span class="comment"># 仓库地址</span></span><br><span class="line">       <span class="attr">targetRevision:</span> <span class="string">master</span> <span class="comment"># 分支</span></span><br><span class="line">       <span class="attr">path:</span> <span class="string">manifests/overlays/dev/nginx</span> <span class="comment"># 仓库中配置文件的相对路径</span></span><br><span class="line">     <span class="attr">destination:</span></span><br><span class="line">        <span class="attr">server:</span> <span class="string">https://kubernetes.default.svc</span> <span class="comment"># 如果是本地集群, 固定写改地址, 跨集群管理则需要写 https://ip:port</span></span><br><span class="line">       <span class="attr">namespace:</span> <span class="string">dev</span> <span class="comment"># 同步到k8s的dev命名空间</span></span><br><span class="line">     <span class="attr">syncPolicy:</span></span><br><span class="line">       <span class="attr">automated:</span></span><br><span class="line">         <span class="attr">prune:</span> <span class="literal">true</span> <span class="comment"># 自动删除集群中仓库不存在的资源</span></span><br><span class="line">         <span class="attr">selfHeal:</span> <span class="literal">true</span> <span class="comment"># 集群资源被手动修改后, 自动恢复为仓库配置</span></span><br></pre></td></tr></table></figure>
+<pre><code>  &gt; 注意: 
+  &gt;
+  &gt; `destination.server`的地址需要根据集群修改
+  &gt;
+</code></pre>
+<blockquote>
+<ul>
+<li>本地集群(即<code>argocd</code>所在就是要部署的<code>k8s</code>集群): 固定写<code>https://kubernetes.default.svc</code></li>
+<li>跨集群部署: 需要写该集群<code>APIServer</code>的实际地址: <code>https://ip:port</code></li>
+</ul>
+<p>查看集群的<code>APIServer</code>地址:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看 kube-apiserver 的启动参数（包含监听地址）</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">cat</span> /etc/kubernetes/manifests/kube-apiserver.yaml | grep <span class="string">&quot;server-cert&quot;</span></span><br><span class="line"><span class="comment"># 或直接通过 kubectl 查看（需在目标集群有配置）</span></span><br><span class="line">kubectl cluster-info | grep <span class="string">&quot;Kubernetes control plane&quot;</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<pre><code>  ![argocd的application配置](argocd的application配置.png)
+</code></pre>
+<ul>
+<li>应用配置</li>
+</ul>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f app.yaml</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>验证同步状态</p>
+<p>安装<code>argocd</code>应用, 用于验证服务是否正常</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">   <span class="comment"># 1. 下载最新版本的 argocd CLI（也可指定版本，如 v2.12.0）</span></span><br><span class="line"><span class="comment"># 查看最新最稳定版本：https://github.com/argoproj/argo-cd/stable</span></span><br><span class="line">   VERSION=$(curl -L -s https://raw.githubusercontent.com/argoproj/argo-cd/stable/VERSION)</span><br><span class="line">curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/download/v<span class="variable">$VERSION</span>/argocd-linux-amd64</span><br><span class="line">   </span><br><span class="line">   <span class="built_in">sudo</span> install -m 555 argocd-linux-amd64 /usr/local/bin/argocd</span><br><span class="line">   <span class="built_in">rm</span> argocd-linux-amd64</span><br><span class="line">   </span><br><span class="line">   <span class="comment"># curl -sSL -o /usr/local/bin/argocd &quot;https://github.com/argoproj/argo-cd/releases/download/v3.0.16/argocd-linux-amd64&quot;</span></span><br><span class="line">      </span><br><span class="line">   </span><br><span class="line">   <span class="comment"># 2. 赋予执行权限</span></span><br><span class="line">   <span class="built_in">chmod</span> +x /usr/local/bin/argocd</span><br><span class="line">      </span><br><span class="line">   <span class="comment"># 3. 验证安装（出现版本号即成功）</span></span><br><span class="line">   argocd version --client</span><br></pre></td></tr></table></figure>
+<p>验证同步情况</p>
+   <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看应用状态（SYNC STATUS 应为 Synced）</span></span><br><span class="line">argocd app get nginx-dev</span><br><span class="line"><span class="comment"># 或通过控制台查看（访问步骤 2 暴露的 NodePort）</span></span><br></pre></td></tr></table></figure>
+<pre><code> 或者使用`k8s APID`验证
+</code></pre>
+   <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get applications -n &#123;namespace&#125;</span><br></pre></td></tr></table></figure>
+<pre><code> 验证结果中应用的同步状态为`Synced`
+   
+ 如果同步状态异常, 可以通过以下命令查看原因
+</code></pre>
+   <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe application &#123;app-name&#125; -n &#123;</span><br><span class="line">namespace&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>配置<code>Webhook</code>(可选)</p>
+<p><code>ArgoCD</code> 需要一个可被 <code>Gitee</code> 访问的 <code>URL</code> 接收 <code>Webhook</code> 事件，可通过 <code>NodePort</code> 或 <code>Ingress</code> 暴露临时暴露为 <code>NodePort</code>（生产环境建议用 <code>Ingress</code> + 域名）</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl patch service argocd-server -n argocd -p <span class="string">&#x27;&#123;&quot;spec&quot;:&#123;&quot;type&quot;:&quot;NodePort&quot;&#125;&#125;&#x27;</span></span><br><span class="line"><span class="comment"># 获取暴露的端口（如 30443）</span></span><br><span class="line">kubectl get service argocd-server -n argocd</span><br></pre></td></tr></table></figure>
+<p><code>Webhook URL</code> 格式：<code>http://&lt;集群节点IP&gt;:&lt;NodePort&gt;/api/webhook</code></p>
+<p>在<code>Gitee</code>仓库 -&gt; 管理 -&gt; <code>Webhook</code>添加</p>
+<p><img src="argocd%E9%85%8D%E7%BD%AEwebhook.png" alt="argocd配置webhook" /></p>
+</li>
+<li>
+<p>验证</p>
+<p>根据自己的<code>Application</code>配置文件, 在<code>Gitee</code>仓库中的对应位置添加一个部署文件做测试</p>
+  <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># manifests/overlays/dev/nginx/nginx.yaml</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span> <span class="comment"># api版本</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span> <span class="comment"># 资源对象类型</span></span><br><span class="line"><span class="attr">metadata:</span> <span class="comment"># 元数据定义</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx-demo</span> <span class="comment"># Pod的名称</span></span><br><span class="line">  <span class="attr">labels:</span> <span class="comment"># 定义Pod的标签</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">app</span> <span class="comment"># 自定义label标签, 名字为type, 值为app</span></span><br><span class="line">    <span class="attr">version:</span> <span class="string">v1</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">nginx-dev</span> <span class="comment"># 命名空间</span></span><br><span class="line"><span class="attr">spec:</span> <span class="comment"># 期望描述</span></span><br><span class="line">  <span class="attr">containers:</span> <span class="comment"># 容器描述</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span> <span class="comment"># 容器名称</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">nginx:1.25</span> <span class="comment"># 容器镜像</span></span><br><span class="line">      <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span> <span class="comment"># 镜像拉取策略 Always, Never, IfNotPresent</span></span><br><span class="line">      <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">title</span></span><br><span class="line">          <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">          <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">command:</span> [<span class="string">&quot;nginx&quot;</span>, <span class="string">&quot;-g&quot;</span>, <span class="string">&quot;daemon off;&quot;</span>] <span class="comment"># 启动后执行的命令</span></span><br><span class="line">      <span class="attr">workingDir:</span> <span class="string">/usr/share/nginx/html</span> <span class="comment"># 工作目录</span></span><br><span class="line">  <span class="attr">restartPolicy:</span> <span class="string">Always</span></span><br></pre></td></tr></table></figure>
+<p><img src="argocd%E9%AA%8C%E8%AF%81.png" alt="argocd验证" /></p>
+<blockquote>
+<p>注意:</p>
+<ol>
+<li>
+<p>需要提前创建<code>namespace</code></p>
+</li>
+<li>
+<p>如果状态不是<code>Running</code>则启动失败, 可以通过以下命令排查</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看启动过程中的描述</span></span><br><span class="line">kubectl describe po nginx-demo -n nginx-dev</span><br><span class="line"><span class="comment"># 查看上次启动中的错误</span></span><br><span class="line">kubectl logs nginx-demo -n nginx-dev -c nginx --previous</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</blockquote>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="部署配置"><a class="markdownIt-Anchor" href="#部署配置"></a> 部署配置</h3>
+<h4 id="什么是部署"><a class="markdownIt-Anchor" href="#什么是部署"></a> 什么是部署</h4>
+<p>部署是什么的概念应该不需要多说, 在<code>k8s</code>中关于部署配置, 我们其实是需要解决三个问题</p>
+<ol>
+<li>可以配置哪些资源</li>
+<li>什么情况下该配置哪些资源</li>
+<li>每种资源如何配置</li>
+</ol>
+<h4 id="部署资源"><a class="markdownIt-Anchor" href="#部署资源"></a> 部署资源</h4>
+<p>首先我们需要知道配置文件中可以配置哪些内容, 可以参考<a target="_blank" rel="noopener" href="https://www.cnblogs.com/misakivv/p/18304329">k8s资源清单</a>或者<a href="K8s资源清单.pdf">常用配置清单</a></p>
+<p>通过命令可以查看<code>k8s</code>可以部署的资源</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl api-resources</span><br></pre></td></tr></table></figure>
+<p>但通常情况下需要我们使用配置文件配置的资源并不多, 像<code>node</code>, <code>role</code>等一些配置只需要配置一次, 可能不需要配置文件. 常用做配置的主要有以下:</p>
+<table>
+<thead>
+<tr>
+<th>资源</th>
+<th>描述</th>
+<th>使用情形</th>
+<th>类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Deployment(deploy)</code></td>
+<td>可以看做<code>Pod</code>和<code>ReplicaSet</code>的管理组</td>
+<td>最常用的部署资源, 无状态服务使用</td>
+<td>工作负载类</td>
+</tr>
+<tr>
+<td><code>StatefulSet(sts)</code></td>
+<td>可以看做<code>Pod</code>和<code>ReplicaSet</code>的管理组</td>
+<td>有状态服务专用, <code>Pod</code>有固定标识符和持久存储</td>
+<td>工作负载类</td>
+</tr>
+<tr>
+<td><code>DaemonSet(ds)</code></td>
+<td>用于每个（或指定）<code>Node</code>上自动运行一个<code>Pod</code></td>
+<td>通常是伴生服务使用, 如日志收集</td>
+<td>工作负载类</td>
+</tr>
+<tr>
+<td><code>Job/CronJob</code></td>
+<td>调度任务</td>
+<td>任务型服务使用, 如一次性任务或定时任务</td>
+<td>工作负载类</td>
+</tr>
+<tr>
+<td><code>Service(svc)</code></td>
+<td>集群内持久服务入口，实现<code>Pod</code>间或外部服务访问负载均衡</td>
+<td>需要通信的服务使用</td>
+<td>服务发现与负载均衡</td>
+</tr>
+<tr>
+<td><code>Ingress</code></td>
+<td>七层路由，支持HTTP/S流量的准入、反向代理、SSL</td>
+<td>一般用于与外部通信</td>
+<td>服务发现与负载均衡</td>
+</tr>
+<tr>
+<td><code>PersistentVolume(pv)、PersistentVolumeClaim(pvc)</code></td>
+<td>PV是系统管理员提供的物理存储，PVC是用户申请的逻辑存储，两者绑定让Pod能持久存储</td>
+<td>需持久化存储使用</td>
+<td>存储管理</td>
+</tr>
+<tr>
+<td><code>StorageClass(sc)</code></td>
+<td>提供动态存储卷选项，简化PVC自动分配</td>
+<td>需持久化存储使用</td>
+<td>存储管理</td>
+</tr>
+<tr>
+<td><code>ConfigMap(cm)</code></td>
+<td>存储配置数据</td>
+<td>环境变量, 配置文件等</td>
+<td>配置与密钥</td>
+</tr>
+<tr>
+<td><code>Secret</code></td>
+<td>存储敏感数据</td>
+<td>密码, <code>token</code>等</td>
+<td>配置与密钥</td>
+</tr>
+<tr>
+<td><code>Namespace(ns)</code></td>
+<td>命名空间</td>
+<td>自创命名空间</td>
+<td>集群级管理</td>
+</tr>
+</tbody>
+</table>
+<h4 id="部署流程"><a class="markdownIt-Anchor" href="#部署流程"></a> 部署流程</h4>
+<h5 id="特点分析"><a class="markdownIt-Anchor" href="#特点分析"></a> 特点分析</h5>
+<p>现在我们以<code>mysql</code>为例, 在<code>k8s</code>中部署<code>mysql</code>服务</p>
+<p>以<code>mysql</code>为例是因为<code>mysql</code>具有以下特点</p>
+<ul>
+<li>外部访问</li>
+<li>持久化</li>
+<li>可以配置集群(此处是指<code>mysql</code>的主从复制)</li>
+</ul>
+<p>现在我们考虑一下搭建这个<code>mysql</code>的架构</p>
+<ul>
+<li>主库负责写入, 开启<code>binlog</code>日志</li>
+<li>从库负责读取, 通过<code>binlog</code>同步主库</li>
+<li>网络通信, 主从通过<code>Service</code>名称互相访问</li>
+<li>数据持久化, 使用<code>pvc</code>存储</li>
+</ul>
+<p>然后我们回想一下<code>mysql</code>搭建主从复制的过程</p>
+<ul>
+<li>搭建主库: 修改主库配置, 然后启动主库</li>
+<li>同步用户: 在主库中创建同步用户, 用于数据同步</li>
+<li>搭建从库: 修改从库配置, 然后启动从库</li>
+<li>执行同步操作: 从库启动后, 执行首次同步操作</li>
+</ul>
+<h5 id="前置资源"><a class="markdownIt-Anchor" href="#前置资源"></a> 前置资源</h5>
+<p>基于以上我们在创建之前首先需要两个资源</p>
+<ul>
+<li>命名空间, 我们搭建<code>mysql</code>服务的工作空间</li>
+<li><code>StorageClass</code>动态存储卷选项</li>
+</ul>
+<p>现在我们先把这两个内容处理好</p>
+<ol>
+<li>
+<p>命名空间</p>
+<ul>
+<li>
+<p><code>namespace</code>的<code>yaml</code>配置</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Namespace</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">test</span></span><br></pre></td></tr></table></figure>
+<p>多环境则需要创建多个<code>yaml</code>文件</p>
+<p><img src="%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E9%83%A8%E7%BD%B2.png" alt="命名空间部署" /></p>
+</li>
+<li>
+<p><code>argocd</code>关于<code>namespace</code>的<code>yaml</code>文件</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">argoproj.io/v1alpha1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Application</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">namespace</span> <span class="comment"># 应用名称</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">argocd</span> <span class="comment"># 必须在 argocd 命名空间</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">project:</span> <span class="string">default</span> <span class="comment"># argocd 项目</span></span><br><span class="line">  <span class="attr">source:</span></span><br><span class="line">    <span class="attr">repoURL:</span> <span class="string">https://gitee.com/xiao-lin/k8s-files.git</span> <span class="comment"># 仓库地址</span></span><br><span class="line">    <span class="attr">targetRevision:</span> <span class="string">master</span> <span class="comment"># 分支</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">manifests/base/namespace</span> <span class="comment"># 仓库中配置文件的相对路径</span></span><br><span class="line">  <span class="attr">destination:</span></span><br><span class="line">    <span class="attr">server:</span> <span class="string">https://kubernetes.default.svc</span> <span class="comment"># 如果是本地集群, 固定写改地址, 跨集群管理则需要写 https://ip:port</span></span><br><span class="line">    <span class="attr">namespace:</span> <span class="string">dev</span> <span class="comment"># 同步到k8s的dev命名空间</span></span><br><span class="line">  <span class="attr">syncPolicy:</span></span><br><span class="line">    <span class="attr">automated:</span></span><br><span class="line">      <span class="attr">prune:</span> <span class="literal">true</span> <span class="comment"># 自动删除集群中仓库不存在的资源</span></span><br><span class="line">      <span class="attr">selfHeal:</span> <span class="literal">true</span> <span class="comment"># 集群资源被手动修改后, 自动恢复为仓库配置</span></span><br></pre></td></tr></table></figure>
+<p><mark>注意别忘记应用</mark></p>
+<p><img src="%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E9%85%8D%E7%BD%AE%E9%83%A8%E7%BD%B2%E7%BB%93%E6%9E%9C.png" alt="命名空间配置部署结果" /></p>
+</li>
+</ul>
+</li>
+<li>
+<p><code>StorageClass</code></p>
+<ul>
+<li>
+<p>下载本地持久化卷的配置</p>
+<p>下载<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.24/deploy/local-path-storage.yaml">local-path-storage</a>文件, 内有一个<code>local-path</code>的<code>StorageClass</code></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># local-path</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Namespace</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">local-path-storage</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">local-path-provisioner-service-account</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">local-path-storage</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">local-path-provisioner-role</span></span><br><span class="line"><span class="attr">rules:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">apiGroups:</span> [ <span class="string">&quot;&quot;</span> ]</span><br><span class="line">    <span class="attr">resources:</span> [ <span class="string">&quot;nodes&quot;</span>, <span class="string">&quot;persistentvolumeclaims&quot;</span>, <span class="string">&quot;configmaps&quot;</span> ]</span><br><span class="line">    <span class="attr">verbs:</span> [ <span class="string">&quot;get&quot;</span>, <span class="string">&quot;list&quot;</span>, <span class="string">&quot;watch&quot;</span> ]</span><br><span class="line">  <span class="bullet">-</span> <span class="attr">apiGroups:</span> [ <span class="string">&quot;&quot;</span> ]</span><br><span class="line">    <span class="attr">resources:</span> [ <span class="string">&quot;endpoints&quot;</span>, <span class="string">&quot;persistentvolumes&quot;</span>, <span class="string">&quot;pods&quot;</span> ]</span><br><span class="line">    <span class="attr">verbs:</span> [ <span class="string">&quot;*&quot;</span> ]</span><br><span class="line">  <span class="bullet">-</span> <span class="attr">apiGroups:</span> [ <span class="string">&quot;&quot;</span> ]</span><br><span class="line">    <span class="attr">resources:</span> [ <span class="string">&quot;events&quot;</span> ]</span><br><span class="line">    <span class="attr">verbs:</span> [ <span class="string">&quot;create&quot;</span>, <span class="string">&quot;patch&quot;</span> ]</span><br><span class="line">  <span class="bullet">-</span> <span class="attr">apiGroups:</span> [ <span class="string">&quot;storage.k8s.io&quot;</span> ]</span><br><span class="line">    <span class="attr">resources:</span> [ <span class="string">&quot;storageclasses&quot;</span> ]</span><br><span class="line">    <span class="attr">verbs:</span> [ <span class="string">&quot;get&quot;</span>, <span class="string">&quot;list&quot;</span>, <span class="string">&quot;watch&quot;</span> ]</span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRoleBinding</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">local-path-provisioner-bind</span></span><br><span class="line"><span class="attr">roleRef:</span></span><br><span class="line">  <span class="attr">apiGroup:</span> <span class="string">rbac.authorization.k8s.io</span></span><br><span class="line">  <span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">local-path-provisioner-role</span></span><br><span class="line"><span class="attr">subjects:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">local-path-provisioner-service-account</span></span><br><span class="line">    <span class="attr">namespace:</span> <span class="string">local-path-storage</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">local-path-provisioner</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">local-path-storage</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">local-path-provisioner</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">local-path-provisioner</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">serviceAccountName:</span> <span class="string">local-path-provisioner-service-account</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">local-path-provisioner</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">rancher/local-path-provisioner:v0.0.24</span></span><br><span class="line">          <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">          <span class="attr">command:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">local-path-provisioner</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--debug</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">start</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--config</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">/etc/config/config.json</span></span><br><span class="line">          <span class="attr">volumeMounts:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">config-volume</span></span><br><span class="line">              <span class="attr">mountPath:</span> <span class="string">/etc/config/</span></span><br><span class="line">          <span class="attr">env:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">POD_NAMESPACE</span></span><br><span class="line">              <span class="attr">valueFrom:</span></span><br><span class="line">                <span class="attr">fieldRef:</span></span><br><span class="line">                  <span class="attr">fieldPath:</span> <span class="string">metadata.namespace</span></span><br><span class="line">      <span class="attr">volumes:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">config-volume</span></span><br><span class="line">          <span class="attr">configMap:</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">local-path-config</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">storage.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">StorageClass</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">local-path</span></span><br><span class="line"><span class="attr">provisioner:</span> <span class="string">rancher.io/local-path</span></span><br><span class="line"><span class="attr">volumeBindingMode:</span> <span class="string">WaitForFirstConsumer</span></span><br><span class="line"><span class="attr">reclaimPolicy:</span> <span class="string">Delete</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">local-path-config</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">local-path-storage</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">config.json:</span> <span class="string">|-</span></span><br><span class="line"><span class="string">    &#123;</span></span><br><span class="line"><span class="string">      &quot;nodePathMap&quot;:[</span></span><br><span class="line"><span class="string">        &#123;</span></span><br><span class="line"><span class="string">          &quot;node&quot;:&quot;DEFAULT_PATH_FOR_NON_LISTED_NODES&quot;,</span></span><br><span class="line"><span class="string">          &quot;paths&quot;:[&quot;/data/mysql/local-path-provisioner&quot;]</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      ]</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string"></span>  <span class="attr">setup:</span> <span class="string">|-</span></span><br><span class="line"><span class="string">    #!/bin/sh</span></span><br><span class="line"><span class="string">    set -eu</span></span><br><span class="line"><span class="string">    mkdir -m 0777 -p &quot;$VOL_DIR&quot;</span></span><br><span class="line"><span class="string"></span>  <span class="attr">teardown:</span> <span class="string">|-</span></span><br><span class="line"><span class="string">    #!/bin/sh</span></span><br><span class="line"><span class="string">    set -eu</span></span><br><span class="line"><span class="string">    rm -rf &quot;$VOL_DIR&quot;</span></span><br><span class="line"><span class="string"></span>  <span class="attr">helperPod.yaml:</span> <span class="string">|-</span></span><br><span class="line"><span class="string">    apiVersion: v1</span></span><br><span class="line"><span class="string">    kind: Pod</span></span><br><span class="line"><span class="string">    metadata:</span></span><br><span class="line"><span class="string">      name: helper-pod</span></span><br><span class="line"><span class="string">    spec:</span></span><br><span class="line"><span class="string">      containers:</span></span><br><span class="line"><span class="string">        - name: helper-pod</span></span><br><span class="line"><span class="string">          image: busybox</span></span><br><span class="line"><span class="string">          imagePullPolicy: IfNotPresent</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p><code>StorageClass</code>的<code>yaml</code>配置</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">storage.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">StorageClass</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-storage-class</span></span><br><span class="line"><span class="attr">provisioner:</span> <span class="string">rancher.io/local-path</span>  <span class="comment"># 存储后端驱动（根据实际环境修改）</span></span><br><span class="line">  <span class="comment"># parameters:</span></span><br><span class="line">  <span class="comment"># 存储类型（根据后端支持调整，如 gp2、gp3、ssd 等）</span></span><br><span class="line">  <span class="comment"># type: gp3</span></span><br><span class="line">  <span class="comment"># 是否加密（可选）</span></span><br><span class="line">  <span class="comment"># encrypted: &quot;true&quot;</span></span><br><span class="line"><span class="comment"># 其他参数根据存储后端添加（如 Ceph 需要指定 pool 等）</span></span><br><span class="line"><span class="attr">reclaimPolicy:</span> <span class="string">Retain</span>  <span class="comment"># MySQL 数据建议保留，避免误删</span></span><br><span class="line"><span class="attr">allowVolumeExpansion:</span> <span class="literal">false</span>  <span class="comment"># 允许动态扩容（MySQL 数据增长可能需要）</span></span><br><span class="line"><span class="attr">volumeBindingMode:</span> <span class="string">WaitForFirstConsumer</span>  <span class="comment"># 延迟绑定 PV（或 Immediate 立即绑定）</span></span><br><span class="line"><span class="attr">allowedTopologies:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">matchLabelExpressions:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">        <span class="attr">values:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">k8s-master</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">k8s-node-01</span>  <span class="comment"># 允许使用的节点名称（替换为你的节点名）</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">k8s-node-02</span>  <span class="comment"># 可添加多个节点</span></span><br></pre></td></tr></table></figure>
+<p><img src="storageclas%E9%85%8D%E7%BD%AE%E7%BB%93%E6%9E%9C.png" alt="storageclas配置结果" /></p>
+<blockquote>
+<ol>
+<li>
+<p><code>provisioner</code>（存储驱动）：</p>
+<p>根据你的存储后端修改，常见选项：</p>
+<ul>
+<li><code>AWS EBS</code>: <code>kubernetes.io/aws-ebs</code></li>
+<li><code>Ceph RBD</code>: <code>rbd.csi.ceph.com</code></li>
+<li><code>NFS</code>: <code>k8s.io/minikube-hostpath</code>（<code>minikube</code> 测试用）或第三方 <code>NFS provisioner</code></li>
+<li>本地存储: <code>kubernetes.io/no-provisioner</code>（需手动创建 <code>PV</code>）</li>
+<li>阿里云盘: <code>diskplugin.csi.alibabacloud.com</code></li>
+<li><code>rancher.io/local-path</code>: <code>Rancher</code> 提供的本地路径存储（自动管理节点本地目录）,需要第一步中下载的<code>local-path-storage.yaml</code>文件支持</li>
+</ul>
+</li>
+<li>
+<p><code>parameters</code>（存储参数）：</p>
+<ul>
+<li><code>type: gp3</code>：<code>AWS</code> 通用型 <code>SSD</code>，适合 <code>MySQL</code> 等数据库（性能与成本平衡）</li>
+<li>其他后端示例：</li>
+<li><code>Ceph</code>: <code>pool: mysql-pool</code>, <code>imageFeatures: layering</code></li>
+<li>本地存储：无需额外参数</li>
+</ul>
+</li>
+<li>
+<p><code>reclaimPolicy</code>: <code>Retain</code>：</p>
+<ul>
+<li>保留 <code>PV</code> 即使 <code>PVC</code>被删除，防止 <code>MySQL</code> 数据意外丢失</li>
+<li>生产环境强烈建议使用 <code>Retain</code>，测试环境可考虑 <code>Delete</code></li>
+</ul>
+</li>
+<li>
+<p><code>allowVolumeExpansion</code>: <code>true</code>：</p>
+<ul>
+<li>允许通过修改 <code>PVC</code>的 <code>storage</code> 字段动态扩容，适应 <code>MySQL</code> 数据增长</li>
+</ul>
+</li>
+<li>
+<p><code>mountOptions</code>（挂载选项）：</p>
+<ul>
+<li><code>uid=999</code> 和 <code>gid=999</code>：匹配 <code>MySQL</code>容器内的用户权限（避免权限问题）</li>
+<li><code>dir_mode</code> 和 <code>file_mode</code>：设置目录和文件权限为 <code>777</code>（或根据安全需求调整）</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<p><mark>此处不添加自己的<code>StorageClass</code>也可以, 可以使用<code>Rancher</code>提供的<code>StorageClass</code>, 但需要修改其回收策略, 名称为<code>local-path</code></mark></p>
+</li>
+<li>
+<p><code>argocd</code>关于<code>StorageClass</code>的<code>yaml</code>配置</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">argoproj.io/v1alpha1</span></span><br><span class="line"> <span class="attr">kind:</span> <span class="string">Application</span></span><br><span class="line"> <span class="attr">metadata:</span></span><br><span class="line">   <span class="attr">name:</span> <span class="string">storage-class</span> <span class="comment"># 应用名称</span></span><br><span class="line">   <span class="attr">namespace:</span> <span class="string">argocd</span> <span class="comment"># 必须在 argocd 命名空间</span></span><br><span class="line"> <span class="attr">spec:</span></span><br><span class="line">   <span class="attr">project:</span> <span class="string">default</span> <span class="comment"># argocd 项目</span></span><br><span class="line">   <span class="attr">source:</span></span><br><span class="line">     <span class="attr">repoURL:</span> <span class="string">https://gitee.com/xiao-lin/k8s-files.git</span> <span class="comment"># 仓库地址</span></span><br><span class="line">     <span class="attr">targetRevision:</span> <span class="string">master</span> <span class="comment"># 分支</span></span><br><span class="line">     <span class="attr">path:</span> <span class="string">manifests/base/storageclass</span> <span class="comment"># 仓库中配置文件的相对路径</span></span><br><span class="line">   <span class="attr">destination:</span></span><br><span class="line">     <span class="attr">server:</span> <span class="string">https://kubernetes.default.svc</span> <span class="comment"># 如果是本地集群, 固定写改地址, 跨集群管理则需要写 https://ip:port</span></span><br><span class="line">     <span class="attr">namespace:</span> <span class="string">dev</span> <span class="comment"># 同步到k8s的dev命名空间</span></span><br><span class="line">   <span class="attr">syncPolicy:</span></span><br><span class="line">     <span class="attr">automated:</span></span><br><span class="line">       <span class="attr">prune:</span> <span class="literal">true</span> <span class="comment"># 自动删除集群中仓库不存在的资源</span></span><br><span class="line">    <span class="attr">selfHeal:</span> <span class="literal">true</span> <span class="comment"># 集群资源被手动修改后, 自动恢复为仓库配置</span></span><br></pre></td></tr></table></figure>
+<p><mark>关于<code>argocd</code>的配置没有特殊情况, 下面将不再重复</mark></p>
+<p><img src="StorageClass%E9%85%8D%E7%BD%AE%E9%83%A8%E7%BD%B2%E7%BB%93%E6%9E%9C.png" alt="StorageClass配置部署结果" /></p>
+</li>
+</ul>
+</li>
+</ol>
+<h5 id="部署步骤"><a class="markdownIt-Anchor" href="#部署步骤"></a> 部署步骤</h5>
+<p>前置资源已经备好, 现在我们在测试环境下进行<code>mysql</code>服务部署</p>
+<ol>
+<li>
+<p>创建<code>Secret</code>存储敏感信息</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Secret</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-secrets</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">test</span></span><br><span class="line"><span class="attr">type:</span> <span class="string">Opaque</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="comment"># 密码需用 base64 编码（示例：echo -n &#x27;密码&#x27; | base64）</span></span><br><span class="line">  <span class="attr">root-password:</span> <span class="string">MTIzNDU2</span>  <span class="comment"># 示例密码：123456</span></span><br><span class="line">  <span class="attr">repl-password:</span> <span class="string">MTIzNDU2</span>  <span class="comment"># 复制用户密码：123456</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>创建<code>ConfigMap</code>配置主从参数</p>
+<p>先把主库和从库的部分配置准备好, 主库配置中有<code>server-id</code>配置, 从库中没有, 从库需要使用启动参数添加</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-config</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">test</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="comment"># 主库配置</span></span><br><span class="line">  <span class="attr">master.cnf:</span> <span class="string">|</span></span><br><span class="line"><span class="string">    [mysqld]</span></span><br><span class="line"><span class="string">    server-id=1</span></span><br><span class="line"><span class="string">    log-bin=mysql-bin</span></span><br><span class="line"><span class="string">    binlog_format=ROW</span></span><br><span class="line"><span class="string">    binlog_do_db=testdb  # 需要同步的数据库</span></span><br><span class="line"><span class="string">    binlog_ignore_db=mysql  # 忽略同步的数据库</span></span><br><span class="line"><span class="string">    binlog_ignore_db=information_schema</span></span><br><span class="line"><span class="string">    binlog_ignore_db=sys</span></span><br><span class="line"><span class="string">    binlog_ignore_db=information_schema</span></span><br><span class="line"><span class="string">    binlog_ignore_db=performance_schema</span></span><br><span class="line"><span class="string">    character-set-server=utf8mb4</span></span><br><span class="line"><span class="string">    collation-server=utf8mb4_unicode_ci</span></span><br><span class="line"><span class="string">    # default-authentication-plugin=mysql_native_password</span></span><br><span class="line"><span class="string">    max_connections=1000</span></span><br><span class="line"><span class="string">    # gtid-mode=ON</span></span><br><span class="line"><span class="string">    # enforce-gtid-consistency=ON</span></span><br><span class="line"><span class="string">    default-time-zone=&#x27;+8:00&#x27;</span></span><br><span class="line"><span class="string"></span>  <span class="comment"># 从库配置</span></span><br><span class="line">  <span class="attr">slave.cnf:</span> <span class="string">|</span></span><br><span class="line"><span class="string">    [mysqld]</span></span><br><span class="line"><span class="string">    relay_log=mysql-relay-bin.log</span></span><br><span class="line"><span class="string">    log-bin=mysql-bin  # 从库也开启 binlog（可选）</span></span><br><span class="line"><span class="string">    read_only=1  # 从库只读</span></span><br><span class="line"><span class="string">    replicate_do_db=testdb  # 需要同步的数据库</span></span><br><span class="line"><span class="string">    replicate_ignore_db=mysql</span></span><br><span class="line"><span class="string">    replicate_ignore_db=information_schema</span></span><br><span class="line"><span class="string">    replicate_ignore_db=information_schema</span></span><br><span class="line"><span class="string">    replicate_ignore_db=performance_schema</span></span><br><span class="line"><span class="string">    character-set-server=utf8mb4</span></span><br><span class="line"><span class="string">    collation-server=utf8mb4_unicode_ci</span></span><br><span class="line"><span class="string">    max_connections=1000</span></span><br><span class="line"><span class="string">    # gtid-mode=ON</span></span><br><span class="line"><span class="string">    # enforce-gtid-consistency=ON</span></span><br><span class="line"><span class="string">    default-time-zone=&#x27;+8:00&#x27;</span></span><br><span class="line"><span class="string">    skip_replica_start = 0 # 启动时自动开始同步</span></span><br></pre></td></tr></table></figure>
+<p><img src="mysql-config%E7%9A%84ConfigMap.png" alt="mysql-config的ConfigMap" /></p>
+</li>
+<li>
+<p>创建持久化存储</p>
+<p>主库</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolumeClaim</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-master-pvc</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">test</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">    <span class="attr">requests:</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="string">10Gi</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">mysql-storage-class</span>  <span class="comment"># 集群实际的 StorageClass</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>部署主库</p>
+<p><code>StatefulSet</code></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 主库 StatefulSet</span></span><br><span class="line">   <span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line">   <span class="attr">kind:</span> <span class="string">StatefulSet</span></span><br><span class="line">   <span class="attr">metadata:</span></span><br><span class="line">     <span class="attr">name:</span> <span class="string">mysql-master-sts</span></span><br><span class="line">     <span class="attr">namespace:</span> <span class="string">test</span></span><br><span class="line">     <span class="attr">labels:</span></span><br><span class="line">       <span class="attr">app:</span> <span class="string">mysql</span></span><br><span class="line">       <span class="attr">role:</span> <span class="string">master</span></span><br><span class="line">   <span class="attr">spec:</span></span><br><span class="line">     <span class="attr">serviceName:</span> <span class="string">mysql-master-svc</span></span><br><span class="line">     <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">     <span class="attr">selector:</span></span><br><span class="line">       <span class="attr">matchLabels:</span></span><br><span class="line">         <span class="attr">app:</span> <span class="string">mysql</span></span><br><span class="line">         <span class="attr">role:</span> <span class="string">master</span></span><br><span class="line">     <span class="attr">template:</span></span><br><span class="line">       <span class="attr">metadata:</span></span><br><span class="line">         <span class="attr">labels:</span></span><br><span class="line">           <span class="attr">app:</span> <span class="string">mysql</span></span><br><span class="line">           <span class="attr">role:</span> <span class="string">master</span></span><br><span class="line">       <span class="attr">spec:</span></span><br><span class="line">         <span class="attr">containers:</span></span><br><span class="line">           <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql-master</span></span><br><span class="line">             <span class="attr">image:</span> <span class="string">mysql:8.4.6</span></span><br><span class="line">             <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">             <span class="attr">ports:</span></span><br><span class="line">               <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">3306</span></span><br><span class="line">             <span class="attr">env:</span></span><br><span class="line">               <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">MYSQL_ROOT_PASSWORD</span></span><br><span class="line">                 <span class="attr">valueFrom:</span> <span class="comment"># 配置环境变量值的来源</span></span><br><span class="line">                   <span class="attr">secretKeyRef:</span></span><br><span class="line">                     <span class="attr">name:</span> <span class="string">mysql-secrets</span>  <span class="comment"># 前面为mysql配置的Secrets的名称</span></span><br><span class="line">                     <span class="attr">key:</span> <span class="string">root-password</span>   <span class="comment"># 前面为mysql配置的Secrets的中data项</span></span><br><span class="line">             <span class="attr">volumeMounts:</span></span><br><span class="line">               <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">master-config</span> <span class="comment"># 挂载数据卷</span></span><br><span class="line">                 <span class="attr">mountPath:</span> <span class="string">/etc/mysql/conf.d/master.cnf</span> <span class="comment"># 挂载路径, 前面 ConfigMap 配置中的主库配置名称</span></span><br><span class="line">                 <span class="attr">subPath:</span> <span class="string">master.cnf</span></span><br><span class="line">               <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">master-data</span></span><br><span class="line">                 <span class="attr">mountPath:</span> <span class="string">/var/lib</span></span><br><span class="line">                 <span class="attr">subPath:</span> <span class="string">mysql</span></span><br><span class="line">             <span class="comment"># 健康检查</span></span><br><span class="line">             <span class="attr">livenessProbe:</span></span><br><span class="line">               <span class="attr">exec:</span></span><br><span class="line">                 <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;mysqladmin ping -u root -p\&quot;$MYSQL_ROOT_PASSWORD\&quot;&quot;</span>]</span><br><span class="line">               <span class="attr">initialDelaySeconds:</span> <span class="number">30</span></span><br><span class="line">               <span class="attr">periodSeconds:</span> <span class="number">10</span></span><br><span class="line">             <span class="attr">readinessProbe:</span></span><br><span class="line">               <span class="attr">exec:</span></span><br><span class="line">                 <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;mysql -u root -p\&quot;$MYSQL_ROOT_PASSWORD\&quot; -e &#x27;SELECT 1&#x27;&quot;</span>]</span><br><span class="line">               <span class="attr">initialDelaySeconds:</span> <span class="number">5</span></span><br><span class="line">               <span class="attr">periodSeconds:</span> <span class="number">5</span></span><br><span class="line">             <span class="attr">securityContext:</span></span><br><span class="line">               <span class="attr">readOnlyRootFilesystem:</span> <span class="literal">false</span></span><br><span class="line">         <span class="attr">volumes:</span></span><br><span class="line">           <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">master-config</span> <span class="comment"># 数据卷名称, 同前面 volumeMounts 中挂载的数据卷名称匹配</span></span><br><span class="line">             <span class="attr">configMap:</span></span><br><span class="line">               <span class="attr">name:</span> <span class="string">mysql-config</span> <span class="comment"># 前面为mysql配置的ConfigMap的名称</span></span><br><span class="line">           <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">master-data</span></span><br><span class="line">             <span class="attr">persistentVolumeClaim:</span></span><br><span class="line">               <span class="attr">claimName:</span> <span class="string">mysql-master-pvc</span> <span class="comment"># 前面配置的持久化存储  </span></span><br></pre></td></tr></table></figure>
+<p><code>Service</code></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 主库 Service</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-master-svc</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">test</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">mysql</span></span><br><span class="line">    <span class="attr">role:</span> <span class="string">master</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">3306</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">3306</span></span><br><span class="line">  <span class="attr">clusterIP:</span> <span class="string">None</span>  <span class="comment"># Headless Service，便于从库通过域名访问</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>部署从库</p>
+<p>由于我们在部署时, 同时将文件上传, 可能出现主库未启动, 从库就开始部署了, 我也不知道会出现什么问题, 所以我先将从库中的<code>replicas</code>置为<code>0</code>, 待主库启动完成并正常运行后再将<code>replicas</code>置为<code>2</code>, 从而达到目的</p>
+<p><code>StatefulSet</code></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 从库 StatefulSet</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">StatefulSet</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-slave-sts</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">test</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">mysql</span></span><br><span class="line">    <span class="attr">role:</span> <span class="string">slave</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">serviceName:</span> <span class="string">mysql-slave-svc</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">mysql</span></span><br><span class="line">      <span class="attr">role:</span> <span class="string">slave</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">mysql</span></span><br><span class="line">        <span class="attr">role:</span> <span class="string">slave</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">securityContext:</span></span><br><span class="line">        <span class="attr">runAsUser:</span> <span class="number">0</span></span><br><span class="line">        <span class="attr">runAsGroup:</span> <span class="number">0</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql-slave</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">mysql:8.4.6</span></span><br><span class="line">          <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">          <span class="attr">ports:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">3306</span></span><br><span class="line"><span class="comment">#          args:</span></span><br><span class="line"><span class="comment">#            - &quot;--server-id=$(echo $HOSTNAME | awk -F &#x27;-&#x27; &#x27;&#123;print $NF + 101&#125;&#x27;)&quot;</span></span><br><span class="line">          <span class="attr">env:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">MYSQL_ROOT_PASSWORD</span></span><br><span class="line">              <span class="attr">valueFrom:</span> <span class="comment"># 配置环境变量值的来源</span></span><br><span class="line">                <span class="attr">secretKeyRef:</span></span><br><span class="line">                  <span class="attr">name:</span> <span class="string">mysql-secrets</span>  <span class="comment"># 前面为mysql配置的Secrets的名称</span></span><br><span class="line">                  <span class="attr">key:</span> <span class="string">root-password</span>   <span class="comment"># 前面为mysql配置的Secrets的中data项</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">MASTER_MYSQL_ROOT_PASSWORD</span></span><br><span class="line">              <span class="attr">valueFrom:</span> <span class="comment"># 配置环境变量值的来源</span></span><br><span class="line">                <span class="attr">secretKeyRef:</span></span><br><span class="line">                  <span class="attr">name:</span> <span class="string">mysql-secrets</span>  <span class="comment"># 前面为mysql配置的Secrets的名称</span></span><br><span class="line">                  <span class="attr">key:</span> <span class="string">root-password</span>   <span class="comment"># 前面为mysql配置的Secrets的中data项</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">REPLICATION_USER</span></span><br><span class="line">              <span class="attr">value:</span> <span class="string">repl_user</span>  <span class="comment"># 复制用户名</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">REPLICATION_PASSWORD</span></span><br><span class="line">              <span class="attr">valueFrom:</span></span><br><span class="line">                <span class="attr">secretKeyRef:</span></span><br><span class="line">                  <span class="attr">name:</span> <span class="string">mysql-secrets</span></span><br><span class="line">                  <span class="attr">key:</span> <span class="string">repl-password</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">MASTER_HOST</span></span><br><span class="line">              <span class="attr">value:</span> <span class="string">mysql-master-svc.test.svc.cluster.local</span>  <span class="comment"># 主库域名, 格式为 &#123;master-service-name&#125;.&#123;namespace-name&#125;.svc.cluster.local</span></span><br><span class="line">          <span class="attr">volumeMounts:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">slave-config</span> <span class="comment"># 挂载数据卷</span></span><br><span class="line">              <span class="attr">mountPath:</span> <span class="string">/etc/mysql/conf.d/slave.cnf</span> <span class="comment"># 挂载路径, 前面 ConfigMap 配置中的主库配置名称</span></span><br><span class="line">              <span class="attr">subPath:</span> <span class="string">slave.cnf</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">slave-data</span></span><br><span class="line">              <span class="attr">mountPath:</span> <span class="string">/var/lib</span></span><br><span class="line">              <span class="attr">subPath:</span> <span class="string">mysql</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-script</span></span><br><span class="line">              <span class="attr">mountPath:</span> <span class="string">/docker-entrypoint-initdb.d</span>  <span class="comment"># 初始化脚本目录</span></span><br><span class="line">          <span class="comment"># 健康检查</span></span><br><span class="line">          <span class="attr">livenessProbe:</span></span><br><span class="line">            <span class="attr">exec:</span></span><br><span class="line">              <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;mysqladmin ping -u root -p\&quot;$MYSQL_ROOT_PASSWORD\&quot;&quot;</span>]</span><br><span class="line">            <span class="attr">initialDelaySeconds:</span> <span class="number">30</span></span><br><span class="line">            <span class="attr">periodSeconds:</span> <span class="number">10</span></span><br><span class="line">          <span class="attr">readinessProbe:</span></span><br><span class="line">            <span class="attr">exec:</span></span><br><span class="line">              <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;mysql -u root -p\&quot;$MYSQL_ROOT_PASSWORD\&quot; -e &#x27;SELECT 1&#x27;&quot;</span>]</span><br><span class="line">            <span class="attr">initialDelaySeconds:</span> <span class="number">5</span></span><br><span class="line">            <span class="attr">periodSeconds:</span> <span class="number">5</span></span><br><span class="line">      <span class="attr">volumes:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">slave-config</span> <span class="comment"># 数据卷名称, 同前面 volumeMounts 中挂载的数据卷名称匹配</span></span><br><span class="line">          <span class="attr">configMap:</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">mysql-config</span> <span class="comment"># 前面为mysql配置的ConfigMap的名称</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">slave-data</span></span><br><span class="line">          <span class="attr">persistentVolumeClaim:</span></span><br><span class="line">            <span class="attr">claimName:</span> <span class="string">local-path</span> <span class="comment"># 前面配置的持久化存储</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-script</span></span><br><span class="line">          <span class="attr">configMap:</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">mysql-replication-script</span>  <span class="comment"># 引用初始化脚本的 ConfigMap, 在下一步配置</span></span><br><span class="line">  <span class="attr">volumeClaimTemplates:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line">      <span class="attr">kind:</span> <span class="string">PersistentVolumeClaim</span></span><br><span class="line">      <span class="attr">metadata:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">slave-data</span></span><br><span class="line">        <span class="attr">namespace:</span> <span class="string">test</span></span><br><span class="line">      <span class="attr">spec:</span></span><br><span class="line">        <span class="attr">accessModes:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">        <span class="attr">resources:</span></span><br><span class="line">          <span class="attr">requests:</span></span><br><span class="line">            <span class="attr">storage:</span> <span class="string">10Gi</span></span><br><span class="line">            <span class="attr">cpu:</span> <span class="string">500m</span></span><br><span class="line">            <span class="attr">memory:</span> <span class="string">2Gi</span></span><br><span class="line">        <span class="attr">storageClassName:</span> <span class="string">local-path</span></span><br></pre></td></tr></table></figure>
+<p><code>Service</code></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 从库 Service</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-slave-svc</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">test</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">mysql</span></span><br><span class="line">    <span class="attr">role:</span> <span class="string">slave</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">3306</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">3306</span></span><br><span class="line">  <span class="attr">clusterIP:</span> <span class="string">None</span>  <span class="comment"># Headless Service，便于从库通过域名访问</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>创建主从复制初始化脚本</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-replication-script</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">test</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">init-replication.sh:</span> <span class="string">|</span></span><br><span class="line"><span class="string">    #!/bin/bash</span></span><br><span class="line"><span class="string">    set -e</span></span><br><span class="line"><span class="string">    echo &quot;从库初始化主库内容开始&quot;</span></span><br><span class="line"><span class="string">    echo &quot;USER: $USER&quot;</span></span><br><span class="line"><span class="string">    echo &quot;HOME: $HOME&quot;</span></span><br><span class="line"><span class="string">    # 动态生成 server-id（100 + Pod 序号）</span></span><br><span class="line"><span class="string">    # 假设 POD_NAME 格式为 mysql-slave-xxx-&lt;序号&gt;，提取最后一段作为序号</span></span><br><span class="line"><span class="string">    echo &quot;host name $HOSTNAME&quot;</span></span><br><span class="line"><span class="string">    SERVER_ID=$(echo $HOSTNAME | awk -F &#x27;-&#x27; &#x27;&#123;print $NF + 101&#125;&#x27;)</span></span><br><span class="line"><span class="string">    echo &quot;server-id: $SERVER_ID&quot;</span></span><br><span class="line"><span class="string">    # 执行当前脚本时容器将mysql临时启动, 此时的server-id因为没有在配置文件中配置, 所以为1, 通过sql语句修改server-id, 使其不与主库冲突</span></span><br><span class="line"><span class="string">    mysql -u root -p&quot;$MYSQL_ROOT_PASSWORD&quot; -e &quot;SET GLOBAL server_id=$SERVER_ID\G&quot;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line">    <span class="comment"># mysql如果内容为空会启动两次, 第一次临时启动会初始化一些内容并执行添加的脚本, 第二次启动才是正式使用</span></span><br><span class="line">    <span class="comment"># 如果不将server-id以配置文件的方式添加, 第二次启动时, mysql的server-id将重置为1</span></span><br><span class="line">    <span class="string">cat</span> <span class="string">&gt;</span> <span class="string">$HOME/.my.cnf</span> <span class="string">&lt;&lt;</span> <span class="string">EOF</span></span><br><span class="line">    [<span class="string">mysqld</span>]</span><br><span class="line">    <span class="string">server-id=$SERVER_ID</span></span><br><span class="line">    <span class="string">EOF</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 等待主库启动</span></span><br><span class="line">    <span class="string">until</span> <span class="string">mysql</span> <span class="string">-h</span> <span class="string">&quot;$MASTER_HOST&quot;</span> <span class="string">-u</span> <span class="string">root</span> <span class="string">-p&quot;$MASTER_MYSQL_ROOT_PASSWORD&quot;</span> <span class="string">-e</span> <span class="string">&quot;SELECT 1&quot;</span><span class="string">;</span> <span class="string">do</span></span><br><span class="line">      <span class="string">echo</span> <span class="string">&quot;等待主库启动...&quot;</span></span><br><span class="line">      <span class="string">sleep</span> <span class="number">5</span></span><br><span class="line">    <span class="string">done</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 在主库创建复制用户</span></span><br><span class="line">    <span class="string">mysql</span> <span class="string">-h</span> <span class="string">&quot;$MASTER_HOST&quot;</span> <span class="string">-u</span> <span class="string">root</span> <span class="string">-p&quot;$MASTER_MYSQL_ROOT_PASSWORD&quot;</span> <span class="string">&lt;&lt;EOF</span></span><br><span class="line">    <span class="string">CREATE</span> <span class="string">USER</span> <span class="string">IF</span> <span class="string">NOT</span> <span class="string">EXISTS</span> <span class="string">&#x27;$REPLICATION_USER&#x27;</span><span class="string">@&#x27;%&#x27;</span> <span class="string">IDENTIFIED</span> <span class="string">BY</span> <span class="string">&#x27;$REPLICATION_PASSWORD&#x27;</span><span class="string">;</span></span><br><span class="line">    <span class="string">GRANT</span> <span class="string">REPLICATION</span> <span class="string">SLAVE</span> <span class="string">ON</span> <span class="string">*.*</span> <span class="string">TO</span> <span class="string">&#x27;$REPLICATION_USER&#x27;</span><span class="string">@&#x27;%&#x27;;</span></span><br><span class="line">    <span class="string">FLUSH</span> <span class="string">PRIVILEGES;</span></span><br><span class="line">    <span class="string">EOF</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 获取主库 binlog 位置</span></span><br><span class="line">    <span class="string">MASTER_STATUS=$(mysql</span> <span class="string">-h</span> <span class="string">&quot;$MASTER_HOST&quot;</span> <span class="string">-u</span> <span class="string">root</span> <span class="string">-p&quot;$MYSQL_ROOT_PASSWORD&quot;</span> <span class="string">-e</span> <span class="string">&quot;SHOW BINARY LOG STATUS\G&quot;</span> <span class="string">|</span> <span class="string">grep</span> <span class="string">-E</span> <span class="string">&#x27;File|Position&#x27;</span><span class="string">)</span></span><br><span class="line">    <span class="string">echo</span> <span class="string">&quot;主库状态: $MASTER_STATUS&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="string">MASTER_LOG_FILE=$(echo</span> <span class="string">&quot;$MASTER_STATUS&quot;</span> <span class="string">|</span> <span class="string">grep</span> <span class="string">File</span> <span class="string">|</span> <span class="string">awk</span> <span class="string">&#x27;&#123;print $2&#125;&#x27;</span><span class="string">)</span></span><br><span class="line">    <span class="string">echo</span> <span class="string">&quot;主库日志文件: $MASTER_LOG_FILE&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="string">MASTER_LOG_POS=$(echo</span> <span class="string">&quot;$MASTER_STATUS&quot;</span> <span class="string">|</span> <span class="string">grep</span> <span class="string">Position</span> <span class="string">|</span> <span class="string">awk</span> <span class="string">&#x27;&#123;print $2&#125;&#x27;</span><span class="string">)</span></span><br><span class="line">    <span class="string">echo</span> <span class="string">&quot;主库日志定位: $MASTER_LOG_POS&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 获取主库的历史数据并导出为sql</span></span><br><span class="line">    <span class="string">mysqldump</span> <span class="string">-h</span> <span class="string">&quot;$MASTER_HOST&quot;</span> <span class="string">-u</span> <span class="string">root</span> <span class="string">-p&quot;$MYSQL_ROOT_PASSWORD&quot;</span> <span class="string">--routines</span> <span class="string">--events</span> <span class="string">--databases</span> <span class="string">testdb</span> <span class="string">&gt;</span> <span class="string">/tmp/master_repl_backup.sql</span></span><br><span class="line">    <span class="comment"># 将历史数据添加到库中</span></span><br><span class="line">    <span class="string">mysql</span> <span class="string">-u</span> <span class="string">root</span> <span class="string">-p&quot;$MYSQL_ROOT_PASSWORD&quot;</span> <span class="string">&lt;</span> <span class="string">/tmp/master_repl_backup.sql</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 配置从库通过binlog同步主库</span></span><br><span class="line">    <span class="string">mysql</span> <span class="string">-u</span> <span class="string">root</span> <span class="string">-p&quot;$MYSQL_ROOT_PASSWORD&quot;</span> <span class="string">&lt;&lt;EOF</span></span><br><span class="line">    <span class="string">STOP</span> <span class="string">REPLICA;</span></span><br><span class="line">    <span class="string">CHANGE</span> <span class="string">REPLICATION</span> <span class="string">SOURCE</span> <span class="string">TO</span></span><br><span class="line">      <span class="string">SOURCE_HOST=&#x27;$MASTER_HOST&#x27;,</span></span><br><span class="line">      <span class="string">SOURCE_USER=&#x27;$REPLICATION_USER&#x27;,</span></span><br><span class="line">      <span class="string">SOURCE_PASSWORD=&#x27;$REPLICATION_PASSWORD&#x27;,</span></span><br><span class="line">      <span class="string">SOURCE_LOG_FILE=&#x27;$MASTER_LOG_FILE&#x27;,</span></span><br><span class="line">      <span class="string">SOURCE_LOG_POS=$MASTER_LOG_POS,</span></span><br><span class="line">      <span class="string">SOURCE_SSL=0,</span></span><br><span class="line">      <span class="string">GET_SOURCE_PUBLIC_KEY=1;</span> </span><br><span class="line">    <span class="string">START</span> <span class="string">REPLICA;</span></span><br><span class="line">    <span class="string">EOF</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 检查同步状态</span></span><br><span class="line">    <span class="string">echo</span> <span class="string">&quot;检查主从同步状态：&quot;</span></span><br><span class="line">    <span class="string">mysql</span> <span class="string">-u</span> <span class="string">root</span> <span class="string">-p&quot;$MYSQL_ROOT_PASSWORD&quot;</span> <span class="string">-e</span> <span class="string">&quot;SHOW REPLICA STATUS\G&quot;</span> <span class="string">|</span> <span class="string">grep</span> <span class="string">-E</span> <span class="string">&#x27;Replica_IO_Running|Replica_SQL_Running&#x27;</span></span><br><span class="line">    <span class="string">echo</span> <span class="string">&quot;从库初始化主库内容结束&quot;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>基于以上配置, 我们尝试部署</p>
+<p><code>OK</code>, 如果成功了那么恭喜, 如果失败了也不要气馁, 我开启这篇文章的时候是<code>9</code>月<code>7</code>号, 写到这里的时候是<code>9</code>月<code>14</code>号(😭当然我也不是全天). 看一下你是否出现了以下问题</p>
+<p><a href="问题一">问题一: <code>yaml</code>配置不生效</a></p>
+<p><a href="问题二">问题二: 从库不同步主库数据</a></p>
+<h5 id="外网访问"><a class="markdownIt-Anchor" href="#外网访问"></a> 外网访问</h5>
+<p>现在我们部署了一套<code>mysql</code>服务, 接下来就来做外网访问</p>
+<p><code>k8s</code>集群的外网访问方式有三种</p>
+<p><code>NodePort</code>, <code>LoadBanlancer</code>, <code>Ingress</code></p>
+<ol>
+<li>
+<p><code>NodePort</code></p>
+<p>前面我们为主库和从库分别配置了<code>svc</code>, 现在我们修改一下这个<code>svc</code>(以主库为例)</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 主库 Service</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-master-svc</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">test</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">mysql</span></span><br><span class="line">    <span class="attr">role:</span> <span class="string">master</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">3306</span>  <span class="comment"># Service内部端口（集群内访问用，可自定义）</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">3306</span>  <span class="comment"># 容器内MySQL实际监听的端口（固定为3306）</span></span><br><span class="line">      <span class="attr">nodePort:</span> <span class="number">31306</span> <span class="comment"># 节点对外开发宽口, 用于外网访问</span></span><br></pre></td></tr></table></figure>
+<p>然后使用<code>navicat</code>访问<code>node_ip:nodePort</code>(上述配置中就是<code>ip:31306</code>)即可访问到主库</p>
+</li>
+<li>
+<p><code>LoadBanlancer</code></p>
+<p><code>LoadBanlancer</code>这种方式是<code>k8s</code>与云厂商<code>API</code>联动的产物, 本地集群使用这种类型会失效, 因为没有云厂商<code>API</code>的支持</p>
+<p>此处添加一个配置, 由于此次是本地搭建, 此处配置无法保证正常使用</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-master-svc</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">test</span></span><br><span class="line">  <span class="comment"># 可选：云厂商扩展注解（如指定SLB类型、带宽等，需根据云厂商调整）</span></span><br><span class="line">  <span class="attr">annotations:</span></span><br><span class="line">    <span class="comment"># 示例1：阿里云SLB注解（指定为公网SLB，带宽10M）</span></span><br><span class="line">    <span class="attr">service.beta.kubernetes.io/alibaba-cloud-loadbalancer-type:</span> <span class="string">&quot;public&quot;</span></span><br><span class="line">    <span class="attr">service.beta.kubernetes.io/alibaba-cloud-loadbalancer-bandwidth:</span> <span class="string">&quot;10&quot;</span></span><br><span class="line">    <span class="comment"># 示例2：AWS ELB注解（指定为应用负载均衡器ALB）</span></span><br><span class="line">    <span class="comment"># service.beta.kubernetes.io/aws-load-balancer-type: &quot;alb&quot;</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">LoadBalancer</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">mysql</span></span><br><span class="line">    <span class="attr">role:</span> <span class="string">master</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">3306</span>        <span class="comment"># Service内部端口（集群内访问用，可自定义）</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">3306</span>  <span class="comment"># 容器内MySQL实际监听的端口（固定为3306）</span></span><br><span class="line">      <span class="attr">protocol:</span> <span class="string">TCP</span>     <span class="comment"># MySQL用TCP协议，默认即可</span></span><br><span class="line">  <span class="comment"># 可选：指定负载均衡器的固定公网IP（需云厂商支持，且IP已创建）</span></span><br><span class="line">  <span class="comment"># loadBalancerIP: 101.xxx.xxx.xxx</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p><code>Ingress</code></p>
+<p><code>Ingress</code>资源本身只是流量规则定义, 需要<code>Ingress Controller</code>来实际转发流量, 而<code>App Ingress</code>则直接通过<code>k8s</code>的<code>ingress</code>配置就可实现访问</p>
+<ul>
+<li>
+<p>部署<code>Ingress Controller</code>, 本次使用<code>Nginx Ingress Controller</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 对于K8s 1.19+，使用官方manifest部署</span></span><br><span class="line">kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.1/deploy/static/provider/cloud/deploy.yaml</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证部署（确保ingress-nginx命名空间下的Pod正常运行）</span></span><br><span class="line">kubectl get pods -n ingress-nginx</span><br></pre></td></tr></table></figure>
+<p><code>ingress-nginx</code>下有三个资源, 其中有两个为一次性的<code>job</code>型资源, 运行完成后, 状态变为<code>Completed</code>只要<code>controller</code>资源状态为<code>Running</code>即可</p>
+</li>
+<li>
+<p>确认<code>Ingress Controller</code>的外网访问方式</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get svc -n ingress-nginx</span><br></pre></td></tr></table></figure>
+<ul>
+<li>云环境：<code>EXTERNAL-IP</code>会显示公网 <code>IP</code>（如<code>101.xxx.xxx.xxx</code>）；</li>
+<li>本地集群：<code>PORT(S)</code>会显示 <code>NodePort</code>（如<code>80:30080/TCP,443:30443/TCP</code>）。</li>
+</ul>
+<p><img src="Ingress-nginx%E7%9A%84%E5%A4%96%E7%BD%91%E8%AE%BF%E9%97%AE%E6%96%B9%E5%BC%8F.png" alt="Ingress-nginx的外网访问方式" /></p>
+</li>
+<li>
+<p><code>mysql</code>是<code>tcp</code>服务, 许特殊配置<code>Ingress</code></p>
+<ul>
+<li>
+<p>配置<code>Ingress Controller</code>转发<code>TCP</code>流量</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># nginx-ingress-tcp-config.yaml</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-ingress-config</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">ingress-nginx</span>  <span class="comment"># 与Ingress Controller同命名空间</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="comment"># 格式：&lt;外部访问端口&gt;: &lt;命名空间&gt;/&lt;Service名称&gt;:&lt;Service端口&gt;</span></span><br><span class="line">  <span class="attr">&quot;13306&quot;:</span> <span class="string">&quot;test/mysql-master-svc:3306&quot;</span>  <span class="comment"># 主库：外部13306端口→主库Service</span></span><br><span class="line">  <span class="attr">&quot;13307&quot;:</span> <span class="string">&quot;test/mysql-slave-svc:3306&quot;</span>   <span class="comment"># 从库：外部13307端口→从库Service</span></span><br></pre></td></tr></table></figure>
+<p>注意命名空间为<code>ingress-nginx</code></p>
+</li>
+<li>
+<p>更新<code>Ingress Controller</code>, 开放<code>TCP</code>端口</p>
+<p>修改<code>ingress-nginx-controller</code>这个<code>Service</code>配置, 添加<code>TCP</code>端口</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app.kubernetes.io/component:</span> <span class="string">controller</span></span><br><span class="line">    <span class="attr">app.kubernetes.io/instance:</span> <span class="string">ingress-nginx</span></span><br><span class="line">    <span class="attr">app.kubernetes.io/name:</span> <span class="string">ingress-nginx</span></span><br><span class="line">    <span class="attr">app.kubernetes.io/part-of:</span> <span class="string">ingress-nginx</span></span><br><span class="line">    <span class="attr">app.kubernetes.io/version:</span> <span class="number">1.8</span><span class="number">.1</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ingress-nginx-controller</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">ingress-nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">externalTrafficPolicy:</span> <span class="string">Local</span></span><br><span class="line">  <span class="attr">ipFamilies:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">IPv4</span></span><br><span class="line">  <span class="attr">ipFamilyPolicy:</span> <span class="string">SingleStack</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">appProtocol:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="string">http</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">appProtocol:</span> <span class="string">https</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">https</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">443</span></span><br><span class="line">    <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="string">https</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql-master</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">13306</span> <span class="comment"># 对外开放端口</span></span><br><span class="line">    <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">13306</span>  <span class="comment"># 对应ConfigMap中的端口</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app.kubernetes.io/component:</span> <span class="string">controller</span></span><br><span class="line">    <span class="attr">app.kubernetes.io/instance:</span> <span class="string">ingress-nginx</span></span><br><span class="line">    <span class="attr">app.kubernetes.io/name:</span> <span class="string">ingress-nginx</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">LoadBalancer</span></span><br></pre></td></tr></table></figure>
+<p>如上添加了一个<code>mysql-master</code>的端口配置, <code>targetPort</code>对用上一步中<code>ConfigMap</code>中的端口</p>
+<p>由此可以看出<code>Nginx Ingress Controller</code>方式访问<code>mysql</code> , 其本质还是使用<code>Service</code>方式</p>
+</li>
+<li>
+<p><code>App Ingress</code>的访问则是使用<code>yaml</code>配置一个<code>k8s</code>的<code>Ingress</code>资源</p>
+<p>配置内容如下</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># app-ingress.yaml（HTTP服务示例）</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Ingress</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">app-ingress</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">test</span></span><br><span class="line">  <span class="attr">annotations:</span></span><br><span class="line">    <span class="attr">kubernetes.io/ingress.class:</span> <span class="string">&quot;nginx&quot;</span>  <span class="comment"># 指定Ingress控制器类型</span></span><br><span class="line">    <span class="comment"># 可选：启用HTTPS重定向</span></span><br><span class="line">    <span class="attr">nginx.ingress.kubernetes.io/ssl-redirect:</span> <span class="string">&quot;false&quot;</span>  <span class="comment"># 先使用HTTP测试，后续可改为true</span></span><br><span class="line">    <span class="comment"># 可选：设置连接超时</span></span><br><span class="line">    <span class="attr">nginx.ingress.kubernetes.io/proxy-connect-timeout:</span> <span class="string">&quot;30s&quot;</span></span><br><span class="line">    <span class="attr">nginx.ingress.kubernetes.io/proxy-read-timeout:</span> <span class="string">&quot;180s&quot;</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">rules:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">host:</span> <span class="string">app.example.com</span>  <span class="comment"># 外部访问域名</span></span><br><span class="line">      <span class="attr">http:</span></span><br><span class="line">        <span class="attr">paths:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">path:</span> <span class="string">/</span></span><br><span class="line">            <span class="attr">pathType:</span> <span class="string">Prefix</span></span><br><span class="line">            <span class="attr">backend:</span></span><br><span class="line">              <span class="attr">service:</span></span><br><span class="line">                <span class="attr">name:</span> <span class="string">app-service</span>  <span class="comment"># 目标Service名称</span></span><br><span class="line">                <span class="attr">port:</span></span><br><span class="line">                  <span class="attr">number:</span> <span class="number">80</span>  <span class="comment"># Service端口</span></span><br></pre></td></tr></table></figure>
+<p><mark>注意, <code>Ingress</code>中配置的目标资源是<code>Service</code>而不是<code>Pod</code></mark></p>
+<p>由于当前没有<code>app</code>型的部署资源, 此项验证暂且搁置, 在我们后面实践时验证</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p>最适合<code>mysql</code>服务的外网访问方式</p>
+<p>前面我们部署了一套<code>mysql</code>主从复制的架构, 现在我们应当想到另一个名词“读写分离”. 这才是符合<code>mysql</code>集群的访问方式, 此方式需要使用<code>ProxySQL</code>, 并定义路由配置, 下面我们来实现</p>
+<ol>
+<li>
+<p>创建<code>ProxySQL</code>配置</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-proxysql-config</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">test</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">proxysql.cnf:</span> <span class="string">|</span></span><br><span class="line"><span class="string">    datadir=&quot;/var/lib/proxysql&quot;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line">    <span class="string">admin_variables=</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="string">admin_credentials=&quot;admin:admin;remote:admin&quot;</span>  <span class="comment"># ProxySQL 管理界面账号密码</span></span><br><span class="line">      <span class="string">mysql_ifaces=&quot;0.0.0.0:6032&quot;</span>     <span class="comment"># 管理端口</span></span><br><span class="line">      <span class="string">refresh_interval=2000</span>           <span class="comment"># 配置刷新间隔（毫秒）</span></span><br><span class="line">      <span class="string">max_connections_admin=100</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="string">mysql_variables=</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="string">threads=4</span></span><br><span class="line">      <span class="string">max_connections=2048</span></span><br><span class="line">      <span class="string">default_query_delay=0</span></span><br><span class="line">      <span class="string">default_query_timeout=36000000</span></span><br><span class="line">      <span class="string">have_compress=true</span></span><br><span class="line">      <span class="string">poll_timeout=2000</span></span><br><span class="line">      <span class="string">interfaces=&quot;0.0.0.0:6033&quot;</span>       <span class="comment"># ProxySQL 对外服务端口</span></span><br><span class="line">      <span class="string">default_schema=&quot;information_schema&quot;</span></span><br><span class="line">      <span class="string">stacksize=1048576</span></span><br><span class="line">      <span class="string">server_version=&quot;8.4.6&quot;</span>         <span class="comment"># 模拟 MySQL 版本</span></span><br><span class="line">      <span class="string">connect_timeout_server=3000</span></span><br><span class="line">      <span class="string">mysql-authentication-plugin=&quot;caching_sha2_password&quot;</span></span><br><span class="line">      <span class="comment"># 允许客户端连接超时配置</span></span><br><span class="line">      <span class="string">client_connect_timeout=10000</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 主从库服务器列表（通过 Kubernetes Service 域名访问）</span></span><br><span class="line">    <span class="string">mysql_servers</span> <span class="string">=</span></span><br><span class="line">    <span class="string">(</span></span><br><span class="line">      &#123;</span><br><span class="line">        <span class="string">address=&quot;mysql-master-svc.test.svc.cluster.local&quot;</span>  <span class="comment"># 主库地址</span></span><br><span class="line">        <span class="string">port=3306</span></span><br><span class="line">        <span class="string">hostgroup=10</span>  <span class="comment"># 主库组 ID（写操作）</span></span><br><span class="line">        <span class="string">status=&quot;ONLINE&quot;</span></span><br><span class="line">        <span class="comment"># 健康检查（确保后端可连接）</span></span><br><span class="line">        <span class="string">check_type=&quot;ping&quot;</span></span><br><span class="line">        <span class="string">max_connections=100</span></span><br><span class="line">      &#125;<span class="string">,</span></span><br><span class="line">      &#123;</span><br><span class="line">        <span class="string">address=&quot;mysql-slave-svc.test.svc.cluster.local&quot;</span>   <span class="comment"># 从库地址</span></span><br><span class="line">        <span class="string">port=3306</span></span><br><span class="line">        <span class="string">hostgroup=20</span>  <span class="comment"># 从库组 ID（读操作）</span></span><br><span class="line">        <span class="string">status=&quot;ONLINE&quot;</span></span><br><span class="line">        <span class="string">check_type=&quot;ping&quot;</span></span><br><span class="line">        <span class="string">max_connections=100</span></span><br><span class="line">      &#125;</span><br><span class="line">    <span class="string">)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 数据库用户（需与主从库的 Secret 一致）</span></span><br><span class="line">    <span class="string">mysql_users</span> <span class="string">=</span></span><br><span class="line">    <span class="string">(</span></span><br><span class="line">      &#123;</span><br><span class="line">        <span class="string">username=&quot;root&quot;</span></span><br><span class="line">        <span class="string">password=&quot;123456&quot;</span>  <span class="comment"># 与前面 Secret 中的 root-password 原文一致</span></span><br><span class="line">        <span class="string">default_hostgroup=10</span>    <span class="comment"># 默认路由到主库组</span></span><br><span class="line">        <span class="string">active=1</span></span><br><span class="line">        <span class="string">plugin=&quot;caching_sha2_password&quot;</span></span><br><span class="line">      &#125;<span class="string">,</span></span><br><span class="line">      &#123;</span><br><span class="line">        <span class="string">username=&quot;repl_user&quot;</span></span><br><span class="line">        <span class="string">password=&quot;123456&quot;</span> <span class="comment"># 与前面 Secret 中的 repl-password 原文一致</span></span><br><span class="line">        <span class="string">default_hostgroup=10</span></span><br><span class="line">        <span class="string">active=1</span></span><br><span class="line">        <span class="string">plugin=&quot;caching_sha2_password&quot;</span></span><br><span class="line">      &#125;</span><br><span class="line">    <span class="string">)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 路由规则（读操作到从库组，写操作到主库组）</span></span><br><span class="line">    <span class="string">mysql_query_rules</span> <span class="string">=</span></span><br><span class="line">    <span class="string">(</span></span><br><span class="line">      &#123;</span><br><span class="line">        <span class="string">rule_id=1</span></span><br><span class="line">        <span class="string">active=1</span></span><br><span class="line">        <span class="string">match_pattern=&quot;^SELECT.*FOR</span> <span class="string">UPDATE$&quot;</span>  <span class="comment"># 带 FOR UPDATE 的 SELECT 视为写操作</span></span><br><span class="line">        <span class="string">destination_hostgroup=10</span></span><br><span class="line">        <span class="string">apply=1</span></span><br><span class="line">      &#125;<span class="string">,</span></span><br><span class="line">      &#123;</span><br><span class="line">        <span class="string">rule_id=2</span></span><br><span class="line">        <span class="string">active=1</span></span><br><span class="line">        <span class="string">match_pattern=&quot;^SELECT&quot;</span>               <span class="comment"># 普通 SELECT 视为读操作</span></span><br><span class="line">        <span class="string">destination_hostgroup=20</span></span><br><span class="line">        <span class="string">apply=1</span></span><br><span class="line">      &#125;</span><br><span class="line">    <span class="string">)</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>部署<code>ProxySQL</code>(<code>Deployment</code> + <code>Service</code>)</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ProxySQL Deployment</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-proxysql</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">test</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">proxysql</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span>  <span class="comment"># 单实例，生产环境可增加副本</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">proxysql</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">proxysql</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">proxysql</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">proxysql/proxysql:3.0.1</span>  <span class="comment"># ProxySQL 镜像</span></span><br><span class="line">          <span class="attr">ports:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">6033</span>  <span class="comment"># 对外服务端口（客户端连接）</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">6032</span>  <span class="comment"># 管理端口</span></span><br><span class="line">          <span class="attr">volumeMounts:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">proxysql-config</span></span><br><span class="line">              <span class="attr">mountPath:</span> <span class="string">/etc/proxysql.cnf</span></span><br><span class="line">              <span class="attr">subPath:</span> <span class="string">proxysql.cnf</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">proxysql-data</span></span><br><span class="line">              <span class="attr">mountPath:</span> <span class="string">/var/lib/proxysql</span>  <span class="comment"># 持久化 ProxySQL 数据</span></span><br><span class="line">          <span class="attr">livenessProbe:</span></span><br><span class="line">            <span class="attr">tcpSocket:</span></span><br><span class="line">              <span class="attr">port:</span> <span class="number">6033</span></span><br><span class="line">            <span class="attr">initialDelaySeconds:</span> <span class="number">10</span></span><br><span class="line">            <span class="attr">periodSeconds:</span> <span class="number">5</span></span><br><span class="line">          <span class="attr">readinessProbe:</span></span><br><span class="line">            <span class="attr">tcpSocket:</span></span><br><span class="line">              <span class="attr">port:</span> <span class="number">6033</span></span><br><span class="line">            <span class="attr">initialDelaySeconds:</span> <span class="number">5</span></span><br><span class="line">            <span class="attr">periodSeconds:</span> <span class="number">5</span></span><br><span class="line">      <span class="attr">volumes:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">proxysql-config</span></span><br><span class="line">          <span class="attr">configMap:</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">mysql-proxysql-config</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">proxysql-data</span></span><br><span class="line">          <span class="attr">emptyDir:</span> &#123;&#125;  <span class="comment"># 临时存储，生产环境建议用 PVC 持久化</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ProxySQL Service（客户端访问入口）</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">proxysql-service</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">test</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">proxysql</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">6033</span>   <span class="comment"># Service内部端口（集群内访问用，可自定义）</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">6033</span>  <span class="comment"># 容器内MySQL实际监听的端口（固定为3306）</span></span><br><span class="line">      <span class="attr">nodePort:</span> <span class="number">31033</span> <span class="comment"># 节点对外开发宽口, 用于外网访问</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">mysql-connect</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">6032</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">6032</span></span><br><span class="line">      <span class="attr">nodePort:</span> <span class="number">31032</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">mysql-manage</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span>  <span class="comment"># 集群内访问，外部访问可改为 NodePort</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意:</p>
+<ol>
+<li><code>ConfigMap</code>中<code>mysql_variables.interfaces=&quot;0.0.0.0:6033&quot;</code>端口为<code>ProxySQL</code>对外提供<code>SQL</code>服务的端口, <code>ProxySQL</code>默认开放该端口, 如果想做到<code>mysql</code>服务的无感知, 可以改为<code>3306</code>端口, 但是需要<code>Deployment</code>和<code>Service</code>做对应的修改
+<ul>
+<li><code>Deployment</code>中<code>container</code>的<code>ports</code>中要开放自定义的端口</li>
+<li><code>Deployment</code>中<code>livenessProbe</code>和<code>readinessProbe</code>需要修改端口为自定义端口</li>
+<li><code>Service</code>中<code>ports</code>要添加该端口的对外访问端口设置<code>mysql-connect</code></li>
+</ul>
+</li>
+<li><code>mysql</code>服务中的加密插件默认为<code>caching_sha2_password</code>, <code>ProxySQL</code>中在<code>2.6.0</code>版本之后才添加支持</li>
+</ol>
+</blockquote>
+</li>
+</ol>
+<p><code>OK</code>, 以<code>mysql</code>为例子的资源部署工作完结撒花</p>
+<h3 id="出现问题"><a class="markdownIt-Anchor" href="#出现问题"></a> 出现问题</h3>
+<p><i id="问题一">问题一</i></p>
+<p>配置的<code>yaml</code>不生效, 可能有以下原因</p>
+<ol>
+<li>如果你是用的是<code>GitOps</code>, 有可能在应用<code>yaml</code>应用时报错, 但是<code>GitOps</code>不会有报错信息, 导致配置不生效, 这就是自己部署时不推荐这种方式的原因</li>
+<li>如果你是用的是<code>GitOps</code>, 看看自己是不是没有提交, 或者等待一下, 因为这种方式默认是定期拉取更新的</li>
+<li>配置的内容发生错误, 如挂载卷时, 名称错误, 名称不存在等</li>
+</ol>
+<p><i id="问题二">问题二</i></p>
+<p>从库不同步主库数据的问题是出现最多的, 总体来说分为三种</p>
+<ol>
+<li>从库初始化时没有执行初始化同步脚本:<a href="问题三">问题三</a></li>
+<li>从库初始化时从库脚本出错:<a href="问题四">问题四</a></li>
+<li>数据同步时出错:<a href="问题五">问题五</a></li>
+</ol>
+<p><i id="问题三">问题三</i></p>
+<p>从库初始化时没有执行初始化脚本出现的原因</p>
+<ol>
+<li>初始化脚本所放目录有问题(这个问题我没有出现, 但还是放在这里, 因为下面的会用到)</li>
+<li>数据卷的挂载问题(我是被这个问题卡了两天, 不是不会挂载, 而是被<code>mysql</code>的挂载方式整的有点懵)</li>
+</ol>
+<p>我的解决过程:</p>
+<ol>
+<li>
+<p>我确认了我的同步脚本在<code>/docker-entrypoint-initdb.d</code>目录下, 并确认了容器可以正常启动, 当我将<code>/var/lib/mysql</code>这个目录挂载到我的数据卷下后, 在容器正常启动后, 我的数据卷的物理目录下有了<code>mysql</code>初始化完成后的文件, 但是没有从主库中同步而来的数据, 我去查看日志, 发现并没有执行我的同步脚本, 这时我有三个解决方向</p>
+<ul>
+<li>是不是我的同步脚本没有在目标目录下, 或者有脚本文件, 但是脚本文件中没有内容</li>
+<li>是不是我的同步脚本在执行时没有执行权限</li>
+<li>是不是我挂载的数据卷下被重复利用, 导致查找时目录下有内容而不执行我的同步脚本</li>
+</ul>
+</li>
+<li>
+<p>第一个方向非常容易, 登录到对应容器下, 查看容器中对应目录的是否有文件, 文件中内容是否正常(这个我是没有的, 解决的非常快:happy:)</p>
+</li>
+<li>
+<p>第二个方向比较麻烦, 因为容器内的执行权限不容易处理, 我通过修改命令(<code>yaml</code>配置中的<code>command</code>)和参数(<code>yaml</code>配置中的<code>args</code>), 将容器中该目录中的文件增加执行权限, 然后按照原容器启动方式启动(这个花了点时间的😅), 这个解决办法我不确定能不能行, 然后有从网上找了一下<code>mysql</code>容器启动后执行脚本的文章, 我没有尝试按照他们的配置运行容器, 但是从他们的文章中给到我的信息时, 这样添加的脚本确实可以执行, 所以应该不是权限问题</p>
+</li>
+<li>
+<p>第三个方向就比较重磅了, 花费的时间几乎都在这一方向上</p>
+<ul>
+<li>
+<p>我先到网上寻找<code>mysql</code>启动后执行脚本的文章, 大多数都是两种, 一种是基于<code>mysql</code>镜像自己再构建镜像, 另一种是第二个方向中提到的网上的文章, 他们单独启动一个<code>mysql</code>容器, 没有挂载<code>mysql</code>数据的数据卷, 你懂吧, 就是启动个<code>mysql</code>容器, 然后只把脚本挂载到容器中, 容器关了, <code>mysql</code>服务和数据就都没有了, 跟扯犊子一样, 这两种都不是我想要的</p>
+</li>
+<li>
+<p>然后我去问了一下豆包, 豆包的回答是:<code>MySQL</code> 官方镜像的<code>/docker-entrypoint-initdb.d</code>目录下的脚本（如你的同步脚本）<strong>仅在首次启动且<code>/var/lib/mysql</code>目录为空时执行</strong>. 好吧我就向着这个方向去努力, 然后反复修改启动, 然后确认. 我确认了<code>pv</code>和<code>pvc</code>的挂载, 确认了挂载目录中初始时确实没有任何内容, 包括隐藏文件(期间各种配置不生效, 各种启动错误等等, 说多了都是泪😭). 这一步我确认了两个问题: 我的挂载没有问题, 确实将<code>pv</code>中的内容挂载到了<code>/var/lib/mysql</code>目录下, 因为在容器启动后, 数据库文件都初始化到该<code>pv</code>指定的目录下了; 脚本文件确实没有执行, 甚至日志中都没有<code>/docker-entrypoint-initdb.d</code>这个目录相关的字眼</p>
+</li>
+<li>
+<p>到这里我就没辙了, 卡在这里了, 因为我的配置和操作都符合豆包的描述, 为何没有执行. 走投无路的情况下, 我又修改了命令行, 这次在执行启动文件执行先打印了下<code>/var/lib/mysql</code>这个目录, 惊奇的发现, 这个目录下是有文件的, 但是这个时候我还没有执行容器中原本的启动文件. 我告诉了豆包, 豆包回答我说, <code>mysql</code>官方镜像中的<code>/var/lib/mysql</code>这个目录中原本是带有内容的, 只有将其挂载到数据卷后, 里面才会绑定你挂载的目录内容, 可能是初始时<code>/var/lib/mysql</code>下是有内容 -&gt; 如果有内容则判定不会执行提供的脚本 -&gt; 挂载数据卷 -&gt; <code>mysql</code>服务启动时, 在空目录中自动生成基础数据文件. 我人傻了, 我告诉豆包, 如果你的推论正确, 那么这个镜像写的就是一坨屎, 因为添加的脚本无论如何都不会执行</p>
+</li>
+<li>
+<p>到这一步, 我唯一的想法就是去看看<code>mysql</code>官方镜像的<a href="docker-entrypoint.sh">启动文件</a>, 然后将它复制了下来. 从脚本中可以看出, 如果想要执行脚本, 则必然有<code>Temporary server started.</code>这部分的数据日志, 但是我的日志中并没有, 我循着这一线索查找<code>DATABASE_ALREADY_EXISTS</code>这一变量, 直到在<code>docker_setup_env</code>这一函数中发现了</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> [ -d <span class="string">&quot;<span class="variable">$DATADIR</span>/mysql&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">	DATABASE_ALREADY_EXISTS=<span class="string">&#x27;true&#x27;</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+<p>这一段代码, 我人直接崩溃, 这一段是告诉我, 如果<strong>没有<code>$DATADIR/mysql</code>这一目录</strong>, 则认为是首次启动, 这根豆包说的不一样啊. 好吧, 就是挂载卷的问题, 我之前的挂载卷配置是</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">volumeMounts:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">slave-config</span> <span class="comment"># 挂载数据卷</span></span><br><span class="line">    <span class="attr">mountPath:</span> <span class="string">/etc/mysql/conf.d/slave.cnf</span> <span class="comment"># 挂载路径, 前面 ConfigMap 配置中的主库配置名称</span></span><br><span class="line">    <span class="attr">subPath:</span> <span class="string">slave.cnf</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">slave-data</span></span><br><span class="line">    <span class="attr">mountPath:</span> <span class="string">/var/lib/mysql</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-script</span></span><br><span class="line">    <span class="attr">mountPath:</span> <span class="string">/docker-entrypoint-initdb.d</span>  <span class="comment"># 初始化脚本目录</span></span><br></pre></td></tr></table></figure>
+<p>修改后为</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">volumeMounts:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">slave-config</span> <span class="comment"># 挂载数据卷</span></span><br><span class="line">    <span class="attr">mountPath:</span> <span class="string">/etc/mysql/conf.d/slave.cnf</span> <span class="comment"># 挂载路径, 前面 ConfigMap 配置中的主库配置名称</span></span><br><span class="line">    <span class="attr">subPath:</span> <span class="string">slave.cnf</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">slave-data</span></span><br><span class="line">    <span class="attr">mountPath:</span> <span class="string">/var/lib</span></span><br><span class="line">    <span class="attr">subPath:</span> <span class="string">mysql</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-script</span></span><br><span class="line">    <span class="attr">mountPath:</span> <span class="string">/docker-entrypoint-initdb.d</span>  <span class="comment"># 初始化脚本目录</span></span><br></pre></td></tr></table></figure>
+<p>区别是什么</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 方式一</span></span><br><span class="line"><span class="attr">volumeMounts:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">slave-data</span></span><br><span class="line">    <span class="attr">mountPath:</span> <span class="string">/var/lib/mysql</span></span><br><span class="line"><span class="comment"># 实际效果：</span></span><br><span class="line"><span class="comment"># 将数据卷的根目录直接挂载到容器内的 /var/lib/mysql 目录。</span></span><br><span class="line"><span class="comment"># 容器内 /var/lib/mysql 下的所有文件，会直接存储在数据卷的根目录中。</span></span><br><span class="line"><span class="comment"># 数据卷中根目录中已有的文件，会直接显示在容器的 /var/lib/mysql 下。</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方式二</span></span><br><span class="line"><span class="attr">volumeMounts:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">slave-data</span></span><br><span class="line">    <span class="attr">mountPath:</span> <span class="string">/var/lib</span></span><br><span class="line">    <span class="attr">subPath:</span> <span class="string">mysql</span></span><br><span class="line"><span class="comment"># 实际效果：</span></span><br><span class="line"><span class="comment"># 将数据卷的根目录下的mysql目录挂载到容器内的 /var/lib 目录。</span></span><br><span class="line"><span class="comment"># 容器内 /var/lib 下的所有文件，会直接存储在数据卷的根目录中。</span></span><br><span class="line"><span class="comment"># 数据卷中根目录下的mysql目录中已有的文件，会直接显示在容器的 /var/lib 下。</span></span><br></pre></td></tr></table></figure>
+<p>现在应该能看出区别了挂载是的每一项的配置中<code>mountPath</code>指向的是容器内的目录, <code>subPath</code>指向的是你数据卷中根目录下的目录, 如果没有<code>subPath</code>配置, 则指向的是数据卷的根目录.</p>
+<p>前文中我们提到, 豆包给出的提示是<code>/var/lib/mysql</code>这个目录为空, 那么如果你确保你挂载的数据卷的根目录为空, 则使用第一种方式挂载即可. 但实际上<code>mysql</code>镜像的判断是是否有<code>msyql</code>这一级目录, 但使用第一种方式时, 你的<code>/var/lib/mysql</code>这个目录下是空的, 但是<code>/var/lib/mysql</code>这一级目录是存在的, 所以会跳过脚本执行操作</p>
+<p>到此解决</p>
+</li>
+</ul>
+</li>
+</ol>
+<p><i id="问题四">问题四</i></p>
+<p>初始化脚本出现的问题遇到的有两个:</p>
+<ol>
+<li><code>mysql</code>脚本出错</li>
+<li>文件权限问题</li>
+</ol>
+<p>第一个问题主要是使用的<code>mysql</code>版本问题, 在<code>mysql:8.4.x</code>之后, <code>mysql</code>不再支持<code>SLAVE</code>这样的字样, 全部替换为了<code>REPLICATION</code>, 同时<code>MASTER</code>也不再支持, 现在<code>SHOW MASTER STATUS</code>被<code>SHOW BINARY LOG STATUS</code>代替</p>
+<p>第二个问题主要是在添加<code>server-id</code>这个<code>mysql</code>启动参数时引发的. 由于主库和从库的<code>server-id</code>不能一致, 而<code>mysql</code>默认的<code>server-id</code>又都是<code>1</code>, 所以需要将从库中的<code>server-id</code>参数修改切不能重复, 我们采用<code>StatefulSet</code>的<code>HOSTNAME</code>中最后的固定数字加一个固定值来表示从库的<code>server-id</code>, 这样能确保唯一</p>
+<p>详细讲一下第二个问题:</p>
+<p>我起初想通过添加<code>args</code>解决, 但是<code>args</code>的添加内容在执行时, 不会识别<code>$HOSTNAME</code>这样的内容, 因为它不是使用<code>/bin/bash</code>执行的, 所以才在脚本中做修改. 看过问题三种提到的<code>mysql</code>服务的<a href="docker-entrypoint.sh">启动文件</a>应该了解了, <code>mysql</code>容器在首次启动时是启动两次的, 第一次是临时启动, 然后执行你添加的脚本, 执行完后停止然后进行第二次启动. 现在要解决两个问题: 临时启动时, 会执行你添加的脚步, 但此时启动的<code>mysql</code>服务的<code>server-id</code>为1, 应当将其改为目标值, 与其他库不一致, 这样才能正常执行同步操作; 第二次启动时<code>server-id</code>也应当修改, 但此时不再执行你添加的脚本, 所以需要想办法添加到<code>mysql</code>可读取的配置文件中, 所以</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -u root -p<span class="string">&quot;<span class="variable">$MYSQL_ROOT_PASSWORD</span>&quot;</span> -e <span class="string">&quot;SET GLOBAL server_id=<span class="variable">$SERVER_ID</span>\G&quot;</span></span><br></pre></td></tr></table></figure>
+<p>这一行是临时启动时修改<code>server-id</code>, 为了执行同步操作</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; <span class="variable">$HOME</span>/.my.cnf &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">[mysqld]</span></span><br><span class="line"><span class="string">server-id=$SERVER_ID</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+<p>这一行是添加<code>server-id</code>配置, 为第二次启动准备</p>
+<p>看着挺简单的, 你可以去网上看一下, 关于这个有没有描述. 对于网上的文章, 大多都是在做<code>ConfigMap</code>配置时, 配置多个<code>slave.cnf</code>, 然后将<code>server-id</code>写的不一样, 这样做的, 这种方式是无法修改<code>replicas</code>来动态扩缩容的, 只能把一个个配置好然后部署, 多捞啊!!!😜. 然后当你想要添加一个<code>server-id</code>这样的配置时, 网上的文章就会告诉你, 写到<code>my.cnf</code>中, 或者在<code>/etc/mysql/conf.d</code>下创建一个<code>cnf</code>文件, 然后将配置写进去. 这就出现权限问题了, <code>/etc</code>下的所有内容都是系统只读的, 即使你使用<code>runAsUser:0</code>也做不到, 在使用<code>chmod</code>修改权限时也会告诉你操作不允许. 聪明的我找了一下<code>mysql</code>的配置顺序和优先级, 发现最后会读取<code>~/.my.cnf</code>中的配置, 我没写错, 带<code>.</code>, 然后试了一下, 在<code>$HOME</code>这个目录下我们是可以操作的, 打印日志就可以看到, <code>$HOME</code>在镜像中指向的是<code>/var/lib/mysql</code>,熟悉不熟悉, 就是你挂载的生成的目录(别告诉我你想手动添加到你挂载的数据卷下, 除非你不想执行初始化脚本了, 而且你也不能确定<code>server-id</code>该取哪个值)</p>
+<p><i id="问题五">问题五</i></p>
+<p>同步时出错我就遇到两个问题</p>
+<ol>
+<li><code>server-id</code>重复, 这个在<a href="问题四">问题四</a>中讲了, 参考问题四</li>
+<li>主库已经创建了库表甚至添加了数据, 当我的从库启动时, 即使执行了初始化脚本, 也没有将数据初始化到从库中, 这是因为<code>binlog</code>时增量同步, 历史数据无法同步. 所以我在同步脚本中添加了同步主库历史数据的操作</li>
+</ol>
+<p>其他错误可以通过<code>SHOW REPLICA STATUS</code>查看错误信息</p>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2025/09/07/k8s/K8s系列五之资源部署/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text"> 前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gitops%E9%83%A8%E7%BD%B2"><span class="toc-number">2.</span> <span class="toc-text"> GitOps部署</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2%E9%85%8D%E7%BD%AE"><span class="toc-number">3.</span> <span class="toc-text"> 部署配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E9%83%A8%E7%BD%B2"><span class="toc-number">3.1.</span> <span class="toc-text"> 什么是部署</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2%E8%B5%84%E6%BA%90"><span class="toc-number">3.2.</span> <span class="toc-text"> 部署资源</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2%E6%B5%81%E7%A8%8B"><span class="toc-number">3.3.</span> <span class="toc-text"> 部署流程</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%89%B9%E7%82%B9%E5%88%86%E6%9E%90"><span class="toc-number">3.3.1.</span> <span class="toc-text"> 特点分析</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E8%B5%84%E6%BA%90"><span class="toc-number">3.3.2.</span> <span class="toc-text"> 前置资源</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2%E6%AD%A5%E9%AA%A4"><span class="toc-number">3.3.3.</span> <span class="toc-text"> 部署步骤</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%A4%96%E7%BD%91%E8%AE%BF%E9%97%AE"><span class="toc-number">3.3.4.</span> <span class="toc-text"> 外网访问</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BA%E7%8E%B0%E9%97%AE%E9%A2%98"><span class="toc-number">4.</span> <span class="toc-text"> 出现问题</span></a></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2025/09/07/k8s/K8s系列五之资源部署/K8s资源清单/"></a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2025/09/07/k8s/K8s系列五之资源部署/'
+  })
+</script>
+
+
+<script>
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        let href = decodeURIComponent(link.href);
+        href = href.substring(href.indexOf('#'));
+        const target = $(href)[0];
+        const top = target.offsetTop;
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      我们在绵延的海滩上捡贝壳，今天捡到了不必欣喜，因为海很大，今天没捡到，也不必失落，因为海很大。 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">我好像没有网络备案</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"自転车","artist":"オレスカバンド","url":"/music/自転车-オレスカバンド.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"撞地球","artist":"鱼儿七","url":"/music/撞地球-鱼儿七.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"晴天","artist":"周杰伦","url":"/music/晴天-周杰伦.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"告白气球","artist":"周杰伦","url":"/music/告白气球-周杰伦.mp3","cover":"/imgs/music-bg1.jpg"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>
