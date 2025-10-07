@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>小琳的星空 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico?time=102" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css?time=102" />
+  <link rel="stylesheet" href="/css/layout.css?time=102" />
+  <link rel="stylesheet" href="/css/iconfont.css?time=102" />
+  <link rel="stylesheet" href="/css/APlayer.min.css?time=102" />
+  <script src="/js/APlayer.min.js?time=102"></script>
+  <script src="/js/jquery.min.js?time=102"></script>
+  <script src="/js/jquery.pjax.min.js?time=102"></script>
+
+  <script src="/js/Valine.min.js?time=102"></script>
+<!--  <script src='https://unpkg.com/valine/dist/Valine.min.js'></script>-->
+  <script>
+    document.title = `小琳的星空`
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="/?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/">-->
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="/log?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/log?time=100">-->
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="/link?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/link?time=100">-->
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="/about?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/about?time=100">-->
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"Promise","cover":"/imgs/cover/default-cover.jpeg?time=44?time=47?time=48?time=66?time=67?time=77","path":"2023/11/24/js/Promise/"},{"title":"K8s系列(一)---基本概念","cover":"/imgs/cover/default-cover.webp?time=57?time=61?time=62?time=69?time=77","path":"2025/08/12/k8s/K8s系列一之基本概念/"},{"title":"K8s系列(三)---搭建","cover":"/imgs/cover/default-cover.webp?time=57?time=61?time=62?time=69?time=77?time=78","path":"2025/08/14/k8s/K8s系列三之搭建/"},{"title":"K8s系列---番外篇","cover":"/imgs/cover/default-cover.jpeg?time=57?time=62?time=63?time=69?time=77?time=78?time=79","path":"2025/09/06/k8s/K8s系列之番外篇/"},{"title":"K8s系列(二)---软件安装","cover":"/imgs/cover/default-cover.jpeg?time=57?time=61?time=62?time=69?time=77?time=78","path":"2025/08/13/k8s/K8s系列二之容器安装/"},{"title":"K8s系列(六)---资源补充","cover":"/imgs/cover/default-cover.webp?time=57?time=62?time=63?time=69?time=77","path":"2025/09/17/k8s/K8s系列六之资源补充/"},{"title":"K8s系列(四)---常用命令","cover":"/imgs/cover/default-cover.jpeg?time=57?time=62?time=63?time=69?time=77","path":"2025/09/07/k8s/K8s系列四之常用命令/"},{"title":"Docker系列(一)---安装和基本使用","cover":"/imgs/cover/default-cover.jpeg?time=38?time=58?time=61?time=64?time=70?time=79?time=80","path":"2025/08/05/docker/Docker系列一之安装和基本使用/"},{"title":"Docker系列(三)---项目部署","cover":"/imgs/cover/default-cover.webp?time=57?time=61?time=62?time=70?time=79","path":"2025/08/11/docker/Docker系列三之项目部署/"},{"title":"MySQL系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=44?time=45?time=48?time=66?time=70?time=80","path":"2023/11/27/mysql/MySQL系列一之安装/"},{"title":"Docker系列(二)---进阶使用","cover":"/imgs/cover/default-cover.webp?time=57?time=61?time=62?time=70?time=79?time=80","path":"2025/08/07/docker/Docker系列二之进阶使用/"},{"title":"K8s系列(五)---资源部署","cover":"/imgs/cover/default-cover.jpeg?time=57?time=62?time=63?time=69?time=77","path":"2025/09/07/k8s/K8s系列五之资源部署/"},{"title":"NPM和PNPM的安装及配置","cover":"/imgs/cover/default-cover.webp?time=42?time=45?time=49?time=65?time=71?time=81?time=81?time=82","path":"2023/12/26/node/npm和pnpm安装及配置/"},{"title":"MySQL系列(三)---索引","cover":"/imgs/cover/default-cover.webp?time=38?time=50?time=55?time=64?time=70?time=82","path":"2024/04/29/mysql/MySQL系列三之索引/"},{"title":"博客搭建","cover":"/imgs/cover/default-cover.webp?time=44?time=47?time=48?time=66?time=72?time=77?time=83","path":"2023/11/22/other/博客搭建/"},{"title":"Redis系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=42?time=45?time=49?time=65?time=72?time=83","path":"2023/12/12/redis/Redis系列一之安装/"},{"title":"Typescript系列(一)---基础","cover":"/imgs/cover/default-cover.webp?time=42?time=45?time=49?time=65?time=73?time=84","path":"2023/12/26/ts/TypeScript系列一之基础/"},{"title":"Typescript系列(二)---高级","cover":"/imgs/cover/default-cover.jpeg?time=42?time=52?time=53?time=65?time=73?time=84","path":"2024/01/04/ts/TypeScript系列二之高级/"},{"title":"项目对接海康SDK","cover":"/imgs/cover/default-cover.webp?time=38?time=50?time=54?time=64?time=72?time=84","path":"2024/02/21/other/项目对接海康SDK/"},{"title":"项目对接招商银行CBS","cover":"/imgs/cover/default-cover.webp?time=38?time=50?time=54?time=64?time=72?time=85","path":"2024/02/21/other/项目对接招商银行CBS/"},{"title":"Vue系列(一)---项目创建和配置","cover":"/imgs/cover/default-cover.webp?time=38?time=58?time=60?time=64?time=73?time=82?time=85?time=85","path":"2025/06/19/web/Vue系列一之项目创建和配置/"},{"title":"MySQL系列(二)---SQL","cover":"/imgs/cover/default-cover.jpeg?time=38?time=50?time=54?time=64?time=70?time=82","path":"2024/02/26/mysql/MySQL系列二之SQL/"},{"title":"Vue系列(二)---路由","cover":"/imgs/cover/default-cover.jpeg?time=42?time=52?time=53?time=65?time=73?time=86","path":"2024/01/07/web/Vue系列二之路由/"},{"title":"Vue系列(四)---请求","cover":"/imgs/cover/default-cover.jpeg?time=42?time=50?time=54?time=65?time=73?time=86","path":"2024/02/01/web/Vue系列四之请求/"},{"title":"Vue系列(三)---状态管理库","cover":"/imgs/cover/default-cover.webp?time=42?time=50?time=53?time=65?time=73?time=87","path":"2024/01/18/web/Vue系列三之状态管理库/"},{"title":"SpringCloud系列(一)---项目创建","cover":"/imgs/cover/default-cover.webp?time=44?time=45?time=48?time=66?time=75?time=87","path":"2023/11/25/springcloud/SpringCloud系列一之基础服务/"},{"title":"SpringCloud系列(七)---认证和授权","cover":"/imgs/cover/default-cover.jpeg?time=42?time=50?time=54?time=65?time=75?time=88","path":"2024/02/03/springcloud/SpringCloud系列七之认证和授权/"},{"title":"SpringCloud系列(三)---服务熔断与降级","cover":"/imgs/cover/default-cover.webp?time=44?time=45?time=49?time=66?time=75?time=87?time=88?time=89","path":"2023/12/02/springcloud/SpringCloud系列三之服务熔断与降级/"},{"title":"SpringCloud系列(九)---阶段总结","cover":"/imgs/cover/default-cover.jpeg?time=38?time=50?time=56?time=64?time=75?time=87","path":"2024/05/11/springcloud/SpringCloud系列九之阶段总结/"},{"title":"Zookeeper系列(一)---原理","cover":"/imgs/cover/default-cover.webp?time=38?time=50?time=56?time=64?time=76?time=89","path":"2024/11/28/zookeeper/Zookeeper系列一之原理/"},{"title":"SpringCloud系列(二)---注册中心和配置中心","cover":"/imgs/cover/default-cover.jpeg?time=44?time=45?time=48?time=66?time=75?time=87?time=89?time=90","path":"2023/11/30/springcloud/SpringCloud系列二之注册中心/"},{"title":"Zookeeper系列(二)---安装和使用","cover":"/imgs/cover/default-cover.jpeg?time=38?time=58?time=59?time=64?time=76?time=89","path":"2025/01/10/zookeeper/Zookeeper系列二之安装和使用/"},{"title":"SpringCloud系列(五)---Redis使用","cover":"/imgs/cover/default-cover.jpeg?time=42?time=45?time=49?time=65?time=75?time=83?time=87","path":"2023/12/14/springcloud/SpringCloud系列五之Redis使用/"},{"title":"SpringCloud系列(六)---分布式主键","cover":"/imgs/cover/default-cover.webp?time=42?time=45?time=49?time=65?time=75?time=87?time=90","path":"2023/12/11/springcloud/SpringCloud系列六之分布式主键/"},{"title":"SpringCloud系列(四)---网关","cover":"/imgs/cover/default-cover.jpeg?time=44?time=45?time=49?time=66?time=75?time=87?time=91","path":"2023/12/10/springcloud/SpringCloud系列四之网关/"},{"title":"SpringCloud系列(八)---服务划分","cover":"/imgs/cover/default-cover.webp?time=38?time=50?time=54?time=64?time=75?time=91","path":"2024/02/19/springcloud/SpringCloud系列八之服务划分/"},{"title":"","path":"2025/10/07/k8s/K8s系列五之资源部署/K8s资源清单/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}${'?time=' + new Date().getMilliseconds()}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp'}${'?time=' + new Date().getMilliseconds()}" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg?time=100" class="main-left--avatar" alt />
+      <div class="main-left--intro">
+        <p class="main-left--name">小琳</p>
+        <div class="main-left--tags">
+          
+            <span class="main-left--tag">中二</span>
+          
+            <span class="main-left--tag">乐天派</span>
+          
+            <span class="main-left--tag">悲观主义</span>
+          
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>跳出圈子你会发现</p>
+        <p>其实你一无是处</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        
+          <a target="_blank" rel="noopener" href="https://github.com/?time=100" title="github">
+            <i class="logo xiao-lin-blog xiao-lin-blog-github"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://gitee.com/xiao-lin?time=100" title="码云">
+            <i class="logo xiao-lin-blog xiao-lin-blog-gitee"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43728193?type=blog?time=100" title="CSDN">
+            <i class="logo xiao-lin-blog xiao-lin-blog-csdn"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiao-lin-unit/?time=100" title="博客园">
+            <i class="logo xiao-lin-blog xiao-lin-blog-cnblogs"></i>
+          </a>
+        
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories?time=100">
+          <div>
+            <span>11</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags?time=100">
+          <div>
+            <span>30</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives?time=100">
+          <div>
+            <span>12 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/?time=100">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log?time=100">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link?time=100">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about?time=100">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tags?time=100">
+            <span class="header-menu--span">标签</span>
+            <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-tags-rectangle"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/categories?time=100">
+            <span class="header-menu--span">分类</span>
+            <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-categories"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools?time=100">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>37 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>686天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  
+
+<link rel="stylesheet" href="/css/partial/article.css?time=938" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">K8s系列(六)---资源补充</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span class="xiao-lin-blog xiao-lin-blog-categories">分类：</span>
+            <a class="category-link" href="/categories/k8s/">K8s</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span class="xiao-lin-blog xiao-lin-blog-tags-fill">标签：</span>
+            <a class="tag-link" href="/tags/k8s/" rel="tag">k8s</a>
+          </div>
+          
+          <p class="article-info--date"><i class="xiao-lin-blog xiao-lin-blog-date-time">日期：2025-09-17 12:44:19</i></p>
+        </div>
+<!--        <img src="/imgs/cover/default-cover.webp" alt="" class="article-cover">-->
+        <img src="/imgs/cover/default-cover.webp" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <!-- toc -->
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>经过前面的折磨, 想必都有了一点体会. 为什么我们要先学习一次部署, 而不是先学习详细内容. 主要是基于以下考虑:</p>
+<ul>
+<li>实践能力. 纸上得来终觉浅, 绝知此事要躬行</li>
+<li>应用能力. 在学习完一次部署之后, 经过折磨之后大致能知道如何做部署工作, 可以直接应用, 经典的我就蹭蹭不进去</li>
+<li>带着问题找答案. 部署过程中会遇到各种问题, 无论有没有部署成功, 过程中的问题会提醒你需要你特别关注的点, 这比盲目学习有用</li>
+<li>此篇本身目的并不是要详细讲解其内容, 而是想做一些内容补充或者做重要内容的使用以及一些可能需要额外注意的内容. 资源配置详解可以从<a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/home/">官方文档</a>参考内容的<a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/reference/kubernetes-api/">Kubernetes API</a>中查看</li>
+</ul>
+<h3 id="pod"><a class="markdownIt-Anchor" href="#pod"></a> <code>Pod</code></h3>
+<h4 id="探针"><a class="markdownIt-Anchor" href="#探针"></a> 探针</h4>
+<p><code>Pod</code>容器中的程序在运行过程中可能会出现错误, 导致程序停止运行. 如, <code>java</code>项目可能会出现内存溢出而停止. 那么<code>Pod</code>是如何知道程序是否正常运行的呢? 答案就是探针.</p>
+<p>前文在部署资源时, 可能会遇到<code>Pod</code>的状态为<code>Running</code>, 但是<code>Ready</code>却是<code>0/1</code>, 而自己也确认容器中的程序没有错误, 那么就是探针没有配置好的结果</p>
+<h5 id="类型"><a class="markdownIt-Anchor" href="#类型"></a> 类型</h5>
+<ul>
+<li><code>StartupProbe</code>(用来探测是否启动成功): 配置该探针后, 会先禁用其他探针, 直到该探针成功后, 其他探针才会启动使用. 这是为了解决不能准确预估应用一定是多长时间启动成功而新增的类型. 是一个启动时的状态探针</li>
+<li><code>LivenessProbe</code>(用来探测是否需要重启): 用于探测容器中的应用是否仍正常运行, 如果探测失败, <code>kubelet</code>会根据配置的重启策略进行重启. 如果没有配置该探针, 默认就认为容器启动成功, 不会执行重启策略. 是一个启动成功后的周期探针</li>
+<li><code>ReadinessProbe</code>(用来探测是否可以接收外部流量): 用于探测容器是否健康, 如果是, 则认为该容器已经完全启动, 并且可以接受外部流量. 多用来做在容器内程序启动后需要内容初始化完成后使用的探测. 是一个启动成功后的周期探针</li>
+</ul>
+<h5 id="探测方式"><a class="markdownIt-Anchor" href="#探测方式"></a> 探测方式</h5>
+<ul>
+<li>
+<p><code>ExecAction</code>: 执行命令进行探测</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">livenessProbe:</span> </span><br><span class="line">  <span class="attr">exec:</span> </span><br><span class="line">    <span class="attr">command:</span> </span><br><span class="line">      <span class="bullet">-</span> <span class="string">sh</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">-c</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">cat</span> <span class="string">inited</span> <span class="string">&gt;</span> <span class="string">&#x27;Pod Success&#x27;</span> <span class="comment"># 自定义探测命令</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p><code>TCPSocketAction</code>: 通过<code>tcp</code>链接检测容器端口是否开放, 若开放则证明该容器健康</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">livenessProbe:</span> </span><br><span class="line">  <span class="attr">tcpSocket:</span> </span><br><span class="line">    <span class="attr">port:</span> <span class="number">8080</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p><code>HTTPGetAction</code>: 通过<code>http get</code>请求, 若结构返回的状态码在<code>200~400</code>之间, 则认为容器健康</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">livenessProbe:</span> </span><br><span class="line">  <span class="attr">httpGet:</span> </span><br><span class="line">    <span class="attr">path:</span> <span class="string">/healthy</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">8080</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="生命周期"><a class="markdownIt-Anchor" href="#生命周期"></a> 生命周期</h4>
+<p><code>Pod</code>的整个生命过程有以下几个节点</p>
+<ul>
+<li><code>initContainer</code></li>
+<li>启动</li>
+<li><code>postStart</code></li>
+<li><code>StartUpProbe</code></li>
+<li><code>LivenessProbe/ReadinessProbe</code></li>
+<li><code>preStop</code></li>
+<li>结束</li>
+</ul>
+<p>但对<code>Pod</code>的生命周期定义有两个, 即<code>postStart</code>和<code>preStop</code>, <code>postStart</code>不建议使用, 可能会与容器的<code>command</code>存在并行</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 以Deployment的yaml配置</span></span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">template:</span> </span><br><span class="line">    <span class="attr">spec:</span> </span><br><span class="line">      <span class="attr">initContainers:</span> </span><br><span class="line">        <span class="comment"># initContainers 的配置内容与 containers 一致, 只是这部分会在容器启动前执行</span></span><br><span class="line">      <span class="attr">containers:</span> </span><br><span class="line">        <span class="attr">lifecycle:</span> </span><br><span class="line">          <span class="attr">postStart:</span> </span><br><span class="line">            <span class="attr">exec:</span> </span><br><span class="line">              <span class="attr">command:</span> <span class="string">&#x27;&#x27;</span></span><br><span class="line">            <span class="attr">httpGet:</span> </span><br><span class="line">              <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">            <span class="attr">tcpSocket:</span> </span><br><span class="line">              <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">          <span class="attr">preStop:</span> </span><br><span class="line">            <span class="attr">exec:</span> </span><br><span class="line">              <span class="attr">command:</span> <span class="string">&#x27;&#x27;</span></span><br><span class="line">            <span class="attr">httpGet:</span> </span><br><span class="line">              <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">            <span class="attr">tcpSocket:</span> </span><br><span class="line">              <span class="attr">port:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+<p><code>preStop</code>常用在释放资源, 注册中心下线等业务中</p>
+<h3 id="资源调度"><a class="markdownIt-Anchor" href="#资源调度"></a> 资源调度</h3>
+<h4 id="标签和选择器"><a class="markdownIt-Anchor" href="#标签和选择器"></a> 标签和选择器</h4>
+<p>在资源中可以在<code>metadata</code>中定义<code>labels</code>, 通过自定义键值对的方式为字段添加标签</p>
+<p>通过选择器<code>selector</code>中定义<code>matchLabels</code>, 通过定义键值对匹配对应的资源</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">labels:</span> </span><br><span class="line">    <span class="attr">app:</span> <span class="string">my-app</span></span><br><span class="line">    <span class="attr">version:</span> <span class="string">v1.0.0</span></span><br><span class="line">    <span class="attr">role:</span> <span class="string">admin</span></span><br><span class="line">    <span class="attr">namespace:</span> <span class="string">test</span> <span class="comment"># 这个与k8s的namespace无关, 这个namespace是自定义的标签</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">selector:</span> </span><br><span class="line">    <span class="attr">matchLabels:</span> </span><br><span class="line">      <span class="attr">app:</span> <span class="string">my-app</span></span><br><span class="line">      <span class="attr">role:</span> <span class="string">admin</span></span><br><span class="line">    <span class="attr">matchExpressions:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">version</span></span><br><span class="line">        <span class="attr">operator:</span> <span class="string">In/NotIn</span></span><br><span class="line">        <span class="attr">values:</span> [<span class="string">v1.0.0</span>, <span class="string">v1.0.1</span>] <span class="comment"># operator 为 In/NotIn时, values不能为空</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">namespace</span></span><br><span class="line">        <span class="attr">operator:</span> <span class="string">Exists/DoesNotExist</span> <span class="comment"># operator 为 Exists/DoesNotExists时, values必须为空</span></span><br><span class="line">        </span><br></pre></td></tr></table></figure>
+<h4 id="deployment"><a class="markdownIt-Anchor" href="#deployment"></a> <code>Deployment</code></h4>
+<p><code>Deployment</code>的内容在上一篇部署中配置的内容差不多, 本篇就只讲解一点关于版本更新的内容</p>
+<ul>
+<li>
+<p>滚动更新</p>
+<p><code>Deployment</code>将现有<code>Pod</code>替换为新<code>Pod</code>称为更新, 更新是通过更新策略配置的, 默认是滚动更新</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">strategy:</span> </span><br><span class="line">    <span class="attr">type:</span> <span class="string">RollingUpdate</span></span><br><span class="line">    <span class="attr">rollingUpdate:</span> </span><br><span class="line">      <span class="attr">maxSurge:</span> <span class="number">25</span><span class="string">%</span></span><br><span class="line">      <span class="attr">maxUnavailable:</span> <span class="number">25</span><span class="string">%</span></span><br></pre></td></tr></table></figure>
+<p>上述配置中</p>
+<ul>
+<li>
+<p><code>maxSurge</code>表示新旧<code>Pod</code>总数不会超过预期<code>Pod</code>数的<code>125%</code></p>
+</li>
+<li>
+<p><code>maxUnavailabe</code>表示可用<code>Pod</code>总数不会少于预期<code>Pod</code>数的<code>75%</code></p>
+</li>
+<li>
+<p><code>type</code>还可以选择<code>Recreate</code>, 当<code>type</code>值为<code>Recreate</code>时, 则不需要<code>rollingUpdate</code>相关配置</p>
+</li>
+</ul>
+<p>滚动更新的过程:</p>
+<ol>
+<li>
+<p>基于原来的<code>ReplicaSet</code>创建一个新的<code>ReplicaSet</code></p>
+</li>
+<li>
+<p>在新的<code>ReplicaSet</code>中执行扩容操作</p>
+</li>
+<li>
+<p>在旧的<code>ReplicaSet</code>中执行缩容操作</p>
+</li>
+<li>
+<p>在滚动更新策略的配置数值基础上, 重复步骤2和步骤3, 全部更新完成</p>
+</li>
+</ol>
+</li>
+<li>
+<p>回滚版本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">kubectl rollout &#123;<span class="built_in">command</span>&#125; &#123;resource_type&#125; &#123;deploy_name&#125; -n &#123;ns_name&#125; [options]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 Deployment 的历史版本</span></span><br><span class="line">kubectl rollout <span class="built_in">history</span> deployment abc [--revision=&#123;n&#125;]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 回滚到先前的 Deployment 版本</span></span><br><span class="line">kubectl rollout undo deployment abc</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 检查 Daemonset 的部署状态</span></span><br><span class="line">kubectl rollout status daemonset foo</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 重启 Deployment</span></span><br><span class="line">kubectl rollout restart deployment abc</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 重启带有 &#x27;app=nginx&#x27; 标签的 Deployment</span></span><br><span class="line">kubectl rollout restart deployment --selector=app=nginx</span><br></pre></td></tr></table></figure>
+<p>需要注意的是, 版本回滚需要基于<code>revisionHistoryLimit</code>配置, 如果该配置设置为0, 则不会记录版本信息, 就不允许<code>Deployment</code>回退了</p>
+</li>
+<li>
+<p>更新的暂停与恢复</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 暂停更新服务, 执行之后任何修改配置都不会触发更新</span></span><br><span class="line">kubectl rollout pause &#123;resource_type&#125; &#123;deploy_name&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 恢复更新服务, 执行后会将之前做的暂停的更新服务恢复</span></span><br><span class="line">kubectl rollout deploy &#123;resource_type&#125; &#123;deploy_name&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="statefulset"><a class="markdownIt-Anchor" href="#statefulset"></a> <code>StatefulSet</code></h4>
+<ul>
+<li>
+<p>扩容和缩容</p>
+<ol>
+<li>
+<p>通过<code>scale</code>命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl scale sts &#123;sts_name&#125; --replicas=5</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>修改配置文件的<code>replicas</code>数量修改</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">5</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>通过<code>patch</code>命令修改</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl patch sts &#123;sts_name&#125; -p <span class="string">&#x27;&#123;&quot;spec&quot;:&#123;&quot;replicas&quot;:5&#125;&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li>
+<p>更新策略</p>
+<p><code>StatefulSet</code>中, 更新策略字段不是<code>strategy</code>, 而是<code>updateStrategy</code></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">updateStrategy:</span> </span><br><span class="line">    <span class="attr">type:</span> <span class="string">RollingUpdate</span></span><br><span class="line">    <span class="attr">rollingUpdate:</span> </span><br><span class="line">      <span class="attr">maxUnavailable:</span> <span class="number">25</span><span class="string">%</span></span><br><span class="line">      <span class="attr">partition:</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p><code>partition</code>表示分区, 只更新序列数<code>&gt;=partition</code>的<code>Pod</code>. 如, <code>replicas</code>为<code>5</code>, <code>partition</code>为<code>3</code>, 那么更新时只更新序列数为3和4的<code>Pod</code></p>
+<p><code>StatefulSet</code>也可以采用滚动更新策略, 但由于<code>Pod</code>是有序的, 所以<code>StatefulSet</code>中更新时是基于<code>pod</code>的顺序倒序更新的. 利用滚动更新中的<code>partition</code>属性, 可以实现简易的灰度发布(金丝雀发布)的效果. 例如有5个<code>Pod</code>, 如果当前<code>partition</code>设置为<code>3</code>, 那么此时滚动更新时只会更新那些序号<code>&gt;=3</code>的<code>Pod</code>. 通过<code>partition</code>的值, 来决定只更新启动一部分<code>Pod</code>, 确认没有问题户在逐渐增大<code>Pod</code>的更新数量</p>
+<p><code>type</code>的值也可以选择使用<code>OnDelete</code>, 表示只有在删除<code>Pod</code>操作后, 在新建<code>Pod</code>时完成更新</p>
+</li>
+<li>
+<p>镜像更新</p>
+<ol>
+<li>
+<p>修改配置文件的<code>image</code>修改</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">template:</span> </span><br><span class="line">    <span class="attr">spec:</span> </span><br><span class="line">      <span class="attr">containers:</span> </span><br><span class="line">        <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">nginx:1.22.1</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>通过<code>patch</code>命令修改</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl patch sts &#123;sts_name&#125; --<span class="built_in">type</span>=<span class="string">&#x27;json&#x27;</span> -p=<span class="string">&#x27;[&#123;&quot;op&quot;:&quot;replace&quot;,&quot;path&quot;:&quot;/spec/template/spec/containers/0/image&quot;, &quot;value&quot;:&quot;nginx:1.22.1&quot;&#125;]&#x27;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li>
+<p>级联删除和非级联删除</p>
+<p><code>StatefulSet</code>在做删除操作时, 默认是级联删除, 即会将相关<code>Pod</code>资源一起删除, 可以通过添加参数做非级联删除</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># cascade 的参数值为true时为级联删除, false为非级联删除</span></span><br><span class="line">kubectl delete sts &#123;sts_name&#125; --cascade=<span class="literal">true</span>/false</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="daemonset"><a class="markdownIt-Anchor" href="#daemonset"></a> <code>DaemonSet</code></h3>
+<p><code>DaemonSet</code>是为每一个<code>node</code>节点都部署一个守护进程, 所以<code>DaemonSet</code>不存在人为修改扩缩容这个概念. 通常是部署公共功能, 如服务日志, 服务监控等.</p>
+<p>指定节点的方式</p>
+<ul>
+<li><code>nodeSelector</code>: 只掉督导匹配指定<code>label</code>的<code>Node</code>上</li>
+<li><code>nodeAffinity</code>: 功能更丰富的<code>Node</code>选择器, 节点亲和力</li>
+<li><code>podAffinity</code>: 调度到满足条件的<code>Pod</code>所在的<code>Node</code>上, <code>Pod</code>亲和力</li>
+</ul>
+<p>亲和力部分先不讲解, 后面与污点一起</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">fluentd-pod-reader</span></span><br><span class="line"><span class="attr">rules:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">apiGroups:</span> [<span class="string">&quot;&quot;</span>]  <span class="comment"># 空字符串表示核心API组</span></span><br><span class="line">    <span class="attr">resources:</span> [<span class="string">&quot;pods&quot;</span>, <span class="string">&quot;namespaces&quot;</span>]</span><br><span class="line">    <span class="attr">verbs:</span> [<span class="string">&quot;get&quot;</span>, <span class="string">&quot;watch&quot;</span>, <span class="string">&quot;list&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRoleBinding</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">fluentd-pod-reader-binding</span></span><br><span class="line"><span class="attr">subjects:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">default</span></span><br><span class="line">    <span class="attr">namespace:</span> <span class="string">test</span>  <span class="comment"># 你的服务账户所在的命名空间</span></span><br><span class="line"><span class="attr">roleRef:</span></span><br><span class="line">  <span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">fluentd-pod-reader</span></span><br><span class="line">  <span class="attr">apiGroup:</span> <span class="string">rbac.authorization.k8s.io</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">DaemonSet</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">fluentd</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">test</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">updateStrategy:</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">OnDelete</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">logging</span> <span class="comment"># 与下面的 template 中定义的labels匹配</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">logging</span> <span class="comment"># 为定义的pod添加标签</span></span><br><span class="line">        <span class="attr">id:</span> <span class="string">fluentd</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">fluentd</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeSelector:</span></span><br><span class="line">        <span class="attr">type:</span> <span class="string">app-node</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">fluentd-es</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">fluent/fluentd-kubernetes-daemonset:v1.19-debian-graylog-1</span></span><br><span class="line">          <span class="attr">env:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">K8S_NODE_NAME</span></span><br><span class="line">              <span class="attr">valueFrom:</span></span><br><span class="line">                <span class="attr">fieldRef:</span></span><br><span class="line">                  <span class="attr">fieldPath:</span> <span class="string">spec.nodeName</span></span><br><span class="line">          <span class="attr">volumeMounts:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">containers</span></span><br><span class="line">              <span class="attr">mountPath:</span> <span class="string">/var/lib/k8s/containers</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">varlog</span></span><br><span class="line">              <span class="attr">mountPath:</span> <span class="string">/var/log</span></span><br><span class="line">      <span class="attr">volumes:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">containers</span></span><br><span class="line">          <span class="attr">hostPath:</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/var/lib/k8s/containers</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">varlog</span></span><br><span class="line">          <span class="attr">hostPath:</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/var/log</span></span><br></pre></td></tr></table></figure>
+<p><mark><code>ClusterRole</code>和<code>ClusterRoleBinding</code>配置是<code>fluentd</code>需要的, 并不是<code>DaemonSet</code>需要的</mark></p>
+<h4 id="hpa自动扩缩容"><a class="markdownIt-Anchor" href="#hpa自动扩缩容"></a> <code>HPA</code>自动扩/缩容</h4>
+<p>根据<code>CPU</code>使用率或者自定义指标(<code>metrics</code>)自动对<code>Pod</code>进行扩/缩容</p>
+<ul>
+<li>控制管理器每隔30s(可自定义修改)查询<code>metrics</code>的资源使用情况</li>
+<li>支持三种<code>metrics</code>类型
+<ul>
+<li>预定义<code>metrics</code>: 以利用率的方式计算</li>
+<li>自定义<code>metrics</code>: 以原始值的方式计算</li>
+<li>自定义的<code>object metrics</code></li>
+</ul>
+</li>
+<li>支持两种<code>metrics</code>查询方式: <code>Heapster</code>和自定义的<code>REST API</code></li>
+<li>支持多<code>metrics</code></li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 资源配置中设置占用资源情况</span></span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">template:</span> </span><br><span class="line">    <span class="attr">spec:</span> </span><br><span class="line">      <span class="attr">containers:</span> </span><br><span class="line">        <span class="bullet">-</span> <span class="attr">resources:</span> </span><br><span class="line">            <span class="attr">limits:</span> </span><br><span class="line">              <span class="attr">cpu:</span> <span class="string">1000m</span>     <span class="comment"># 1000m CPU = 1 CPU</span></span><br><span class="line">              <span class="attr">memory:</span> <span class="string">2Gi</span></span><br><span class="line">            <span class="attr">requests:</span> </span><br><span class="line">              <span class="attr">cpu:</span> <span class="string">500m</span></span><br><span class="line">              <span class="attr">memory:</span> <span class="string">1Gi</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># hpa 配置</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">autoscaling/v2</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">HorizontalPodAutoscaler</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-slave-hpa.yaml</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">test</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">role:</span> <span class="string">slave</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">maxReplicas:</span> <span class="number">5</span></span><br><span class="line">  <span class="attr">minReplicas:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">scaleTargetRef:</span></span><br><span class="line">    <span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line">    <span class="attr">kind:</span> <span class="string">StatefulSet</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">mysql-slave-sts</span></span><br><span class="line">  <span class="attr">metrics:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">type:</span> <span class="string">Resource</span></span><br><span class="line">      <span class="attr">resource:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">cpu</span></span><br><span class="line">        <span class="attr">target:</span></span><br><span class="line">          <span class="attr">type:</span> <span class="string">Utilization</span></span><br><span class="line">          <span class="attr">averageUtilization:</span> <span class="number">6</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2025/09/17/k8s/K8s系列六之资源补充/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text"> 前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pod"><span class="toc-number">2.</span> <span class="toc-text"> Pod</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8E%A2%E9%92%88"><span class="toc-number">2.1.</span> <span class="toc-text"> 探针</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%B1%BB%E5%9E%8B"><span class="toc-number">2.1.1.</span> <span class="toc-text"> 类型</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%8E%A2%E6%B5%8B%E6%96%B9%E5%BC%8F"><span class="toc-number">2.1.2.</span> <span class="toc-text"> 探测方式</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-number">2.2.</span> <span class="toc-text"> 生命周期</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6"><span class="toc-number">3.</span> <span class="toc-text"> 资源调度</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%87%E7%AD%BE%E5%92%8C%E9%80%89%E6%8B%A9%E5%99%A8"><span class="toc-number">3.1.</span> <span class="toc-text"> 标签和选择器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#deployment"><span class="toc-number">3.2.</span> <span class="toc-text"> Deployment</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#statefulset"><span class="toc-number">3.3.</span> <span class="toc-text"> StatefulSet</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#daemonset"><span class="toc-number">4.</span> <span class="toc-text"> DaemonSet</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#hpa%E8%87%AA%E5%8A%A8%E6%89%A9%E7%BC%A9%E5%AE%B9"><span class="toc-number">4.1.</span> <span class="toc-text"> HPA自动扩&#x2F;缩容</span></a></li></ol></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2025/10/07/k8s/K8s系列五之资源部署/K8s资源清单/"></a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2025/09/07/k8s/K8s系列五之资源部署/">K8s系列(五)---资源部署</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2025/09/17/k8s/K8s系列六之资源补充/'
+  })
+</script>
+
+
+<script>
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        let href = decodeURIComponent(link.href);
+        href = href.substring(href.indexOf('#'));
+        const target = $(href)[0];
+        const top = target.offsetTop;
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      我们在绵延的海滩上捡贝壳，今天捡到了不必欣喜，因为海很大，今天没捡到，也不必失落，因为海很大。 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">我好像没有网络备案</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"自転车","artist":"オレスカバンド","url":"/music/自転车-オレスカバンド.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"撞地球","artist":"鱼儿七","url":"/music/撞地球-鱼儿七.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"晴天","artist":"周杰伦","url":"/music/晴天-周杰伦.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"告白气球","artist":"周杰伦","url":"/music/告白气球-周杰伦.mp3","cover":"/imgs/music-bg1.jpg"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>
