@@ -5,16 +5,16 @@
   
   <title>小琳的星空 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico?time=408" type="image/x-icon">
-  <link rel="stylesheet" href="/css/public.css?time=408" />
-  <link rel="stylesheet" href="/css/layout.css?time=408" />
-  <link rel="stylesheet" href="/css/iconfont.css?time=408" />
-  <link rel="stylesheet" href="/css/APlayer.min.css?time=408" />
-  <script src="/js/APlayer.min.js?time=408"></script>
-  <script src="/js/jquery.min.js?time=408"></script>
-  <script src="/js/jquery.pjax.min.js?time=408"></script>
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico?time=594" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css?time=594" />
+  <link rel="stylesheet" href="/css/layout.css?time=594" />
+  <link rel="stylesheet" href="/css/iconfont.css?time=594" />
+  <link rel="stylesheet" href="/css/APlayer.min.css?time=594" />
+  <script src="/js/APlayer.min.js?time=594"></script>
+  <script src="/js/jquery.min.js?time=594"></script>
+  <script src="/js/jquery.pjax.min.js?time=594"></script>
 
-  <script src="/js/Valine.min.js?time=408"></script>
+  <script src="/js/Valine.min.js?time=594"></script>
 <!--  <script src='https://unpkg.com/valine/dist/Valine.min.js'></script>-->
   <script>
     document.title = `小琳的星空`
@@ -170,21 +170,21 @@
         </li>
         <li>
           <a href="/log?time=' + new Date().getMilliseconds()">
-<!--          <a href="http://example.com/log?time=399">-->
+<!--          <a href="http://example.com/log?time=584">-->
             <i class="header-menu--icon iconfont icon-rizhi"></i>
             <span class="header-menu--span">日志</span>
           </a>
         </li>
         <li>
           <a href="/link?time=' + new Date().getMilliseconds()">
-<!--          <a href="http://example.com/link?time=399">-->
+<!--          <a href="http://example.com/link?time=584">-->
             <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
             <span class="header-menu--span">友情链接</span>
           </a>
         </li>
         <li>
           <a href="/about?time=' + new Date().getMilliseconds()">
-<!--          <a href="http://example.com/about?time=399">-->
+<!--          <a href="http://example.com/about?time=584">-->
             <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
             <span class="header-menu--span">关于我</span>
           </a>
@@ -198,7 +198,7 @@
   const ipt = document.querySelector('#search-input')
   const btn = document.querySelector('#search-btn')
   const layer = document.querySelector('#search-layer')
-  const posts = JSON.parse(`[{"title":"AI系列(一)---Spring AI学习","cover":"/imgs/cover/default-cover.jpeg?time=335?time=354?time=357?time=360?time=369?time=372?time=373","path":"2025/08/05/ai/AI系列一之SpringAI学习/"},{"title":"Docker系列(一)---安装和基本使用","cover":"/imgs/cover/default-cover.jpeg?time=335?time=356?time=357?time=361?time=369?time=373?time=374","path":"2025/08/05/docker/Docker系列一之安装和基本使用/"},{"title":"Docker系列(三)---项目部署","cover":"/imgs/cover/default-cover.webp?time=335?time=354?time=357?time=361?time=369?time=373","path":"2025/08/11/docker/Docker系列三之项目部署/"},{"title":"Docker系列(二)---进阶使用","cover":"/imgs/cover/default-cover.webp?time=335?time=354?time=357?time=361?time=369?time=373?time=374","path":"2025/08/07/docker/Docker系列二之进阶使用/"},{"title":"Promise","cover":"/imgs/cover/default-cover.jpeg?time=341?time=344?time=345?time=361?time=370?time=374","path":"2023/11/24/js/Promise/"},{"title":"K8s系列(一)---基本概念","cover":"/imgs/cover/default-cover.webp?time=335?time=354?time=357?time=362?time=369?time=375","path":"2025/08/12/k8s/K8s系列一之基本概念/"},{"title":"K8s系列(三)---搭建","cover":"/imgs/cover/default-cover.webp?time=354?time=357?time=362?time=366?time=375?time=376","path":"2025/08/14/k8s/K8s系列三之搭建/"},{"title":"K8s系列---番外篇","cover":"/imgs/cover/default-cover.jpeg?time=354?time=358?time=362?time=366?time=375?time=376?time=376","path":"2025/09/06/k8s/K8s系列之番外篇/"},{"title":"K8s系列(二)---软件安装","cover":"/imgs/cover/default-cover.jpeg?time=354?time=357?time=362?time=366?time=375?time=376","path":"2025/08/13/k8s/K8s系列二之容器安装/"},{"title":"K8s系列(六)---资源补充","cover":"/imgs/cover/default-cover.webp?time=354?time=358?time=362?time=366?time=375","path":"2025/09/17/k8s/K8s系列六之资源补充/"},{"title":"K8s系列(四)---常用命令","cover":"/imgs/cover/default-cover.jpeg?time=354?time=358?time=362?time=366?time=375","path":"2025/09/07/k8s/K8s系列四之常用命令/"},{"title":"K8s系列(五)---资源部署","cover":"/imgs/cover/default-cover.jpeg?time=354?time=358?time=362?time=366?time=375","path":"2025/09/07/k8s/K8s系列五之资源部署/"},{"title":"MySQL系列(三)---索引","cover":"/imgs/cover/default-cover.webp?time=335?time=348?time=352?time=363?time=369?time=377","path":"2024/04/29/mysql/MySQL系列三之索引/"},{"title":"MySQL系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=341?time=342?time=345?time=363?time=370?time=377","path":"2023/11/27/mysql/MySQL系列一之安装/"},{"title":"MySQL系列(二)---SQL","cover":"/imgs/cover/default-cover.jpeg?time=335?time=348?time=351?time=363?time=369?time=377","path":"2024/02/26/mysql/MySQL系列二之SQL/"},{"title":"NPM和PNPM的安装及配置","cover":"/imgs/cover/default-cover.webp?time=339?time=342?time=347?time=363?time=371?time=378?time=378?time=378","path":"2023/12/26/node/npm和pnpm安装及配置/"},{"title":"博客搭建","cover":"/imgs/cover/default-cover.webp?time=341?time=344?time=345?time=364?time=370?time=374?time=379","path":"2023/11/22/other/博客搭建/"},{"title":"项目对接招商银行CBS","cover":"/imgs/cover/default-cover.webp?time=339?time=348?time=351?time=364?time=371?time=379","path":"2024/02/21/other/项目对接招商银行CBS/"},{"title":"项目对接海康SDK","cover":"/imgs/cover/default-cover.webp?time=339?time=348?time=351?time=364?time=371?time=380","path":"2024/02/21/other/项目对接海康SDK/"},{"title":"Typescript系列(一)---基础","cover":"/imgs/cover/default-cover.webp?time=339?time=342?time=347?time=364?time=371?time=380","path":"2023/12/26/ts/TypeScript系列一之基础/"},{"title":"Redis系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=341?time=342?time=347?time=366?time=370?time=381","path":"2023/12/12/redis/Redis系列一之安装/"},{"title":"Redis系列(三)---应用","cover":"/imgs/cover/default-cover.jpeg?time=359?time=360?time=366?time=366?time=381","path":"2026/04/20/redis/Redis系列三之应用/"},{"title":"Typescript系列(二)---高级","cover":"/imgs/cover/default-cover.jpeg?time=339?time=349?time=350?time=364?time=371?time=380","path":"2024/01/04/ts/TypeScript系列二之高级/"},{"title":"Redis系列(二)---基础","cover":"/imgs/cover/default-cover.webp?time=359?time=360?time=366?time=366?time=381","path":"2026/04/20/redis/Redis系列二之基础/"},{"title":"Vue系列(一)---项目创建和配置","cover":"/imgs/cover/default-cover.webp?time=359?time=360?time=365?time=366?time=378?time=381?time=382","path":"2026/04/01/web/Vue系列一之项目创建和配置/"},{"title":"Vue系列(三)---状态管理库","cover":"/imgs/cover/default-cover.webp?time=339?time=348?time=350?time=365?time=371?time=382","path":"2024/01/18/web/Vue系列三之状态管理库/"},{"title":"Vue系列(二)---路由","cover":"/imgs/cover/default-cover.jpeg?time=339?time=349?time=350?time=365?time=371?time=382","path":"2024/01/07/web/Vue系列二之路由/"},{"title":"Vue系列(四)---请求","cover":"/imgs/cover/default-cover.jpeg?time=339?time=348?time=351?time=365?time=371?time=383","path":"2024/02/01/web/Vue系列四之请求/"},{"title":"Zookeeper系列(一)---原理","cover":"/imgs/cover/default-cover.webp?time=335?time=348?time=353?time=368?time=369?time=383","path":"2024/11/28/zookeeper/Zookeeper系列一之原理/"},{"title":"Zookeeper系列(二)---安装和使用","cover":"/imgs/cover/default-cover.jpeg?time=335?time=356?time=356?time=368?time=369?time=383","path":"2025/01/10/zookeeper/Zookeeper系列二之安装和使用/"},{"title":"SpringCloud系列(一)---项目创建","cover":"/imgs/cover/default-cover.webp?time=341?time=342?time=345?time=368?time=370?time=385","path":"2023/11/25/springcloud/SpringCloud系列一之基础服务/"},{"title":"SpringCloud系列(七)---认证和授权","cover":"/imgs/cover/default-cover.jpeg?time=339?time=348?time=351?time=368?time=371?time=386","path":"2024/02/03/springcloud/SpringCloud系列七之认证和授权/"},{"title":"SpringCloud系列(三)---服务熔断与降级","cover":"/imgs/cover/default-cover.webp?time=341?time=342?time=347?time=368?time=370?time=385?time=387?time=387","path":"2023/12/02/springcloud/SpringCloud系列三之服务熔断与降级/"},{"title":"SpringCloud系列(九)---阶段总结","cover":"/imgs/cover/default-cover.jpeg?time=335?time=348?time=353?time=368?time=369?time=385","path":"2024/05/11/springcloud/SpringCloud系列九之阶段总结/"},{"title":"SpringCloud系列(二)---注册中心和配置中心","cover":"/imgs/cover/default-cover.jpeg?time=341?time=342?time=345?time=368?time=370?time=383?time=385?time=388","path":"2023/11/30/springcloud/SpringCloud系列二之注册中心/"},{"title":"SpringCloud系列(五)---Redis使用","cover":"/imgs/cover/default-cover.jpeg?time=341?time=342?time=347?time=368?time=370?time=381?time=385","path":"2023/12/14/springcloud/SpringCloud系列五之Redis使用/"},{"title":"SpringCloud系列(八)---服务划分","cover":"/imgs/cover/default-cover.webp?time=339?time=348?time=351?time=368?time=371?time=388","path":"2024/02/19/springcloud/SpringCloud系列八之服务划分/"},{"title":"SpringCloud系列(六)---分布式主键","cover":"/imgs/cover/default-cover.webp?time=341?time=342?time=347?time=368?time=370?time=385?time=388","path":"2023/12/11/springcloud/SpringCloud系列六之分布式主键/"},{"title":"SpringCloud系列(四)---网关","cover":"/imgs/cover/default-cover.jpeg?time=341?time=342?time=347?time=368?time=370?time=385?time=389","path":"2023/12/10/springcloud/SpringCloud系列四之网关/"},{"title":"","path":"2026/04/01/k8s/K8s系列五之资源部署/K8s资源清单/"}]`)
+  const posts = JSON.parse(`[{"title":"AI系列(一)---Spring AI学习","cover":"/imgs/cover/default-cover.jpeg?time=520?time=538?time=541?time=545?time=554?time=557?time=558","path":"2025/08/05/ai/AI系列一之SpringAI学习/"},{"title":"Docker系列(一)---安装和基本使用","cover":"/imgs/cover/default-cover.jpeg?time=520?time=540?time=541?time=546?time=554?time=558?time=559","path":"2025/08/05/docker/Docker系列一之安装和基本使用/"},{"title":"Docker系列(三)---项目部署","cover":"/imgs/cover/default-cover.webp?time=520?time=538?time=541?time=546?time=554?time=558","path":"2025/08/11/docker/Docker系列三之项目部署/"},{"title":"Docker系列(二)---进阶使用","cover":"/imgs/cover/default-cover.webp?time=520?time=538?time=541?time=546?time=554?time=558?time=559","path":"2025/08/07/docker/Docker系列二之进阶使用/"},{"title":"K8s系列(一)---基本概念","cover":"/imgs/cover/default-cover.webp?time=520?time=538?time=541?time=546?time=554?time=559","path":"2025/08/12/k8s/K8s系列一之基本概念/"},{"title":"K8s系列(三)---搭建","cover":"/imgs/cover/default-cover.webp?time=538?time=541?time=546?time=552?time=559?time=560","path":"2025/08/14/k8s/K8s系列三之搭建/"},{"title":"K8s系列---番外篇","cover":"/imgs/cover/default-cover.jpeg?time=538?time=542?time=546?time=552?time=559?time=560?time=561","path":"2025/09/06/k8s/K8s系列之番外篇/"},{"title":"K8s系列(二)---软件安装","cover":"/imgs/cover/default-cover.jpeg?time=538?time=541?time=546?time=552?time=559?time=560","path":"2025/08/13/k8s/K8s系列二之容器安装/"},{"title":"K8s系列(六)---资源补充","cover":"/imgs/cover/default-cover.webp?time=538?time=542?time=546?time=552?time=559","path":"2025/09/17/k8s/K8s系列六之资源补充/"},{"title":"MySQL系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=526?time=527?time=530?time=547?time=556?time=561","path":"2023/11/27/mysql/MySQL系列一之安装/"},{"title":"K8s系列(四)---常用命令","cover":"/imgs/cover/default-cover.jpeg?time=538?time=542?time=546?time=552?time=559","path":"2025/09/07/k8s/K8s系列四之常用命令/"},{"title":"K8s系列(五)---资源部署","cover":"/imgs/cover/default-cover.jpeg?time=538?time=542?time=546?time=552?time=559","path":"2025/09/07/k8s/K8s系列五之资源部署/"},{"title":"MySQL系列(三)---索引","cover":"/imgs/cover/default-cover.webp?time=520?time=532?time=536?time=547?time=554?time=562","path":"2024/04/29/mysql/MySQL系列三之索引/"},{"title":"MySQL系列(二)---SQL","cover":"/imgs/cover/default-cover.jpeg?time=520?time=532?time=535?time=547?time=554?time=562","path":"2024/02/26/mysql/MySQL系列二之SQL/"},{"title":"Promise","cover":"/imgs/cover/default-cover.jpeg?time=526?time=529?time=530?time=548?time=556?time=562","path":"2023/11/24/js/Promise/"},{"title":"博客搭建","cover":"/imgs/cover/default-cover.webp?time=526?time=529?time=530?time=548?time=556?time=562?time=563","path":"2023/11/22/other/博客搭建/"},{"title":"项目对接招商银行CBS","cover":"/imgs/cover/default-cover.webp?time=524?time=532?time=535?time=548?time=555?time=563","path":"2024/02/21/other/项目对接招商银行CBS/"},{"title":"项目对接海康SDK","cover":"/imgs/cover/default-cover.webp?time=524?time=532?time=535?time=548?time=555?time=564","path":"2024/02/21/other/项目对接海康SDK/"},{"title":"Redis系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=526?time=527?time=531?time=549?time=556?time=564","path":"2023/12/12/redis/Redis系列一之安装/"},{"title":"Redis系列(三)---应用","cover":"/imgs/cover/default-cover.jpeg?time=543?time=544?time=549?time=552?time=564","path":"2026/04/20/redis/Redis系列三之应用/"},{"title":"Redis系列(二)---基础","cover":"/imgs/cover/default-cover.webp?time=543?time=544?time=549?time=552?time=564","path":"2026/04/20/redis/Redis系列二之基础/"},{"title":"NPM和PNPM的安装及配置","cover":"/imgs/cover/default-cover.webp?time=524?time=527?time=531?time=550?time=555?time=565?time=565?time=565","path":"2023/12/26/node/npm和pnpm安装及配置/"},{"title":"Typescript系列(一)---基础","cover":"/imgs/cover/default-cover.webp?time=524?time=527?time=531?time=550?time=555?time=566","path":"2023/12/26/ts/TypeScript系列一之基础/"},{"title":"Typescript系列(二)---高级","cover":"/imgs/cover/default-cover.jpeg?time=524?time=533?time=534?time=550?time=555?time=566","path":"2024/01/04/ts/TypeScript系列二之高级/"},{"title":"SpringCloud系列(一)---项目创建","cover":"/imgs/cover/default-cover.webp?time=526?time=527?time=530?time=551?time=556?time=566","path":"2023/11/25/springcloud/SpringCloud系列一之基础服务/"},{"title":"SpringCloud系列(七)---认证和授权","cover":"/imgs/cover/default-cover.jpeg?time=524?time=532?time=535?time=551?time=555?time=567","path":"2024/02/03/springcloud/SpringCloud系列七之认证和授权/"},{"title":"SpringCloud系列(三)---服务熔断与降级","cover":"/imgs/cover/default-cover.webp?time=526?time=527?time=531?time=551?time=556?time=566?time=567?time=568","path":"2023/12/02/springcloud/SpringCloud系列三之服务熔断与降级/"},{"title":"SpringCloud系列(九)---阶段总结","cover":"/imgs/cover/default-cover.jpeg?time=520?time=532?time=537?time=551?time=554?time=566","path":"2024/05/11/springcloud/SpringCloud系列九之阶段总结/"},{"title":"SpringCloud系列(二)---注册中心和配置中心","cover":"/imgs/cover/default-cover.jpeg?time=526?time=527?time=530?time=551?time=556?time=566?time=568?time=569","path":"2023/11/30/springcloud/SpringCloud系列二之注册中心/"},{"title":"SpringCloud系列(八)---服务划分","cover":"/imgs/cover/default-cover.webp?time=524?time=532?time=535?time=551?time=555?time=569","path":"2024/02/19/springcloud/SpringCloud系列八之服务划分/"},{"title":"SpringCloud系列(六)---分布式主键","cover":"/imgs/cover/default-cover.webp?time=526?time=527?time=531?time=551?time=556?time=566?time=570","path":"2023/12/11/springcloud/SpringCloud系列六之分布式主键/"},{"title":"SpringCloud系列(五)---Redis使用","cover":"/imgs/cover/default-cover.jpeg?time=526?time=527?time=531?time=551?time=556?time=564?time=566","path":"2023/12/14/springcloud/SpringCloud系列五之Redis使用/"},{"title":"SpringCloud系列(四)---网关","cover":"/imgs/cover/default-cover.jpeg?time=526?time=527?time=531?time=551?time=556?time=566?time=570","path":"2023/12/10/springcloud/SpringCloud系列四之网关/"},{"title":"Vue系列(一)---项目创建和配置","cover":"/imgs/cover/default-cover.webp?time=543?time=544?time=552?time=553?time=565?time=570?time=571","path":"2026/04/01/web/Vue系列一之项目创建和配置/"},{"title":"Vue系列(三)---状态管理库","cover":"/imgs/cover/default-cover.webp?time=524?time=532?time=534?time=553?time=555?time=571","path":"2024/01/18/web/Vue系列三之状态管理库/"},{"title":"Vue系列(二)---路由","cover":"/imgs/cover/default-cover.jpeg?time=524?time=533?time=534?time=553?time=555?time=572","path":"2024/01/07/web/Vue系列二之路由/"},{"title":"Vue系列(四)---请求","cover":"/imgs/cover/default-cover.jpeg?time=524?time=532?time=535?time=553?time=555?time=572","path":"2024/02/01/web/Vue系列四之请求/"},{"title":"Zookeeper系列(一)---原理","cover":"/imgs/cover/default-cover.webp?time=520?time=532?time=537?time=553?time=554?time=569","path":"2024/11/28/zookeeper/Zookeeper系列一之原理/"},{"title":"Zookeeper系列(二)---安装和使用","cover":"/imgs/cover/default-cover.jpeg?time=520?time=540?time=540?time=553?time=554?time=569","path":"2025/01/10/zookeeper/Zookeeper系列二之安装和使用/"},{"title":"","path":"2026/04/01/k8s/K8s系列五之资源部署/K8s资源清单/"}]`)
   ipt.addEventListener('keyup', e => {
     if (e.key === 'Enter') {
       handleSearch()
@@ -240,7 +240,7 @@
 <div class="main-left">
   <div class="main-left--block">
     <div class="main-left--info">
-      <img src="/imgs/avatar.jpg?time=399" class="main-left--avatar" alt />
+      <img src="/imgs/avatar.jpg?time=585" class="main-left--avatar" alt />
       <div class="main-left--intro">
         <p class="main-left--name">小琳</p>
         <div class="main-left--tags">
@@ -263,38 +263,38 @@
       <div class="main-left--github">
         <span class="line"></span>
         
-          <a target="_blank" rel="noopener" href="https://github.com/?time=399" title="github">
+          <a target="_blank" rel="noopener" href="https://github.com/?time=585" title="github">
             <i class="logo xiao-lin-blog xiao-lin-blog-github"></i>
           </a>
         
-          <a target="_blank" rel="noopener" href="https://gitee.com/xiao-lin?time=399" title="码云">
+          <a target="_blank" rel="noopener" href="https://gitee.com/xiao-lin?time=585" title="码云">
             <i class="logo xiao-lin-blog xiao-lin-blog-gitee"></i>
           </a>
         
-          <a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43728193?type=blog?time=399" title="CSDN">
+          <a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43728193?type=blog?time=585" title="CSDN">
             <i class="logo xiao-lin-blog xiao-lin-blog-csdn"></i>
           </a>
         
-          <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiao-lin-unit/?time=399" title="博客园">
+          <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiao-lin-unit/?time=585" title="博客园">
             <i class="logo xiao-lin-blog xiao-lin-blog-cnblogs"></i>
           </a>
         
         <span class="line"></span>
       </div>
       <div class="main-left--statics">
-        <a href="/categories?time=399">
+        <a href="/categories?time=585">
           <div>
             <span>12</span>
             <span>分类</span>
           </div>
         </a>
-        <a href="/tags?time=399">
+        <a href="/tags?time=585">
           <div>
             <span>32</span>
             <span>标签</span>
           </div>
         </a>
-        <a href="/archives?time=399">
+        <a href="/archives?time=585">
           <div>
             <span>11 </span>
             <span>归档</span>
@@ -308,49 +308,49 @@
     <ul class="main-left--menu">
       
         <li>
-          <a href="/?time=399">
+          <a href="/?time=585">
             <span class="header-menu--span">小站首页</span>
             <i class="header-menu--icon iconfont icon-shouye"></i>
           </a>
         </li>
       
         <li>
-          <a href="/log?time=399">
+          <a href="/log?time=585">
             <span class="header-menu--span">个人日志</span>
             <i class="header-menu--icon iconfont icon-rizhi"></i>
           </a>
         </li>
       
         <li>
-          <a href="/link?time=399">
+          <a href="/link?time=585">
             <span class="header-menu--span">友情链接</span>
             <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
           </a>
         </li>
       
         <li>
-          <a href="/about?time=399">
+          <a href="/about?time=585">
             <span class="header-menu--span">关于自己</span>
             <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
           </a>
         </li>
       
         <li>
-          <a href="/tags?time=399">
+          <a href="/tags?time=585">
             <span class="header-menu--span">标签</span>
             <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-tags-rectangle"></i>
           </a>
         </li>
       
         <li>
-          <a href="/categories?time=399">
+          <a href="/categories?time=585">
             <span class="header-menu--span">分类</span>
             <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-categories"></i>
           </a>
         </li>
       
         <li>
-          <a href="/tools?time=399">
+          <a href="/tools?time=585">
             <span class="header-menu--span">我的工具</span>
             <i class="header-menu--icon iconfont icon-gongju"></i>
           </a>
@@ -384,7 +384,7 @@
     </div>
   </div>
 </div></div>
-      <div id="main-container" class="main-container"><link rel="stylesheet" href="/css/partial/index.css?time=364"/>
+      <div id="main-container" class="main-container"><link rel="stylesheet" href="/css/partial/index.css?time=548"/>
 
 
 
@@ -392,13 +392,13 @@
     <div class="index-left">
         
             <div class="index-article">
-                <!-- <img class="index-article--cover" src="/imgs/cover/default-cover.webp?time=341?time=344?time=345?time=364?time=364" alt=""> -->
+                <!-- <img class="index-article--cover" src="/imgs/cover/default-cover.webp?time=526?time=529?time=530?time=548?time=548" alt=""> -->
                 <div class="index-article--box">
-                    <img class="index-article--cover" data-cover="/imgs/cover/default-cover.webp?time=341?time=344?time=345?time=364" src=""
+                    <img class="index-article--cover" data-cover="/imgs/cover/default-cover.webp?time=526?time=529?time=530?time=548" src=""
                          alt="博客搭建"/>
                 </div>
                 <div class="index-article--content">
-                    <a href="/2023/11/22/other/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/?time=364">博客搭建 </a>
+                    <a href="/2023/11/22/other/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/?time=548">博客搭建 </a>
                     <div>
                         
                             <p>
@@ -416,13 +416,13 @@
             </div>
         
             <div class="index-article">
-                <!-- <img class="index-article--cover" src="/imgs/cover/default-cover.webp?time=339?time=348?time=351?time=364?time=364" alt=""> -->
+                <!-- <img class="index-article--cover" src="/imgs/cover/default-cover.webp?time=524?time=532?time=535?time=548?time=548" alt=""> -->
                 <div class="index-article--box">
-                    <img class="index-article--cover" data-cover="/imgs/cover/default-cover.webp?time=339?time=348?time=351?time=364" src=""
+                    <img class="index-article--cover" data-cover="/imgs/cover/default-cover.webp?time=524?time=532?time=535?time=548" src=""
                          alt="项目对接招商银行CBS"/>
                 </div>
                 <div class="index-article--content">
-                    <a href="/2024/02/21/other/%E9%A1%B9%E7%9B%AE%E5%AF%B9%E6%8E%A5%E6%8B%9B%E5%95%86%E9%93%B6%E8%A1%8CCBS/?time=364">项目对接招商银行CBS </a>
+                    <a href="/2024/02/21/other/%E9%A1%B9%E7%9B%AE%E5%AF%B9%E6%8E%A5%E6%8B%9B%E5%95%86%E9%93%B6%E8%A1%8CCBS/?time=548">项目对接招商银行CBS </a>
                     <div>
                         
                             <p>
@@ -443,13 +443,13 @@
     <div class="index-center">
         
             <div class="index-article">
-                <!-- <img class="index-article--cover" data-cover="/imgs/cover/default-cover.webp?time=339?time=348?time=351?time=364" src="/imgs/cover/default-cover.webp?time=339?time=348?time=351?time=364?time=364" alt=""> -->
+                <!-- <img class="index-article--cover" data-cover="/imgs/cover/default-cover.webp?time=524?time=532?time=535?time=548" src="/imgs/cover/default-cover.webp?time=524?time=532?time=535?time=548?time=548" alt=""> -->
                 <div class="index-article--box">
-                    <img class="index-article--cover" data-cover="/imgs/cover/default-cover.webp?time=339?time=348?time=351?time=364" src=""
+                    <img class="index-article--cover" data-cover="/imgs/cover/default-cover.webp?time=524?time=532?time=535?time=548" src=""
                          alt="项目对接海康SDK"/>
                 </div>
                 <div class="index-article--content">
-                    <a href="/2024/02/21/other/%E9%A1%B9%E7%9B%AE%E5%AF%B9%E6%8E%A5%E6%B5%B7%E5%BA%B7SDK/?time=364">项目对接海康SDK </a>
+                    <a href="/2024/02/21/other/%E9%A1%B9%E7%9B%AE%E5%AF%B9%E6%8E%A5%E6%B5%B7%E5%BA%B7SDK/?time=548">项目对接海康SDK </a>
                     <div>
                         
                             <p>
