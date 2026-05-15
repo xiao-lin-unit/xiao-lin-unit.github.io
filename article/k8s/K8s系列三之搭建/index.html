@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>小琳的星空 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico?time=471" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css?time=471" />
+  <link rel="stylesheet" href="/css/layout.css?time=471" />
+  <link rel="stylesheet" href="/css/iconfont.css?time=471" />
+  <link rel="stylesheet" href="/css/APlayer.min.css?time=471" />
+  <script src="/js/APlayer.min.js?time=471"></script>
+  <script src="/js/jquery.min.js?time=471"></script>
+  <script src="/js/jquery.pjax.min.js?time=471"></script>
+
+  <script src="/js/Valine.min.js?time=471"></script>
+<!--  <script src='https://unpkg.com/valine/dist/Valine.min.js'></script>-->
+  <script>
+    document.title = `小琳的星空`
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="/?time=' + new Date().getMilliseconds()">
+<!--          <a href="https://xiao-lin-unit.github.io/">-->
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="/log?time=' + new Date().getMilliseconds()">
+<!--          <a href="https://xiao-lin-unit.github.io/log?time=468">-->
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="/link?time=' + new Date().getMilliseconds()">
+<!--          <a href="https://xiao-lin-unit.github.io/link?time=468">-->
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="/about?time=' + new Date().getMilliseconds()">
+<!--          <a href="https://xiao-lin-unit.github.io/about?time=468">-->
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"Docker系列(一)---安装和基本使用","cover":"/imgs/cover/default-cover.jpeg?time=401?time=415?time=420?time=436?time=439?time=442?time=443","path":"article/docker/Docker系列一之安装和基本使用/"},{"title":"AI系列(一)---Spring AI学习","cover":"/imgs/cover/default-cover.jpeg?time=404?time=415?time=420?time=437?time=439?time=443?time=444","path":"article/ai/AI系列一之SpringAI学习/"},{"title":"Docker系列(三)---项目部署","cover":"/imgs/cover/default-cover.webp?time=401?time=415?time=420?time=436?time=439?time=442","path":"article/docker/Docker系列三之项目部署/"},{"title":"Docker系列(二)---进阶使用","cover":"/imgs/cover/default-cover.webp?time=401?time=415?time=420?time=436?time=439?time=442?time=443","path":"article/docker/Docker系列二之进阶使用/"},{"title":"MySQL系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=405?time=418?time=424?time=426?time=428?time=444","path":"article/mysql/MySQL系列一之安装/"},{"title":"MySQL系列(三)---索引","cover":"/imgs/cover/default-cover.webp?time=405?time=415?time=420?time=430?time=434?time=445","path":"article/mysql/MySQL系列三之索引/"},{"title":"MySQL系列(二)---SQL","cover":"/imgs/cover/default-cover.jpeg?time=405?time=415?time=420?time=430?time=433?time=445","path":"article/mysql/MySQL系列二之SQL/"},{"title":"Promise","cover":"/imgs/cover/default-cover.jpeg?time=406?time=418?time=424?time=427?time=428?time=445","path":"article/js/Promise/"},{"title":"K8s系列(一)---基本概念","cover":"/imgs/cover/default-cover.webp?time=407?time=415?time=420?time=436?time=439?time=446","path":"article/k8s/K8s系列一之基本概念/"},{"title":"K8s系列(三)---搭建","cover":"/imgs/cover/default-cover.webp?time=407?time=412?time=436?time=439?time=446?time=447","path":"article/k8s/K8s系列三之搭建/"},{"title":"K8s系列---番外篇","cover":"/imgs/cover/default-cover.jpeg?time=407?time=412?time=436?time=440?time=446?time=447?time=447","path":"article/k8s/K8s系列之番外篇/"},{"title":"K8s系列(二)---软件安装","cover":"/imgs/cover/default-cover.jpeg?time=407?time=412?time=436?time=439?time=446?time=447","path":"article/k8s/K8s系列二之容器安装/"},{"title":"K8s系列(六)---资源补充","cover":"/imgs/cover/default-cover.webp?time=407?time=412?time=436?time=440?time=446","path":"article/k8s/K8s系列六之资源补充/"},{"title":"K8s系列(四)---常用命令","cover":"/imgs/cover/default-cover.jpeg?time=407?time=412?time=436?time=440?time=446","path":"article/k8s/K8s系列四之常用命令/"},{"title":"K8s系列(五)---资源部署","cover":"/imgs/cover/default-cover.jpeg?time=407?time=412?time=436?time=440?time=446","path":"article/k8s/K8s系列五之资源部署/"},{"title":"博客搭建","cover":"/imgs/cover/default-cover.webp?time=408?time=418?time=424?time=427?time=428?time=445?time=448","path":"article/other/博客搭建/"},{"title":"项目对接招商银行CBS","cover":"/imgs/cover/default-cover.webp?time=408?time=417?time=423?time=430?time=433?time=448","path":"article/other/项目对接招商银行CBS/"},{"title":"项目对接海康SDK","cover":"/imgs/cover/default-cover.webp?time=408?time=417?time=423?time=430?time=433?time=449","path":"article/other/项目对接海康SDK/"},{"title":"NPM和PNPM的安装及配置","cover":"/imgs/cover/default-cover.webp?time=409?time=417?time=423?time=426?time=429?time=449?time=450?time=450","path":"article/node/npm和pnpm安装及配置/"},{"title":"SpringCloud系列(一)---项目创建","cover":"/imgs/cover/default-cover.webp?time=409?time=418?time=424?time=426?time=428?time=451","path":"article/springcloud/SpringCloud系列一之基础服务/"},{"title":"SpringCloud系列(七)---认证和授权","cover":"/imgs/cover/default-cover.jpeg?time=409?time=417?time=423?time=430?time=433?time=451","path":"article/springcloud/SpringCloud系列七之认证和授权/"},{"title":"SpringCloud系列(三)---服务熔断与降级","cover":"/imgs/cover/default-cover.webp?time=409?time=418?time=424?time=426?time=429?time=451?time=452?time=452","path":"article/springcloud/SpringCloud系列三之服务熔断与降级/"},{"title":"SpringCloud系列(九)---阶段总结","cover":"/imgs/cover/default-cover.jpeg?time=409?time=415?time=420?time=430?time=435?time=451","path":"article/springcloud/SpringCloud系列九之阶段总结/"},{"title":"SpringCloud系列(二)---注册中心和配置中心","cover":"/imgs/cover/default-cover.jpeg?time=409?time=418?time=424?time=426?time=428?time=451?time=453?time=453","path":"article/springcloud/SpringCloud系列二之注册中心/"},{"title":"SpringCloud系列(五)---Redis使用","cover":"/imgs/cover/default-cover.jpeg?time=409?time=418?time=424?time=426?time=429?time=451?time=453","path":"article/springcloud/SpringCloud系列五之Redis使用/"},{"title":"SpringCloud系列(八)---服务划分","cover":"/imgs/cover/default-cover.webp?time=409?time=417?time=423?time=430?time=433?time=454","path":"article/springcloud/SpringCloud系列八之服务划分/"},{"title":"SpringCloud系列(六)---分布式主键","cover":"/imgs/cover/default-cover.webp?time=409?time=418?time=424?time=426?time=429?time=451?time=454","path":"article/springcloud/SpringCloud系列六之分布式主键/"},{"title":"SpringCloud系列(四)---网关","cover":"/imgs/cover/default-cover.jpeg?time=409?time=418?time=424?time=426?time=429?time=451?time=455","path":"article/springcloud/SpringCloud系列四之网关/"},{"title":"Typescript系列(一)---基础","cover":"/imgs/cover/default-cover.webp?time=411?time=417?time=423?time=426?time=429?time=455","path":"article/ts/TypeScript系列一之基础/"},{"title":"Typescript系列(二)---高级","cover":"/imgs/cover/default-cover.jpeg?time=411?time=417?time=423?time=431?time=432?time=455","path":"article/ts/TypeScript系列二之高级/"},{"title":"Redis系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=412?time=418?time=424?time=426?time=429?time=453","path":"article/redis/Redis系列一之安装/"},{"title":"Redis系列(三)---应用","cover":"/imgs/cover/default-cover.jpeg?time=412?time=412?time=441?time=441?time=453","path":"article/redis/Redis系列三之应用/"},{"title":"Redis系列(二)---基础","cover":"/imgs/cover/default-cover.webp?time=412?time=412?time=441?time=441?time=453","path":"article/redis/Redis系列二之基础/"},{"title":"Zookeeper系列(一)---原理","cover":"/imgs/cover/default-cover.webp?time=414?time=415?time=420?time=430?time=435?time=453","path":"article/zookeeper/Zookeeper系列一之原理/"},{"title":"Zookeeper系列(二)---安装和使用","cover":"/imgs/cover/default-cover.jpeg?time=414?time=415?time=420?time=437?time=438?time=453","path":"article/zookeeper/Zookeeper系列二之安装和使用/"},{"title":"Vue系列(一)---项目创建和配置","cover":"/imgs/cover/default-cover.webp?time=412?time=414?time=441?time=441?time=450?time=456?time=456","path":"article/web/Vue系列一之项目创建和配置/"},{"title":"Vue系列(三)---状态管理库","cover":"/imgs/cover/default-cover.webp?time=414?time=417?time=423?time=430?time=432?time=456","path":"article/web/Vue系列三之状态管理库/"},{"title":"Vue系列(二)---路由","cover":"/imgs/cover/default-cover.jpeg?time=414?time=417?time=423?time=431?time=432?time=457","path":"article/web/Vue系列二之路由/"},{"title":"Vue系列(四)---请求","cover":"/imgs/cover/default-cover.jpeg?time=414?time=417?time=423?time=430?time=433?time=457","path":"article/web/Vue系列四之请求/"},{"title":"","path":"article/k8s/K8s系列五之资源部署/K8s资源清单/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}${'?time=' + new Date().getMilliseconds()}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp'}${'?time=' + new Date().getMilliseconds()}" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg?time=468" class="main-left--avatar" alt />
+      <div class="main-left--intro">
+        <p class="main-left--name">小琳</p>
+        <div class="main-left--tags">
+          
+            <span class="main-left--tag">中二</span>
+          
+            <span class="main-left--tag">乐天派</span>
+          
+            <span class="main-left--tag">悲观主义</span>
+          
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>跳出圈子你会发现</p>
+        <p>其实你一无是处</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        
+          <a target="_blank" rel="noopener" href="https://github.com/?time=468" title="github">
+            <i class="logo xiao-lin-blog xiao-lin-blog-github"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://gitee.com/xiao-lin?time=468" title="码云">
+            <i class="logo xiao-lin-blog xiao-lin-blog-gitee"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43728193?type=blog?time=468" title="CSDN">
+            <i class="logo xiao-lin-blog xiao-lin-blog-csdn"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiao-lin-unit/?time=468" title="博客园">
+            <i class="logo xiao-lin-blog xiao-lin-blog-cnblogs"></i>
+          </a>
+        
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories?time=468">
+          <div>
+            <span>12</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags?time=468">
+          <div>
+            <span>32</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives?time=468">
+          <div>
+            <span>11 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/?time=468">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log?time=468">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link?time=468">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about?time=468">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tags?time=468">
+            <span class="header-menu--span">标签</span>
+            <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-tags-rectangle"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/categories?time=468">
+            <span class="header-menu--span">分类</span>
+            <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-categories"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools?time=468">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>40 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>906天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  
+
+<link rel="stylesheet" href="/css/partial/article.css?time=330" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">K8s系列(三)---搭建</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span class="xiao-lin-blog xiao-lin-blog-categories">分类：</span>
+            <a class="category-link" href="/categories/k8s/">K8s</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span class="xiao-lin-blog xiao-lin-blog-tags-fill">标签：</span>
+            <a class="tag-link" href="/tags/containerd/" rel="tag">containerd</a><a class="tag-link" href="/tags/k8s/" rel="tag">k8s</a>
+          </div>
+          
+          <p class="article-info--date"><i class="xiao-lin-blog xiao-lin-blog-date-time">日期：2025-08-14 16:44:19</i></p>
+        </div>
+<!--        <img src="/imgs/cover/default-cover.webp" alt="" class="article-cover">-->
+        <img src="/imgs/cover/default-cover.webp" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <!-- toc -->
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>基于前篇, 我们已经安装并配置好了<code>containerd</code>环境, 本篇将在此基础上开始搭建<code>K8s</code></p>
+<h3 id="安装k8s功能包"><a class="markdownIt-Anchor" href="#安装k8s功能包"></a> 安装<code>K8s</code>功能包</h3>
+<p>安装<code>kubeadm</code>、<code>kubelet</code> 和 <code>kubectl</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 更新 apt 包索引并安装使用 Kubernetes apt 仓库所需要的包</span></span><br><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="comment"># apt-transport-https 可能是一个虚拟包（dummy package）；如果是的话，你可以跳过安装这个包</span></span><br><span class="line"><span class="built_in">sudo</span> apt install -y apt-transport-https ca-certificates curl gpg</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载用于 Kubernetes 软件包仓库的公共签名密钥</span></span><br><span class="line"><span class="comment"># 如果 `/etc/apt/keyrings` 目录不存在，则应在 curl 命令之前创建它，请阅读下面的注释。</span></span><br><span class="line"><span class="comment"># sudo mkdir -p -m 755 /etc/apt/keyrings</span></span><br><span class="line">curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key | <span class="built_in">sudo</span> gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加 Kubernetes 仓库, 仅包含 1.32的软件包</span></span><br><span class="line"><span class="comment"># 此操作会覆盖 /etc/apt/sources.list.d/kubernetes.list 中现存的所有配置。</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /&#x27;</span> | <span class="built_in">sudo</span> <span class="built_in">tee</span> /etc/apt/sources.list.d/kubernetes.list</span><br><span class="line"></span><br><span class="line"><span class="comment"># 跟新包索引</span></span><br><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="comment"># 安装kubelet kubeadm kubectl</span></span><br><span class="line"><span class="built_in">sudo</span> apt install -y kubelet kubeadm kubectl</span><br><span class="line"><span class="comment"># 锁定kubelet kubeadm kubectl版本</span></span><br><span class="line"><span class="built_in">sudo</span> apt-mark hold kubelet kubeadm kubectl</span><br></pre></td></tr></table></figure>
+<h3 id="前期配置"><a class="markdownIt-Anchor" href="#前期配置"></a> 前期配置</h3>
+<p>主节点和从节点都需要修改主机的网络配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> vi /etc/sysctl.conf</span><br><span class="line"><span class="comment"># 修改内容</span></span><br><span class="line">net.ipv4.ip_forward=1</span><br><span class="line"><span class="comment"># 立即生效</span></span><br><span class="line"><span class="built_in">sudo</span> sysctl -p</span><br><span class="line"><span class="comment"># 永久生效</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chmod</span> 644 /etc/sysctl.conf</span><br></pre></td></tr></table></figure>
+<h3 id="部署kubernetes-master"><a class="markdownIt-Anchor" href="#部署kubernetes-master"></a> 部署<code>Kubernetes Master</code></h3>
+<p>在主节点上做初始化操作</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> kubeadm init --image-repository registry.aliyuncs.com/google_containers --apiserver-advertise-address=<span class="variable">$&#123;k8s_master_ip&#125;</span> --kubernetes-version v1.32.7 --service-cidr=10.96.0.0/12 --pod-network-cidr=10.244.0.0/16</span><br><span class="line"></span><br><span class="line"><span class="comment"># 例如</span></span><br><span class="line"><span class="comment"># sudo kubeadm init --image-repository registry.aliyuncs.com/google_containers --apiserver-advertise-address=192.168.5.101  --kubernetes-version v1.32.7 --service-cidr=10.96.0.0/12 --pod-network-cidr=10.244.0.0/16</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>国内在初始化时指定一下镜像源, 否则会无法拉取镜像而导致失败</p>
+</blockquote>
+<p><img src="kubernetes%E4%BD%BF%E7%94%A8kubeadm%E5%88%9D%E5%A7%8B%E5%8C%96%E6%88%90%E5%8A%9F.png" alt="kubernetes使用kubeadm初始化成功" /></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 普通用户</span></span><br><span class="line"><span class="built_in">mkdir</span> -p <span class="variable">$HOME</span>/.kube</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">cp</span> -i /etc/kubernetes/admin.conf <span class="variable">$HOME</span>/.kube/config</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chown</span> $(<span class="built_in">id</span> -u):$(<span class="built_in">id</span> -g) <span class="variable">$HOME</span>/.kube/config</span><br><span class="line"> </span><br><span class="line"><span class="comment"># ROOT 用户</span></span><br><span class="line"><span class="built_in">export</span> KUBECONFIG=/etc/kubernetes/admin.conf</span><br></pre></td></tr></table></figure>
+<p>推荐使用普通用户</p>
+<p>重置集群</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> kubeadm reset</span><br></pre></td></tr></table></figure>
+<p>需要再每个节点都执行</p>
+<h3 id="加入集群kubernets-node"><a class="markdownIt-Anchor" href="#加入集群kubernets-node"></a> 加入集群<code>Kubernets Node</code></h3>
+<ol>
+<li>
+<p>使用以下命令加入集群</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> kubeadm <span class="built_in">join</span> &#123;k8s_master_ip&#125;:6443 --token &#123;k8s_master_token&#125; --discovery-token-ca-cert-hash sha256:&#123;k8s_maste_hash&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 例如 sudo kubeadm join 192.168.5.101:6443 --token c1qyym.5srgs3r3i94wepqh --discovery-token-ca-cert-hash  sha256:472d5b07da9edd6bc1ecf93d9b8f0ed8e9888eba504e2620ab94d253c0fc9bc0</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>如果初始化时的<code>token</code>清空了, 可以在<code>master</code>服务器通过以下命令查看</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm token list</span><br></pre></td></tr></table></figure>
+<p>如果<code>token</code>已经过期, 可以通过以下命令重新申请</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm token create</span><br></pre></td></tr></table></figure>
+<p>如果初始化时的master_hash清空了, 可以在master服务器通过以下命令查看</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2&gt;/dev/null | openssl dgst -sha256 -hex | sed &#x27;s/^.* //&#x27;</span><br></pre></td></tr></table></figure>
+<p>在执行命令成功后可以通过以下命令查看是否已经加入集群</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubelet get nodes</span><br></pre></td></tr></table></figure>
+<p><img src="k8s%E9%9B%86%E7%BE%A4%E8%8A%82%E7%82%B9%E4%BF%A1%E6%81%AF.png" alt="k8s集群节点信息" /></p>
+<blockquote>
+<p>注意:</p>
+<ol>
+<li>查看节点的操作要在<code>master</code>节点上操作</li>
+<li>如果节点是<code>NotReady</code>状态, 可能是没有安装跨服务器的网络插件</li>
+</ol>
+</blockquote>
+<ol start="2">
+<li>
+<p>将<code>master</code>节点配置复制到<code>node</code>节点</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 或者想其他方式将文件复制过去</span></span><br><span class="line">scp root@&lt;master-ip&gt;:/etc/kubernetes/admin.conf ~/.kube/config</span><br><span class="line"><span class="comment"># scp root@k8s-master:~/.kube/config ~/.kube/config</span></span><br><span class="line"><span class="comment"># k8s-master 是主机名, 需要配置hosts, 如果没有配置则需要改为IP</span></span><br><span class="line"><span class="comment"># ~/.kube/config是基于普通用户的, root用户方式与master节点一致</span></span><br><span class="line"><span class="comment"># scp root@192.168.31.101:/etc/kubernetes/admin.conf ~/.kube/config</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chown</span> $(<span class="built_in">id</span> -u):$(<span class="built_in">id</span> -g) <span class="variable">$HOME</span>/.kube/config</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="部署跨服务器的cni网络插件"><a class="markdownIt-Anchor" href="#部署跨服务器的cni网络插件"></a> 部署跨服务器的<code>CNI</code>网络插件</h3>
+<p>本系列的跨服务器的<code>CNI</code>网络插件使用<code>flannel</code></p>
+<p>首先需要安装<code>flannel</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用Flannel</span></span><br><span class="line"><span class="comment"># 安装Flannel</span></span><br><span class="line"><span class="built_in">cd</span> /usr/local/src</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> wget https://raw.githubusercontent.com/flannel-io/flannel/v0.27.1/Documentation/kube-flannel.yml</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> wget https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下面一行命令我每次关机重启后都需要重新执行一次, 可以做成自启配置</span></span><br><span class="line"><span class="built_in">sudo</span> modprobe br_netfilter</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装完Flannel后执行操作</span></span><br><span class="line"><span class="comment"># 删除历史应用数据(如果有)</span></span><br><span class="line"><span class="comment"># 此处的删除和应用flannel实际上是删除和创建集群中的flannel资源, 只需要在一个节点上执行即可</span></span><br><span class="line">kubectl delete -f /usr/local/src/kube-flannel.yml --ignore-not-found</span><br><span class="line">kubectl apply -f /usr/local/src/kube-flannel.yml</span><br><span class="line"><span class="comment"># 如果从节点出现了错误, 连接到本地8080, 则可能是没有将master节点配置复制到node节点</span></span><br></pre></td></tr></table></figure>
+<p><span style="color: red">非常抱歉, 我到这里卡住了. 因为flannel-cni-plugin:v1.7.1-flannel1这个破玩意儿无法安装, 原因是魔法, 国内的魔法地址要么不能用了, 要么没有这个破玩意儿. 不要慌, 我正在积极寻找</span>😁</p>
+<p><mark>我胡汉三又回来了. 我想到了一个方案, 很蠢, 这里不多说了, 写一个<a href="/article/k8s/K8s%E7%B3%BB%E5%88%97%E4%B9%8B%E7%95%AA%E5%A4%96%E7%AF%87/" title="K8s系列---番外篇">番外篇</a>吧</mark></p>
+<p>插件安装成功后, 就会发现各个节点都已经准备好</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure>
+<p><img src="k8s%E9%9B%86%E7%BE%A4%E8%8A%82%E7%82%B9%E5%87%86%E5%A4%87%E5%AE%8C%E6%88%90.png" alt="kubernetes集群节点准备完成" /></p>
+<p>查看<code>kube-system</code>命名空间下启动的容器</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods -n kube-system</span><br></pre></td></tr></table></figure>
+<p><img src="kube-system%E4%B8%8B%E5%90%AF%E5%8A%A8%E7%9A%84%E5%AE%B9%E5%99%A8.png" alt="kube-system下启动的容器" /></p>
+<p>查看<code>kube-flannel</code>命名空间下启动的容器</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods -n kube-flannel</span><br></pre></td></tr></table></figure>
+<p><img src="kube-flannel%E4%B8%8B%E5%90%AF%E5%8A%A8%E7%9A%84%E5%AE%B9%E5%99%A8.png" alt="kube-flannel下启动的容器" /></p>
+<p>成功的标志, 个人的判断方式, 不代表官方</p>
+<ul>
+<li><code>kube-system</code>中容器正常运行, 并且<code>proxy</code>容器数量与节点数量一致</li>
+<li><code>kube-flannel</code>中容器正常运行, 并且<code>ds</code>容器数量与节点数量一致</li>
+<li>使用<code>ip addr</code>命令, 每个节点都出现了<code>flannel.1</code>这一项</li>
+</ul>
+<p><a href="#%E9%97%AE%E9%A2%98%E4%B8%80">coredns一直处于ContainerCreating状态</a></p>
+<p>到此, <code>k8s</code>集群的搭建已经完成, 之后就可以愉快(但愿吧)的使用了😆</p>
+<h3 id="问题"><a class="markdownIt-Anchor" href="#问题"></a> 问题</h3>
+<p><i id="问题一">问题一</i></p>
+<p><code>coredns</code>处于<code>ContainerCreating</code>状态</p>
+<p>问题的原因可以通过日志查看</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl logs &#123;pod_name&#125; -n kube-flannel -c kube-flannel</span><br></pre></td></tr></table></figure>
+<p>这个问题出现的原因一般有三种:</p>
+<ol>
+<li>
+<p><code>CNI</code>插件未初始化, <code>Flannel</code>未正常部署. 本人前文中已经正常部署, 所以此处的解决方案参考<code>Flannel</code>插件部署</p>
+</li>
+<li>
+<p><code>CoreDNS</code>镜像拉取失败. 这个请自己的方式拉取合适的镜像</p>
+</li>
+<li>
+<p>找不到<code>subnet.env</code>文件. 这个冷藏室<code>Flannel</code>未生成子网配置文件, 网络插件未就绪导致的,参考<a href="#%E9%97%AE%E9%A2%98%E4%BA%8C"><code>Flannel</code>部署资源失败</a></p>
+<p>通过命令查看<code>flannel</code>部署资源是否正常运行</p>
+</li>
+</ol>
+<p><i id="问题二">问题二</i></p>
+<p><code>Flannel</code>部署资源失败</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查kube-flannel命名空间是否存在</span></span><br><span class="line">kubectl get namespace kube-flannel</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查 Flannel 的 DaemonSet 资源（核心部署资源）</span></span><br><span class="line">kubectl get daemonset -n kube-flannel</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查 Flannel 的所有相关资源（包括 ConfigMap、ServiceAccount 等）</span></span><br><span class="line">kubectl get all -n kube-flannel</span><br></pre></td></tr></table></figure>
+<p>这个问题的原因一般有四种:</p>
+<ol>
+<li>
+<p>命名空间不存在, 说明部署文件未正确创建命名空间, 可以运行资源部署命令并查看错误</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 假设部署文件为 kube-flannel.yml，重新应用</span></span><br><span class="line">kubectl apply -f kube-flannel.yml</span><br></pre></td></tr></table></figure>
+<ul>
+<li>
+<p><code>error: unable to recognize &quot;kube-flannel.yml&quot;: no matches for kind &quot;DaemonSet&quot; in version &quot;apps/v1&quot;</code></p>
+<p>部署文件版本与<code>K8s</code>版本不兼容</p>
+</li>
+<li>
+<p><code>error: failed to create namespace &quot;kube-flannel&quot;: ...</code></p>
+<p>权限不足或者命名空间被锁定, 手动创建命名空间后再部署即可</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl create namespace kube-flannel</span><br><span class="line">kubectl apply -f kube-flannel.yml</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>无错误输出但资源仍未创建</p>
+<p>部署文件内容损坏或格式错误, 下载最新部署文件, 如果原网址连接超时可以用一下网址尝试</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://ghproxy.com/https://raw.githubusercontent.com/flannel-io/flannel/v0.22.2/Documentation/kube-flannel.yml</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li>
+<p><code>kube-flannel-ds</code>容器启动失败</p>
+<p>查看容器崩溃日志</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看当前崩溃的日志（替换 &lt;pod-name&gt; 为实际名称，如 kube-flannel-ds-wl42w）</span></span><br><span class="line">kubectl logs &#123;pod_name&#125; -n kube-flannel -c kube-flannel</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若当前日志无有效信息，查看上一次启动的日志</span></span><br><span class="line">kubectl logs &#123;pod_name&#125; -n kube-flannel -c kube-flannel --previous</span><br></pre></td></tr></table></figure>
+<p>错误原因:</p>
+<ol>
+<li>
+<p>权限不足</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编辑 Flannel DaemonSet</span></span><br><span class="line">kubectl edit daemonset kube-flannel-ds -n kube-flannel</span><br></pre></td></tr></table></figure>
+<p>在 <code>spec.template.spec.containers[0].securityContext</code> 下添加 / 确认：</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">securityContext:</span></span><br><span class="line">  <span class="attr">privileged:</span> <span class="literal">true</span>  <span class="comment"># 必须开启，允许修改主机网络</span></span><br><span class="line">  <span class="attr">capabilities:</span></span><br><span class="line">    <span class="attr">add:</span> [<span class="string">&quot;NET_ADMIN&quot;</span>, <span class="string">&quot;NET_RAW&quot;</span>]  <span class="comment"># 必要的网络管理权限</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p><code>etcd</code>连接失败</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编辑 Flannel ConfigMap（存储核心配置）</span></span><br><span class="line">kubectl edit configmap kube-flannel-cfg -n kube-flannel</span><br></pre></td></tr></table></figure>
+<p>确保 <code>net-conf.json</code> 中使用 <code>kube-api</code> 后端：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;net-conf.json&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;Network&quot;</span><span class="punctuation">:</span> <span class="string">&quot;10.244.0.0/16&quot;</span><span class="punctuation">,</span>  # 与 kubeadm init 时的 --pod-network-cidr 一致</span><br><span class="line">    <span class="attr">&quot;Backend&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;Type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;vxlan&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;KubeAPIEndpoint&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://172.29.160.142:6443&quot;</span><span class="punctuation">,</span>  # 控制平面 API 地址</span><br><span class="line">      <span class="attr">&quot;KubeAPIToken&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&lt;你的 kube-proxy token&gt;&quot;</span>  # 可留空，Flannel 会自动获取</span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>若不清楚 API 地址，可通过 <code>kubectl cluster-info</code> 查看。</p>
+</blockquote>
+</li>
+<li>
+<p>网络冲突</p>
+<p>检查端口占用</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> netstat -tulpn | grep 8472  <span class="comment"># 找到占用端口的进程并停止</span></span><br></pre></td></tr></table></figure>
+<p>若无法停止冲突进程或者该端口确实需要被占用, 则修改<code>Flannel</code>端口, 编辑<code>ConfigMap</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl edit configmap -n kube-flannel</span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;Backend&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;Type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;vxlan&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;Port&quot;</span><span class="punctuation">:</span> <span class="number">8473</span>  # 改为未占用的端口（如 <span class="number">8473</span>）</span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>资源不足</p>
+<p>参考<code>DaemonSet</code>资源不足的解决方案</p>
+</li>
+<li>
+<p>镜像损坏或版本不兼容</p>
+<p>检查或者重新导入兼容的镜像</p>
+</li>
+<li>
+<p>找不到文件或者目录</p>
+<p>根据找不到的文件或者目录的不同, 解决方案有可能不同, 本人就是在此遇到问题, 这里给出此文件的解决方案</p>
+<ul>
+<li>
+<p><code>Failed to check br_netfilter: stat /proc/sys/net/bridge/bridge-nf-call-iptables: no such file or directory</code>: 缺少 <code>br_netfilter</code> 内核模块或对应的相关配置文件</p>
+<p>这个问题其实在上一篇中的系统配置就解决了, 只是当时使用的是临时生效内核参数, 导致虚拟机重启后失效了</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 加载 br_netfilter 模块</span></span><br><span class="line"><span class="built_in">sudo</span> modprobe br_netfilter</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证模块是否加载成功</span></span><br><span class="line">lsmod | grep br_netfilter</span><br><span class="line"><span class="comment"># 若输出类似 br_netfilter 24576 0，说明模块加载成功。</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 临时生效内核参数（立即应用）</span></span><br><span class="line"><span class="built_in">sudo</span> sysctl -w net.bridge.bridge-nf-call-iptables=1</span><br><span class="line"><span class="built_in">sudo</span> sysctl -w net.bridge.bridge-nf-call-ip6tables=1</span><br><span class="line"><span class="built_in">sudo</span> sysctl -w net.ipv4.ip_forward=1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 持久化配置（重启后自动生效）</span></span><br><span class="line"><span class="comment"># 创建/编辑内核参数配置文件</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">cat</span> &gt; /etc/sysctl.conf &lt;&lt;<span class="string">EOF</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-iptables  = 1</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-ip6tables = 1</span></span><br><span class="line"><span class="string">net.ipv4.ip_forward                 = 1</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="comment"># 上面命令可能会出现权限不足的情况, 可以通过vi命令直接编辑</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 生效配置</span></span><br><span class="line"><span class="built_in">sudo</span> sysctl --system</span><br></pre></td></tr></table></figure>
+<p>确认配置文件存在</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 验证文件是否存在</span></span><br><span class="line"><span class="built_in">ls</span> -l /proc/sys/net/bridge/bridge-nf-call-iptables</span><br></pre></td></tr></table></figure>
+<p>重启<code>Flannel</code>和<code>kubelet</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 重启 Flannel Pod（使其检测到新配置）</span></span><br><span class="line">kubectl delete pods -n kube-flannel --all</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启 kubelet</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart kubelet</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>一般情况下只需要执行加载<code>br_netfilter</code>模块命令, 然后删除<code>kube-flannel</code>的<code>pod</code>, 重启<code>kubelet</code>即可, 或者等待容器自己重新启动</p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p><code>DaemonSet</code>不存在</p>
+<p>这种情况通常是部署文件未被正确应用, 或应用时出错, 解决方式参考第一种情况, 查看部署文件部署失败的原因</p>
+</li>
+<li>
+<p><code>DaemonSet</code>存在但<code>DESIRED</code>和<code>CURRENT</code>为0</p>
+<p>这种情况通常是存在调度限制或配置错误</p>
+<ul>
+<li>
+<p><code>node(s) had taint &#123;node-role.kubernetes.io/master: &#125;, but no tolerations</code>: <code>master</code>节点有污点, 而<code>Flannel DaemonSet</code>未配置容忍(<code>toleration</code>), 导致无法调度到<code>master</code>节点</p>
+<p>解决: 编辑<code>DaemonSet</code>, 添加对<code>master</code>污点的容忍</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl edit daemonset kube-flannel-ds -n kube-flannel</span><br></pre></td></tr></table></figure>
+<p>在 <code>spec.template.spec</code> 下添加：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">tolerations:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">key:</span> <span class="string">node-role.kubernetes.io/master</span></span><br><span class="line">  <span class="attr">operator:</span> <span class="string">Exists</span></span><br><span class="line">  <span class="attr">effect:</span> <span class="string">NoSchedule</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">key:</span> <span class="string">node-role.kubernetes.io/control-plane</span></span><br><span class="line">  <span class="attr">operator:</span> <span class="string">Exists</span></span><br><span class="line">  <span class="attr">effect:</span> <span class="string">NoSchedule</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p><code>Insufficient cpu</code> 或 <code>Insufficient memory</code>: 节点资源不足</p>
+<p>解决: 清理节点资源, 或降低<code>Flannel</code>的资源请求, 编辑<code>DaemonSet</code>, 调整<code>resources.requests</code>(操作方式同上)</p>
+</li>
+<li>
+<p><code>no nodes available</code>: 节点亲和性规则不匹配</p>
+<p>解决: 检查<code>DaemonSet</code>中的<code>nodeSelector</code>, 确保节点有对应标签, 或删除不必要的<code>nodeSelector</code></p>
+</li>
+</ul>
+</li>
+<li>
+<p>控制平面组件异常</p>
+<p>查看控制平面组件状态</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods -n kube-system | grep -E <span class="string">&quot;kube-apiserver|kube-controller-manager|kube-scheduler&quot;</span></span><br></pre></td></tr></table></figure>
+<p>如果异常需先修复控制平面</p>
+</li>
+</ol>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="article/k8s/K8s系列三之搭建/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text"> 前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85k8s%E5%8A%9F%E8%83%BD%E5%8C%85"><span class="toc-number">2.</span> <span class="toc-text"> 安装K8s功能包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E6%9C%9F%E9%85%8D%E7%BD%AE"><span class="toc-number">3.</span> <span class="toc-text"> 前期配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2kubernetes-master"><span class="toc-number">4.</span> <span class="toc-text"> 部署Kubernetes Master</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E5%85%A5%E9%9B%86%E7%BE%A4kubernets-node"><span class="toc-number">5.</span> <span class="toc-text"> 加入集群Kubernets Node</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2%E8%B7%A8%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84cni%E7%BD%91%E7%BB%9C%E6%8F%92%E4%BB%B6"><span class="toc-number">6.</span> <span class="toc-text"> 部署跨服务器的CNI网络插件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%98"><span class="toc-number">7.</span> <span class="toc-text"> 问题</span></a></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/article/k8s/K8s系列之番外篇/">K8s系列---番外篇</a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/article/k8s/K8s系列二之容器安装/">K8s系列(二)---软件安装</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: 'article/k8s/K8s系列三之搭建/'
+  })
+</script>
+
+
+<script>
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        let href = decodeURIComponent(link.href);
+        href = href.substring(href.indexOf('#'));
+        const target = $(href)[0];
+        const top = target.offsetTop;
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      我们在绵延的海滩上捡贝壳，今天捡到了不必欣喜，因为海很大，今天没捡到，也不必失落，因为海很大。 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">我好像没有网络备案</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"自転车","artist":"オレスカバンド","url":"/music/自転车-オレスカバンド.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"撞地球","artist":"鱼儿七","url":"/music/撞地球-鱼儿七.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"晴天","artist":"周杰伦","url":"/music/晴天-周杰伦.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"告白气球","artist":"周杰伦","url":"/music/告白气球-周杰伦.mp3","cover":"/imgs/music-bg1.jpg"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path) ||
+        /^article\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>
