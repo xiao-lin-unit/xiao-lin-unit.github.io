@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>小琳的星空 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico?time=401" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css?time=401" />
+  <link rel="stylesheet" href="/css/layout.css?time=401" />
+  <link rel="stylesheet" href="/css/iconfont.css?time=401" />
+  <link rel="stylesheet" href="/css/APlayer.min.css?time=401" />
+  <script src="/js/APlayer.min.js?time=401"></script>
+  <script src="/js/jquery.min.js?time=401"></script>
+  <script src="/js/jquery.pjax.min.js?time=401"></script>
+
+  <script src="/js/Valine.min.js?time=401"></script>
+<!--  <script src='https://unpkg.com/valine/dist/Valine.min.js'></script>-->
+  <script>
+    document.title = `小琳的星空`
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="/?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/">-->
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="/log?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/log?time=399">-->
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="/link?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/link?time=399">-->
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="/about?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/about?time=399">-->
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"AI系列(一)---Spring AI学习","cover":"/imgs/cover/default-cover.jpeg?time=335?time=354?time=357?time=360?time=369?time=372?time=373","path":"2025/08/05/ai/AI系列一之SpringAI学习/"},{"title":"Docker系列(一)---安装和基本使用","cover":"/imgs/cover/default-cover.jpeg?time=335?time=356?time=357?time=361?time=369?time=373?time=374","path":"2025/08/05/docker/Docker系列一之安装和基本使用/"},{"title":"Docker系列(三)---项目部署","cover":"/imgs/cover/default-cover.webp?time=335?time=354?time=357?time=361?time=369?time=373","path":"2025/08/11/docker/Docker系列三之项目部署/"},{"title":"Docker系列(二)---进阶使用","cover":"/imgs/cover/default-cover.webp?time=335?time=354?time=357?time=361?time=369?time=373?time=374","path":"2025/08/07/docker/Docker系列二之进阶使用/"},{"title":"Promise","cover":"/imgs/cover/default-cover.jpeg?time=341?time=344?time=345?time=361?time=370?time=374","path":"2023/11/24/js/Promise/"},{"title":"K8s系列(一)---基本概念","cover":"/imgs/cover/default-cover.webp?time=335?time=354?time=357?time=362?time=369?time=375","path":"2025/08/12/k8s/K8s系列一之基本概念/"},{"title":"K8s系列(三)---搭建","cover":"/imgs/cover/default-cover.webp?time=354?time=357?time=362?time=366?time=375?time=376","path":"2025/08/14/k8s/K8s系列三之搭建/"},{"title":"K8s系列---番外篇","cover":"/imgs/cover/default-cover.jpeg?time=354?time=358?time=362?time=366?time=375?time=376?time=376","path":"2025/09/06/k8s/K8s系列之番外篇/"},{"title":"K8s系列(二)---软件安装","cover":"/imgs/cover/default-cover.jpeg?time=354?time=357?time=362?time=366?time=375?time=376","path":"2025/08/13/k8s/K8s系列二之容器安装/"},{"title":"K8s系列(六)---资源补充","cover":"/imgs/cover/default-cover.webp?time=354?time=358?time=362?time=366?time=375","path":"2025/09/17/k8s/K8s系列六之资源补充/"},{"title":"K8s系列(四)---常用命令","cover":"/imgs/cover/default-cover.jpeg?time=354?time=358?time=362?time=366?time=375","path":"2025/09/07/k8s/K8s系列四之常用命令/"},{"title":"K8s系列(五)---资源部署","cover":"/imgs/cover/default-cover.jpeg?time=354?time=358?time=362?time=366?time=375","path":"2025/09/07/k8s/K8s系列五之资源部署/"},{"title":"MySQL系列(三)---索引","cover":"/imgs/cover/default-cover.webp?time=335?time=348?time=352?time=363?time=369?time=377","path":"2024/04/29/mysql/MySQL系列三之索引/"},{"title":"MySQL系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=341?time=342?time=345?time=363?time=370?time=377","path":"2023/11/27/mysql/MySQL系列一之安装/"},{"title":"MySQL系列(二)---SQL","cover":"/imgs/cover/default-cover.jpeg?time=335?time=348?time=351?time=363?time=369?time=377","path":"2024/02/26/mysql/MySQL系列二之SQL/"},{"title":"NPM和PNPM的安装及配置","cover":"/imgs/cover/default-cover.webp?time=339?time=342?time=347?time=363?time=371?time=378?time=378?time=378","path":"2023/12/26/node/npm和pnpm安装及配置/"},{"title":"博客搭建","cover":"/imgs/cover/default-cover.webp?time=341?time=344?time=345?time=364?time=370?time=374?time=379","path":"2023/11/22/other/博客搭建/"},{"title":"项目对接招商银行CBS","cover":"/imgs/cover/default-cover.webp?time=339?time=348?time=351?time=364?time=371?time=379","path":"2024/02/21/other/项目对接招商银行CBS/"},{"title":"项目对接海康SDK","cover":"/imgs/cover/default-cover.webp?time=339?time=348?time=351?time=364?time=371?time=380","path":"2024/02/21/other/项目对接海康SDK/"},{"title":"Typescript系列(一)---基础","cover":"/imgs/cover/default-cover.webp?time=339?time=342?time=347?time=364?time=371?time=380","path":"2023/12/26/ts/TypeScript系列一之基础/"},{"title":"Redis系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=341?time=342?time=347?time=366?time=370?time=381","path":"2023/12/12/redis/Redis系列一之安装/"},{"title":"Redis系列(三)---应用","cover":"/imgs/cover/default-cover.jpeg?time=359?time=360?time=366?time=366?time=381","path":"2026/04/20/redis/Redis系列三之应用/"},{"title":"Typescript系列(二)---高级","cover":"/imgs/cover/default-cover.jpeg?time=339?time=349?time=350?time=364?time=371?time=380","path":"2024/01/04/ts/TypeScript系列二之高级/"},{"title":"Redis系列(二)---基础","cover":"/imgs/cover/default-cover.webp?time=359?time=360?time=366?time=366?time=381","path":"2026/04/20/redis/Redis系列二之基础/"},{"title":"Vue系列(一)---项目创建和配置","cover":"/imgs/cover/default-cover.webp?time=359?time=360?time=365?time=366?time=378?time=381?time=382","path":"2026/04/01/web/Vue系列一之项目创建和配置/"},{"title":"Vue系列(三)---状态管理库","cover":"/imgs/cover/default-cover.webp?time=339?time=348?time=350?time=365?time=371?time=382","path":"2024/01/18/web/Vue系列三之状态管理库/"},{"title":"Vue系列(二)---路由","cover":"/imgs/cover/default-cover.jpeg?time=339?time=349?time=350?time=365?time=371?time=382","path":"2024/01/07/web/Vue系列二之路由/"},{"title":"Vue系列(四)---请求","cover":"/imgs/cover/default-cover.jpeg?time=339?time=348?time=351?time=365?time=371?time=383","path":"2024/02/01/web/Vue系列四之请求/"},{"title":"Zookeeper系列(一)---原理","cover":"/imgs/cover/default-cover.webp?time=335?time=348?time=353?time=368?time=369?time=383","path":"2024/11/28/zookeeper/Zookeeper系列一之原理/"},{"title":"Zookeeper系列(二)---安装和使用","cover":"/imgs/cover/default-cover.jpeg?time=335?time=356?time=356?time=368?time=369?time=383","path":"2025/01/10/zookeeper/Zookeeper系列二之安装和使用/"},{"title":"SpringCloud系列(一)---项目创建","cover":"/imgs/cover/default-cover.webp?time=341?time=342?time=345?time=368?time=370?time=385","path":"2023/11/25/springcloud/SpringCloud系列一之基础服务/"},{"title":"SpringCloud系列(七)---认证和授权","cover":"/imgs/cover/default-cover.jpeg?time=339?time=348?time=351?time=368?time=371?time=386","path":"2024/02/03/springcloud/SpringCloud系列七之认证和授权/"},{"title":"SpringCloud系列(三)---服务熔断与降级","cover":"/imgs/cover/default-cover.webp?time=341?time=342?time=347?time=368?time=370?time=385?time=387?time=387","path":"2023/12/02/springcloud/SpringCloud系列三之服务熔断与降级/"},{"title":"SpringCloud系列(九)---阶段总结","cover":"/imgs/cover/default-cover.jpeg?time=335?time=348?time=353?time=368?time=369?time=385","path":"2024/05/11/springcloud/SpringCloud系列九之阶段总结/"},{"title":"SpringCloud系列(二)---注册中心和配置中心","cover":"/imgs/cover/default-cover.jpeg?time=341?time=342?time=345?time=368?time=370?time=383?time=385?time=388","path":"2023/11/30/springcloud/SpringCloud系列二之注册中心/"},{"title":"SpringCloud系列(五)---Redis使用","cover":"/imgs/cover/default-cover.jpeg?time=341?time=342?time=347?time=368?time=370?time=381?time=385","path":"2023/12/14/springcloud/SpringCloud系列五之Redis使用/"},{"title":"SpringCloud系列(八)---服务划分","cover":"/imgs/cover/default-cover.webp?time=339?time=348?time=351?time=368?time=371?time=388","path":"2024/02/19/springcloud/SpringCloud系列八之服务划分/"},{"title":"SpringCloud系列(六)---分布式主键","cover":"/imgs/cover/default-cover.webp?time=341?time=342?time=347?time=368?time=370?time=385?time=388","path":"2023/12/11/springcloud/SpringCloud系列六之分布式主键/"},{"title":"SpringCloud系列(四)---网关","cover":"/imgs/cover/default-cover.jpeg?time=341?time=342?time=347?time=368?time=370?time=385?time=389","path":"2023/12/10/springcloud/SpringCloud系列四之网关/"},{"title":"","path":"2026/04/01/k8s/K8s系列五之资源部署/K8s资源清单/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}${'?time=' + new Date().getMilliseconds()}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp'}${'?time=' + new Date().getMilliseconds()}" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg?time=399" class="main-left--avatar" alt />
+      <div class="main-left--intro">
+        <p class="main-left--name">小琳</p>
+        <div class="main-left--tags">
+          
+            <span class="main-left--tag">中二</span>
+          
+            <span class="main-left--tag">乐天派</span>
+          
+            <span class="main-left--tag">悲观主义</span>
+          
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>跳出圈子你会发现</p>
+        <p>其实你一无是处</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        
+          <a target="_blank" rel="noopener" href="https://github.com/?time=399" title="github">
+            <i class="logo xiao-lin-blog xiao-lin-blog-github"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://gitee.com/xiao-lin?time=399" title="码云">
+            <i class="logo xiao-lin-blog xiao-lin-blog-gitee"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43728193?type=blog?time=399" title="CSDN">
+            <i class="logo xiao-lin-blog xiao-lin-blog-csdn"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiao-lin-unit/?time=399" title="博客园">
+            <i class="logo xiao-lin-blog xiao-lin-blog-cnblogs"></i>
+          </a>
+        
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories?time=399">
+          <div>
+            <span>12</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags?time=399">
+          <div>
+            <span>32</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives?time=399">
+          <div>
+            <span>11 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/?time=399">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log?time=399">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link?time=399">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about?time=399">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tags?time=399">
+            <span class="header-menu--span">标签</span>
+            <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-tags-rectangle"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/categories?time=399">
+            <span class="header-menu--span">分类</span>
+            <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-categories"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools?time=399">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>40 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>906天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  
+
+<link rel="stylesheet" href="/css/partial/article.css?time=229" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">Redis系列(二)---基础</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span class="xiao-lin-blog xiao-lin-blog-categories">分类：</span>
+            <a class="category-link" href="/categories/Redis/">Redis</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span class="xiao-lin-blog xiao-lin-blog-tags-fill">标签：</span>
+            <a class="tag-link" href="/tags/Redis/" rel="tag">Redis</a>
+          </div>
+          
+          <p class="article-info--date"><i class="xiao-lin-blog xiao-lin-blog-date-time">日期：2026-04-20 15:16:07</i></p>
+        </div>
+<!--        <img src="/imgs/cover/default-cover.webp" alt="" class="article-cover">-->
+        <img src="/imgs/cover/default-cover.webp" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <!-- toc -->
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>前面我们已经完成了<code>redis</code>的安装工作，现在我们来学习使用<code>redis</code></p>
+<h3 id="redis的数据类型"><a class="markdownIt-Anchor" href="#redis的数据类型"></a> <code>Redis</code>的数据类型</h3>
+<h5 id="1-string"><a class="markdownIt-Anchor" href="#1-string"></a> 1. <code>string</code></h5>
+<p>基本的数据存储单元，可以存储字符串、整数、浮点数</p>
+<p><code>string</code>：普通字符串</p>
+<p><code>int</code>：整数类型，可以做自增自减操作</p>
+<p><code>float</code>：浮点类型，可以做自增自减操作</p>
+<h5 id="2-hash"><a class="markdownIt-Anchor" href="#2-hash"></a> 2. <code>hash</code></h5>
+<p>一个键值对集合，可以存储多个字段</p>
+<h5 id="3-list"><a class="markdownIt-Anchor" href="#3-list"></a> 3. <code>list</code></h5>
+<p>一个简单的列表，可以存储一系列的字符元素。双向链表型。有序，可重复，插入和删除快，查询速度一般</p>
+<h5 id="4-set"><a class="markdownIt-Anchor" href="#4-set"></a> 4. <code>set</code></h5>
+<p>一个无序集合，可以存储不重复的字符串元素。无序，不可重复，查找快，支持交集，并集，差集等操作</p>
+<h5 id="5-zset"><a class="markdownIt-Anchor" href="#5-zset"></a> 5. <code>zset</code></h5>
+<p>类似于集合，但是每个元素都有一个分数与之关联。可以基于<code>score</code>属性对元素排序，底层的是按是一个跳表<code>skiplist</code>加<code>hash</code>表。可排序，元素不重复，查询速度快</p>
+<h5 id="6-位图bitmaps"><a class="markdownIt-Anchor" href="#6-位图bitmaps"></a> 6. 位图<code>(Bitmaps)</code></h5>
+<p>基于字符串类型，可以对每个位进行操作</p>
+<h5 id="7-超日志hyperloglogs"><a class="markdownIt-Anchor" href="#7-超日志hyperloglogs"></a> 7. 超日志<code>(HyperLogLogs)</code></h5>
+<p>用于基数统计，可以估算集合中的唯一元素数量</p>
+<h5 id="8-地理空间geospatial"><a class="markdownIt-Anchor" href="#8-地理空间geospatial"></a> 8. 地理空间<code>(Geospatial)</code></h5>
+<p>用于存储地理位置信息</p>
+<h5 id="9-发布订阅pubsub"><a class="markdownIt-Anchor" href="#9-发布订阅pubsub"></a> 9. 发布/订阅<code>(Pub/Sub)</code></h5>
+<p>一种消息通信模式，允许客户端订阅消息通道，并接受发布到该通道的消息</p>
+<h5 id="10-流streams"><a class="markdownIt-Anchor" href="#10-流streams"></a> 10. 流<code>(Streams)</code></h5>
+<p>用于消息队列和日志存储，支持消息的持久化和时间排序</p>
+<h5 id="11-模块modules"><a class="markdownIt-Anchor" href="#11-模块modules"></a> 11. 模块<code>(Modules)</code></h5>
+<p><code>redis</code>支持动态架子啊模块，可以扩展<code>redis</code>的功能</p>
+<h3 id="redis的常见命令"><a class="markdownIt-Anchor" href="#redis的常见命令"></a> <code>Redis</code>的常见命令</h3>
+<h4 id="1-通用命令"><a class="markdownIt-Anchor" href="#1-通用命令"></a> 1. 通用命令</h4>
+<h5 id="1-帮助命令"><a class="markdownIt-Anchor" href="#1-帮助命令"></a> 1. 帮助命令</h5>
+<p>获取某种类型有哪些命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">help @&lt;数据类型&gt;</span><br><span class="line"># help @string</span><br><span class="line">help &lt;command&gt;</span><br><span class="line"># help keys</span><br></pre></td></tr></table></figure>
+<h5 id="2-keys"><a class="markdownIt-Anchor" href="#2-keys"></a> 2. <code>keys</code></h5>
+<p>获取所有符合给定模板的<code>key</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">keys &lt;pattern&gt;</span><br><span class="line"># keys a*</span><br></pre></td></tr></table></figure>
+<h5 id="3-del"><a class="markdownIt-Anchor" href="#3-del"></a> 3. <code>del</code></h5>
+<p>删除给定的<code>key</code>指向的键值对</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">del &lt;key [key1 key2...]&gt;</span><br><span class="line"># del name age</span><br></pre></td></tr></table></figure>
+<h5 id="4-exists"><a class="markdownIt-Anchor" href="#4-exists"></a> 4. <code>exists</code></h5>
+<p>判断一个给定的<code>key</code>是否存在</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">exists &lt;key [key ...]&gt;</span><br><span class="line"># exists name</span><br></pre></td></tr></table></figure>
+<h5 id="5-expire"><a class="markdownIt-Anchor" href="#5-expire"></a> 5. <code>expire</code></h5>
+<p>为给定<code>key</code>设置有效期，有效期到期时，给定的<code>key</code>会被自动删除</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">expire &lt;key&gt; &lt;seconds&gt;</span><br><span class="line"># expire name 30</span><br></pre></td></tr></table></figure>
+<h5 id="6-ttl"><a class="markdownIt-Anchor" href="#6-ttl"></a> 6. <code>ttl</code></h5>
+<p>查看给定<code>key</code>的剩余有效期，结果如果返回-2表示不存在，-1表示永久有效</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ttl &lt;key&gt;</span><br><span class="line"># ttl name</span><br></pre></td></tr></table></figure>
+<h5 id="7-scan"><a class="markdownIt-Anchor" href="#7-scan"></a> 7. <code>scan</code></h5>
+<p>增量遍历<code>key</code>，与<code>keys</code>命令不同，此命令不会阻塞服务器</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scan &lt;cursor&gt; [match &lt;pattern&gt;] [count &lt;count&gt;] [type &lt;type&gt;]</span><br><span class="line"># scan 0 match n* count 10 type string</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>cursor</code>：游标，表示从指定位置开始便利</p>
+<p><code>pattern</code>：匹配的模式</p>
+<p><code>count</code>： 每次遍历返回的元素数量</p>
+<p><code>type</code>： 指定返回的类型</p>
+</blockquote>
+<h4 id="2-string"><a class="markdownIt-Anchor" href="#2-string"></a> 2. <code>string</code></h4>
+<h5 id="1-set"><a class="markdownIt-Anchor" href="#1-set"></a> 1. <code>set</code></h5>
+<p>添加或者修改已经存在的一个<code>string</code>类型的键值对</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">set &lt;key&gt; &lt;value&gt;</span><br><span class="line">#set name xiao-lin</span><br></pre></td></tr></table></figure>
+<p>使用<code>:</code>可以让<code>key</code>创建层级结构</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set user:xiaolin &#x27;&#123;&quot;name&quot;: &quot;xiaolin&quot;, &quot;age&quot;: 18&#125;&#x27;</span><br></pre></td></tr></table></figure>
+<p>这会创建<code>user</code>这一层级，然后在这层级下创建一个<code>xiaolin</code>的<code>key</code></p>
+<h5 id="2-get"><a class="markdownIt-Anchor" href="#2-get"></a> 2. <code>get</code></h5>
+<p>根据<code>key</code>获取<code>string</code>类型的值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">get &lt;key&gt;</span><br><span class="line">#get name</span><br></pre></td></tr></table></figure>
+<h5 id="3-mset"><a class="markdownIt-Anchor" href="#3-mset"></a> 3. <code>mset</code></h5>
+<p>批量添加多个<code>string</code>类型的键值对</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mset &lt;key1&gt; &lt;value1&gt; &lt;key2&gt; &lt;value2&gt;</span><br><span class="line">#mset age 18 city qingdao</span><br></pre></td></tr></table></figure>
+<h5 id="4-mget"><a class="markdownIt-Anchor" href="#4-mget"></a> 4. <code>mget</code></h5>
+<p>根据多个<code>key</code>获取多个<code>string</code>类型的值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mget &lt;name&gt; &lt;age&gt; &lt;city&gt;</span><br><span class="line">#mget name age city</span><br></pre></td></tr></table></figure>
+<h5 id="5-incrdecr"><a class="markdownIt-Anchor" href="#5-incrdecr"></a> 5. <code>incr/decr</code></h5>
+<p>让给定的<code>key</code>的整型值自增/自减1</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">incr &lt;key&gt;</span><br><span class="line">#incr age</span><br></pre></td></tr></table></figure>
+<h5 id="6-incrbydecrby"><a class="markdownIt-Anchor" href="#6-incrbydecrby"></a> 6. <code>incrby/decrby</code></h5>
+<p>让给定的<code>key</code>的整型值自增/自减指定步长</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">incrby &lt;key&gt; &lt;step&gt;</span><br><span class="line">#incrby age 2</span><br></pre></td></tr></table></figure>
+<h5 id="7-incrbyfloat"><a class="markdownIt-Anchor" href="#7-incrbyfloat"></a> 7. <code>incrbyfloat</code></h5>
+<p>让给定的<code>key</code>的浮点型值自增指定步长</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">incrbyfloat &lt;key&gt; &lt;step&gt;</span><br><span class="line">#incrbyfloat money 10000000.2</span><br></pre></td></tr></table></figure>
+<h5 id="8-setnx"><a class="markdownIt-Anchor" href="#8-setnx"></a> 8. <code>setnx</code></h5>
+<p>当给定的<code>key</code>不存在时，添加一个<code>string</code>类型的键值对，否则不执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">setnx &lt;key&gt; &lt;value&gt;</span><br><span class="line">#setnx province shandong</span><br></pre></td></tr></table></figure>
+<h5 id="9-setex"><a class="markdownIt-Anchor" href="#9-setex"></a> 9. <code>setex</code></h5>
+<p>添加一个<code>string</code>类型的键值对，并且指定有效期</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">setex &lt;key&gt; &lt;seconds&gt; &lt;value&gt;</span><br><span class="line"># setex computer 30 thinkbook</span><br></pre></td></tr></table></figure>
+<h5 id="10-append"><a class="markdownIt-Anchor" href="#10-append"></a> 10. <code>APPEND</code></h5>
+<p>为给定<code>key</code>的值追加内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">append &lt;key&gt; &lt;value。</span><br><span class="line"># appdend name &quot;-unit&quot;</span><br></pre></td></tr></table></figure>
+<h5 id="11-strlen"><a class="markdownIt-Anchor" href="#11-strlen"></a> 11. <code>strlen</code></h5>
+<p>获取给定<code>key</code>的值的长度</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">strlen &lt;key&gt;</span><br><span class="line"># strlen name</span><br></pre></td></tr></table></figure>
+<h5 id="12-substr"><a class="markdownIt-Anchor" href="#12-substr"></a> 12. <code>substr</code></h5>
+<p>获取给定<code>key</code>的值的子串</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">substr &lt;key&gt; &lt;start&gt; &lt;end&gt;</span><br><span class="line"># strlen name 0 7</span><br></pre></td></tr></table></figure>
+<h4 id="2-hash-2"><a class="markdownIt-Anchor" href="#2-hash-2"></a> 2. <code>hash</code></h4>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>field</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>user:xiaolin:1</td>
+<td>name</td>
+<td>xiao-lin</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>注意：</p>
+<p><code>field</code>和<code>value</code>才是整个<code>key</code>的<code>value</code></p>
+</blockquote>
+<h5 id="1-hset"><a class="markdownIt-Anchor" href="#1-hset"></a> 1. <code>hset</code></h5>
+<p>添加或修改<code>hash</code>类型<code>key</code>的<code>field</code>的值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hset &lt;key&gt; &lt;field&gt; &lt;value&gt; &lt;field2&gt; &lt;value2&gt;</span><br></pre></td></tr></table></figure>
+<h5 id="2-hget"><a class="markdownIt-Anchor" href="#2-hget"></a> 2. <code>hget</code></h5>
+<p>获取一个<code>hash</code>类型的<code>key</code>的<code>field</code>的值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gset &lt;key&gt; &lt;field&gt;</span><br></pre></td></tr></table></figure>
+<h5 id="3-hmset"><a class="markdownIt-Anchor" href="#3-hmset"></a> 3. <code>hmset</code></h5>
+<p>批量添加多个<code>hash</code>类型<code>key</code>的<code>field</code>的值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hmset &lt;key&gt; &lt;field1&gt; &lt;value1&gt; &lt;field2&gt; &lt;value2&gt;</span><br></pre></td></tr></table></figure>
+<h5 id="4-hmget"><a class="markdownIt-Anchor" href="#4-hmget"></a> 4. <code>hmget</code></h5>
+<p>批量获取多个<code>hash</code>类型<code>key</code>的<code>field</code>的值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hmget &lt;key1&gt; </span><br></pre></td></tr></table></figure>
+<h5 id="5-hgetall"><a class="markdownIt-Anchor" href="#5-hgetall"></a> 5. <code>hgetall</code></h5>
+<p>获取给定<code>hash</code>类型<code>key</code>的所有<code>field</code>和<code>value</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hgetall &lt;key&gt;</span><br><span class="line"># hgetall user:xiao-lin</span><br></pre></td></tr></table></figure>
+<h5 id="6-hkeys"><a class="markdownIt-Anchor" href="#6-hkeys"></a> 6. <code>hkeys</code></h5>
+<p>获取给定<code>hash</code>类型<code>key</code>中的所有<code>field</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hkeys &lt;key&gt;</span><br><span class="line"># hkeys user:xiao-lin</span><br></pre></td></tr></table></figure>
+<h5 id="7-hvals"><a class="markdownIt-Anchor" href="#7-hvals"></a> 7. <code>hvals</code></h5>
+<p>获取给定<code>hash</code>类型<code>key</code>中的所有<code>value</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hvals &lt;key&gt;</span><br><span class="line"># hvals user:xiao-lin</span><br></pre></td></tr></table></figure>
+<h5 id="8-hincrbyhdecrby"><a class="markdownIt-Anchor" href="#8-hincrbyhdecrby"></a> 8. <code>hincrby/hdecrby</code></h5>
+<p>让给定的<code>hash</code>类型的<code>key</code>的指定<code>field</code>自增/自减指定步长</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hincrby &lt;key&gt; &lt;field&gt; &lt;step&gt;</span><br><span class="line"># hvals user:xiao-lin age 2</span><br></pre></td></tr></table></figure>
+<h5 id="9-hsetnx"><a class="markdownIt-Anchor" href="#9-hsetnx"></a> 9. <code>hsetnx</code></h5>
+<p>当给定的<code>hash</code>类型<code>key</code>的<code>field</code>不存在时，添加一个<code>field</code>和<code>value</code>的键值对，否则不执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hsetnx &lt;key&gt; &lt;field&gt; &lt;value&gt;</span><br><span class="line"># hsetnx user:xiao-lin city wf</span><br></pre></td></tr></table></figure>
+<h5 id="10-hdel"><a class="markdownIt-Anchor" href="#10-hdel"></a> 10. <code>hdel</code></h5>
+<p>删除给定的<code>hash</code>类型<code>key</code>的<code>field</code>的值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hdel &lt;key&gt; &lt;field&gt;</span><br><span class="line"># hdel user:xiao-lin city</span><br></pre></td></tr></table></figure>
+<h5 id="11-hexists"><a class="markdownIt-Anchor" href="#11-hexists"></a> 11. <code>hexists</code></h5>
+<p>判断给定的<code>hash</code>类型<code>key</code>的<code>field</code>的值是否存在</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexists &lt;key&gt; &lt;field&gt;</span><br><span class="line"># hexists user:xiao-lin city</span><br></pre></td></tr></table></figure>
+<h5 id="12-hlen"><a class="markdownIt-Anchor" href="#12-hlen"></a> 12. <code>hlen</code></h5>
+<p>获取给定的<code>hash</code>类型<code>key</code>的<code>field</code>的数量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hlen &lt;key&gt;</span><br><span class="line"># hlen user:xiao-lin</span><br></pre></td></tr></table></figure>
+<h4 id="3-list-2"><a class="markdownIt-Anchor" href="#3-list-2"></a> 3. <code>List</code></h4>
+<h5 id="1-lpush"><a class="markdownIt-Anchor" href="#1-lpush"></a> 1. <code>lpush</code></h5>
+<p>向列表左侧出入一个或多个元素</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lpush &lt;key&gt; &lt;element&gt; [&lt;element1&gt; ...]</span><br><span class="line"># lpush index 1 2 3</span><br></pre></td></tr></table></figure>
+<h5 id="2-lpop"><a class="markdownIt-Anchor" href="#2-lpop"></a> 2. <code>lpop</code></h5>
+<p>移除并返回列表左侧的指定个元素（默认1个），没有则返回<code>nil</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lpop &lt;key&gt; [&lt;count&gt;]</span><br><span class="line"># lpop index</span><br></pre></td></tr></table></figure>
+<h5 id="3-rpush"><a class="markdownIt-Anchor" href="#3-rpush"></a> 3. <code>rpush</code></h5>
+<p>向列表右侧插入一个或多个元素</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rpush &lt;key&gt; &lt;element&gt; [&lt;element1&gt; ...]</span><br><span class="line"># rpush index 3 4</span><br></pre></td></tr></table></figure>
+<h5 id="4-rpop"><a class="markdownIt-Anchor" href="#4-rpop"></a> 4. <code>rpop</code></h5>
+<p>移除并返回列表右侧的指定个元素（默认1个），没有则返回<code>nil</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rpop &lt;key&gt; [&lt;count&gt;]</span><br><span class="line"># rpop index 2</span><br></pre></td></tr></table></figure>
+<h5 id="5-lrange"><a class="markdownIt-Anchor" href="#5-lrange"></a> 5. <code>lrange</code></h5>
+<p>返回一段下表范围内的所有元素</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lrange &lt;key&gt; &lt;start&gt; &lt;end&gt;</span><br><span class="line"># lrange index 1 3</span><br></pre></td></tr></table></figure>
+<h5 id="6-blpopbrpop"><a class="markdownIt-Anchor" href="#6-blpopbrpop"></a> 6. <code>blpop/brpop</code></h5>
+<p>与<code>lpop</code>和<code>rpop</code>类型，只不过在没有元素时等待指定时间，而不是直接返回<code>nil</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">blpop &lt;key&gt; &lt;timeout&gt;</span><br><span class="line"># blpop index 30</span><br></pre></td></tr></table></figure>
+<h4 id="4-set-2"><a class="markdownIt-Anchor" href="#4-set-2"></a> 4. <code>set</code></h4>
+<h5 id="1-sadd"><a class="markdownIt-Anchor" href="#1-sadd"></a> 1. <code>sadd</code></h5>
+<p>向<code>set</code>中添加一个或多个元素</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sadd cset 1 2 3 4 5 6</span><br></pre></td></tr></table></figure>
+<h5 id="2-srem"><a class="markdownIt-Anchor" href="#2-srem"></a> 2. <code>srem</code></h5>
+<p>移除<code>set</code>中的指定元素</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">srem</span><br><span class="line"># srem cset 3</span><br></pre></td></tr></table></figure>
+<h5 id="3-scard"><a class="markdownIt-Anchor" href="#3-scard"></a> 3. <code>scard</code></h5>
+<p>返回<code>set</code>中元素的个数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scard</span><br><span class="line"># scard cset</span><br></pre></td></tr></table></figure>
+<h5 id="4-sismember"><a class="markdownIt-Anchor" href="#4-sismember"></a> 4. <code>sismember</code></h5>
+<p>判断一个元素是否存在于<code>set</code>中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sismember</span><br><span class="line"># sismember cset 2</span><br></pre></td></tr></table></figure>
+<h5 id="5-smembers"><a class="markdownIt-Anchor" href="#5-smembers"></a> 5. <code>smembers</code></h5>
+<p>获取<code>set</code>中的所有元素</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">smembers &lt;key&gt;</span><br><span class="line"># smembers cset</span><br></pre></td></tr></table></figure>
+<h5 id="6-smove"><a class="markdownIt-Anchor" href="#6-smove"></a> 6. <code>smove</code></h5>
+<p>将某个集合中的元素某个元素移动到另一个集合中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">smove &lt;source_key&gt; &lt;destination_key&gt; &lt;member&gt;</span><br><span class="line"># smove dset cset 3</span><br></pre></td></tr></table></figure>
+<h5 id="7-sinter"><a class="markdownIt-Anchor" href="#7-sinter"></a> 7. <code>sinter</code></h5>
+<p>指定<code>key</code>集合的交集</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sinter &lt;key&gt; [&lt;key1&gt; &lt;key2&gt;]</span><br><span class="line"># sinter cset dset</span><br></pre></td></tr></table></figure>
+<h5 id="8-sdiff"><a class="markdownIt-Anchor" href="#8-sdiff"></a> 8. <code>sdiff</code></h5>
+<p>指定<code>key</code>集合的差集</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sdiff &lt;key&gt; [&lt;key1&gt; &lt;key2&gt;]</span><br><span class="line"># sdiff cset dset</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：如果集合位置交换，结果可能不一样</p>
+<p>如：<code>cset=[1, 2, 4, 5, 6], dset=[1,2,3,4,5,6]</code>，则<code>sdiff cset dset</code>为空集，<code>sdiff dset cset</code>为<code>[3]</code></p>
+</blockquote>
+<h5 id="9-sunion"><a class="markdownIt-Anchor" href="#9-sunion"></a> 9. <code>sunion</code></h5>
+<p>指定<code>key</code>集合的并集</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sunion &lt;key&gt; [&lt;key1&gt; &lt;key2&gt;]</span><br><span class="line"># sunion cset dset</span><br></pre></td></tr></table></figure>
+<h4 id="5-zset-2"><a class="markdownIt-Anchor" href="#5-zset-2"></a> 5. <code>zset</code></h4>
+<h5 id="1-zadd"><a class="markdownIt-Anchor" href="#1-zadd"></a> 1. <code>zadd</code></h5>
+<p>添加一个或多个元素到<code>zset</code>中，如果已经存在则更新其<code>score</code>值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">zadd &lt;key&gt; &lt;score&gt; &lt;member&gt;</span><br><span class="line"># zadd students 85 J 89 L 82 R 95 T 92 A 76 M</span><br></pre></td></tr></table></figure>
+<h5 id="2-zrem"><a class="markdownIt-Anchor" href="#2-zrem"></a> 2. <code>zrem</code></h5>
+<p>删除<code>zset</code>中的指定元素</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">zrem &lt;key&gt; &lt;member&gt;</span><br><span class="line"># zrem students A</span><br></pre></td></tr></table></figure>
+<h5 id="3-zscore"><a class="markdownIt-Anchor" href="#3-zscore"></a> 3. <code>zscore</code></h5>
+<p>获取<code>zset</code>中的指定元素的<code>score</code>值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">zscore &lt;key&gt; &lt;member&gt;</span><br><span class="line"># zscore students T</span><br></pre></td></tr></table></figure>
+<h5 id="4-zrank"><a class="markdownIt-Anchor" href="#4-zrank"></a> 4. <code>zrank</code></h5>
+<p>获取<code>zset</code>中的指定元素的排名</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">zrank/zrevrank &lt;key&gt; &lt;member&gt;</span><br><span class="line"># zrank students R</span><br><span class="line"># zrevrank students R</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>zrank</code>是升序排名，如果要降序则使用<code>zrevrank</code></p>
+</blockquote>
+<h5 id="5-zcard"><a class="markdownIt-Anchor" href="#5-zcard"></a> 5. <code>zcard</code></h5>
+<p>获取<code>zset</code>中的元素个数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">zcard &lt;key&gt;</span><br><span class="line"># zcard students</span><br></pre></td></tr></table></figure>
+<h5 id="6-zcount"><a class="markdownIt-Anchor" href="#6-zcount"></a> 6. <code>zcount</code></h5>
+<p>统计<code>score</code>值在给定范围内的所有元素的个数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">zcount &lt;key&gt; &lt;min&gt; &lt;max&gt;</span><br><span class="line"># zcount students 0 80</span><br></pre></td></tr></table></figure>
+<h5 id="7-zincrby"><a class="markdownIt-Anchor" href="#7-zincrby"></a> 7. <code>zincrby</code></h5>
+<p>让<code>zset</code>中的指定元素自增指定步长</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">zincrby &lt;key&gt; &lt;step&gt; &lt;member&gt;</span><br><span class="line"># zincrby stadents 2 T</span><br></pre></td></tr></table></figure>
+<h5 id="8-zrange"><a class="markdownIt-Anchor" href="#8-zrange"></a> 8. <code>zrange</code></h5>
+<p>按照<code>score</code>排序后，获取指定排名范围内的元素</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">zrange &lt;key&gt; &lt;min&gt; &lt;max&gt; [byscore|bylex] [rev] [limit &lt;offset&gt; &lt;count&gt;] [withscores]</span><br><span class="line"># zrange students 0 80</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>默认是升序排名，如果要降序则在命令最后添加<code>rev</code>或者使用<code>zrevrange</code></p>
+</blockquote>
+<h5 id="9-zdiff"><a class="markdownIt-Anchor" href="#9-zdiff"></a> 9. <code>zdiff</code></h5>
+<p>获取指定集合的差集</p>
+<h5 id="10-zinter"><a class="markdownIt-Anchor" href="#10-zinter"></a> 10. <code>zinter</code></h5>
+<p>获取指定集合的交集</p>
+<h5 id="11-zunion"><a class="markdownIt-Anchor" href="#11-zunion"></a> 11 <code>zunion</code></h5>
+<p>获取指定集合的并集</p>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2026/04/20/redis/Redis系列二之基础/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text"> 前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#redis%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-number">2.</span> <span class="toc-text"> Redis的数据类型</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-string"><span class="toc-number">2.0.1.</span> <span class="toc-text"> 1. string</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-hash"><span class="toc-number">2.0.2.</span> <span class="toc-text"> 2. hash</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-list"><span class="toc-number">2.0.3.</span> <span class="toc-text"> 3. list</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-set"><span class="toc-number">2.0.4.</span> <span class="toc-text"> 4. set</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5-zset"><span class="toc-number">2.0.5.</span> <span class="toc-text"> 5. zset</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#6-%E4%BD%8D%E5%9B%BEbitmaps"><span class="toc-number">2.0.6.</span> <span class="toc-text"> 6. 位图(Bitmaps)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#7-%E8%B6%85%E6%97%A5%E5%BF%97hyperloglogs"><span class="toc-number">2.0.7.</span> <span class="toc-text"> 7. 超日志(HyperLogLogs)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#8-%E5%9C%B0%E7%90%86%E7%A9%BA%E9%97%B4geospatial"><span class="toc-number">2.0.8.</span> <span class="toc-text"> 8. 地理空间(Geospatial)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#9-%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85pubsub"><span class="toc-number">2.0.9.</span> <span class="toc-text"> 9. 发布&#x2F;订阅(Pub&#x2F;Sub)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#10-%E6%B5%81streams"><span class="toc-number">2.0.10.</span> <span class="toc-text"> 10. 流(Streams)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#11-%E6%A8%A1%E5%9D%97modules"><span class="toc-number">2.0.11.</span> <span class="toc-text"> 11. 模块(Modules)</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#redis%E7%9A%84%E5%B8%B8%E8%A7%81%E5%91%BD%E4%BB%A4"><span class="toc-number">3.</span> <span class="toc-text"> Redis的常见命令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%80%9A%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">3.1.</span> <span class="toc-text"> 1. 通用命令</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-%E5%B8%AE%E5%8A%A9%E5%91%BD%E4%BB%A4"><span class="toc-number">3.1.1.</span> <span class="toc-text"> 1. 帮助命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-keys"><span class="toc-number">3.1.2.</span> <span class="toc-text"> 2. keys</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-del"><span class="toc-number">3.1.3.</span> <span class="toc-text"> 3. del</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-exists"><span class="toc-number">3.1.4.</span> <span class="toc-text"> 4. exists</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5-expire"><span class="toc-number">3.1.5.</span> <span class="toc-text"> 5. expire</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#6-ttl"><span class="toc-number">3.1.6.</span> <span class="toc-text"> 6. ttl</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#7-scan"><span class="toc-number">3.1.7.</span> <span class="toc-text"> 7. scan</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-string"><span class="toc-number">3.2.</span> <span class="toc-text"> 2. string</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-set"><span class="toc-number">3.2.1.</span> <span class="toc-text"> 1. set</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-get"><span class="toc-number">3.2.2.</span> <span class="toc-text"> 2. get</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-mset"><span class="toc-number">3.2.3.</span> <span class="toc-text"> 3. mset</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-mget"><span class="toc-number">3.2.4.</span> <span class="toc-text"> 4. mget</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5-incrdecr"><span class="toc-number">3.2.5.</span> <span class="toc-text"> 5. incr&#x2F;decr</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#6-incrbydecrby"><span class="toc-number">3.2.6.</span> <span class="toc-text"> 6. incrby&#x2F;decrby</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#7-incrbyfloat"><span class="toc-number">3.2.7.</span> <span class="toc-text"> 7. incrbyfloat</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#8-setnx"><span class="toc-number">3.2.8.</span> <span class="toc-text"> 8. setnx</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#9-setex"><span class="toc-number">3.2.9.</span> <span class="toc-text"> 9. setex</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#10-append"><span class="toc-number">3.2.10.</span> <span class="toc-text"> 10. APPEND</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#11-strlen"><span class="toc-number">3.2.11.</span> <span class="toc-text"> 11. strlen</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#12-substr"><span class="toc-number">3.2.12.</span> <span class="toc-text"> 12. substr</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-hash-2"><span class="toc-number">3.3.</span> <span class="toc-text"> 2. hash</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-hset"><span class="toc-number">3.3.1.</span> <span class="toc-text"> 1. hset</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-hget"><span class="toc-number">3.3.2.</span> <span class="toc-text"> 2. hget</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-hmset"><span class="toc-number">3.3.3.</span> <span class="toc-text"> 3. hmset</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-hmget"><span class="toc-number">3.3.4.</span> <span class="toc-text"> 4. hmget</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5-hgetall"><span class="toc-number">3.3.5.</span> <span class="toc-text"> 5. hgetall</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#6-hkeys"><span class="toc-number">3.3.6.</span> <span class="toc-text"> 6. hkeys</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#7-hvals"><span class="toc-number">3.3.7.</span> <span class="toc-text"> 7. hvals</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#8-hincrbyhdecrby"><span class="toc-number">3.3.8.</span> <span class="toc-text"> 8. hincrby&#x2F;hdecrby</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#9-hsetnx"><span class="toc-number">3.3.9.</span> <span class="toc-text"> 9. hsetnx</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#10-hdel"><span class="toc-number">3.3.10.</span> <span class="toc-text"> 10. hdel</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#11-hexists"><span class="toc-number">3.3.11.</span> <span class="toc-text"> 11. hexists</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#12-hlen"><span class="toc-number">3.3.12.</span> <span class="toc-text"> 12. hlen</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-list-2"><span class="toc-number">3.4.</span> <span class="toc-text"> 3. List</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-lpush"><span class="toc-number">3.4.1.</span> <span class="toc-text"> 1. lpush</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-lpop"><span class="toc-number">3.4.2.</span> <span class="toc-text"> 2. lpop</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-rpush"><span class="toc-number">3.4.3.</span> <span class="toc-text"> 3. rpush</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-rpop"><span class="toc-number">3.4.4.</span> <span class="toc-text"> 4. rpop</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5-lrange"><span class="toc-number">3.4.5.</span> <span class="toc-text"> 5. lrange</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#6-blpopbrpop"><span class="toc-number">3.4.6.</span> <span class="toc-text"> 6. blpop&#x2F;brpop</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-set-2"><span class="toc-number">3.5.</span> <span class="toc-text"> 4. set</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-sadd"><span class="toc-number">3.5.1.</span> <span class="toc-text"> 1. sadd</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-srem"><span class="toc-number">3.5.2.</span> <span class="toc-text"> 2. srem</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-scard"><span class="toc-number">3.5.3.</span> <span class="toc-text"> 3. scard</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-sismember"><span class="toc-number">3.5.4.</span> <span class="toc-text"> 4. sismember</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5-smembers"><span class="toc-number">3.5.5.</span> <span class="toc-text"> 5. smembers</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#6-smove"><span class="toc-number">3.5.6.</span> <span class="toc-text"> 6. smove</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#7-sinter"><span class="toc-number">3.5.7.</span> <span class="toc-text"> 7. sinter</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#8-sdiff"><span class="toc-number">3.5.8.</span> <span class="toc-text"> 8. sdiff</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#9-sunion"><span class="toc-number">3.5.9.</span> <span class="toc-text"> 9. sunion</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-zset-2"><span class="toc-number">3.6.</span> <span class="toc-text"> 5. zset</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-zadd"><span class="toc-number">3.6.1.</span> <span class="toc-text"> 1. zadd</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-zrem"><span class="toc-number">3.6.2.</span> <span class="toc-text"> 2. zrem</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-zscore"><span class="toc-number">3.6.3.</span> <span class="toc-text"> 3. zscore</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-zrank"><span class="toc-number">3.6.4.</span> <span class="toc-text"> 4. zrank</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5-zcard"><span class="toc-number">3.6.5.</span> <span class="toc-text"> 5. zcard</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#6-zcount"><span class="toc-number">3.6.6.</span> <span class="toc-text"> 6. zcount</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#7-zincrby"><span class="toc-number">3.6.7.</span> <span class="toc-text"> 7. zincrby</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#8-zrange"><span class="toc-number">3.6.8.</span> <span class="toc-text"> 8. zrange</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#9-zdiff"><span class="toc-number">3.6.9.</span> <span class="toc-text"> 9. zdiff</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#10-zinter"><span class="toc-number">3.6.10.</span> <span class="toc-text"> 10. zinter</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#11-zunion"><span class="toc-number">3.6.11.</span> <span class="toc-text"> 11 zunion</span></a></li></ol></li></ol></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2026/04/20/redis/Redis系列三之应用/">Redis系列(三)---应用</a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2026/04/01/web/Vue系列一之项目创建和配置/">Vue系列(一)---项目创建和配置</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2026/04/20/redis/Redis系列二之基础/'
+  })
+</script>
+
+
+<script>
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        let href = decodeURIComponent(link.href);
+        href = href.substring(href.indexOf('#'));
+        const target = $(href)[0];
+        const top = target.offsetTop;
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      我们在绵延的海滩上捡贝壳，今天捡到了不必欣喜，因为海很大，今天没捡到，也不必失落，因为海很大。 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">我好像没有网络备案</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"自転车","artist":"オレスカバンド","url":"/music/自転车-オレスカバンド.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"撞地球","artist":"鱼儿七","url":"/music/撞地球-鱼儿七.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"晴天","artist":"周杰伦","url":"/music/晴天-周杰伦.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"告白气球","artist":"周杰伦","url":"/music/告白气球-周杰伦.mp3","cover":"/imgs/music-bg1.jpg"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>

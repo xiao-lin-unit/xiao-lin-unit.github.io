@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>小琳的星空 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico?time=404" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css?time=404" />
+  <link rel="stylesheet" href="/css/layout.css?time=404" />
+  <link rel="stylesheet" href="/css/iconfont.css?time=404" />
+  <link rel="stylesheet" href="/css/APlayer.min.css?time=404" />
+  <script src="/js/APlayer.min.js?time=404"></script>
+  <script src="/js/jquery.min.js?time=404"></script>
+  <script src="/js/jquery.pjax.min.js?time=404"></script>
+
+  <script src="/js/Valine.min.js?time=404"></script>
+<!--  <script src='https://unpkg.com/valine/dist/Valine.min.js'></script>-->
+  <script>
+    document.title = `小琳的星空`
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="/?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/">-->
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="/log?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/log?time=399">-->
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="/link?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/link?time=399">-->
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="/about?time=' + new Date().getMilliseconds()">
+<!--          <a href="http://example.com/about?time=399">-->
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"AI系列(一)---Spring AI学习","cover":"/imgs/cover/default-cover.jpeg?time=335?time=354?time=357?time=360?time=369?time=372?time=373","path":"2025/08/05/ai/AI系列一之SpringAI学习/"},{"title":"Docker系列(一)---安装和基本使用","cover":"/imgs/cover/default-cover.jpeg?time=335?time=356?time=357?time=361?time=369?time=373?time=374","path":"2025/08/05/docker/Docker系列一之安装和基本使用/"},{"title":"Docker系列(三)---项目部署","cover":"/imgs/cover/default-cover.webp?time=335?time=354?time=357?time=361?time=369?time=373","path":"2025/08/11/docker/Docker系列三之项目部署/"},{"title":"Docker系列(二)---进阶使用","cover":"/imgs/cover/default-cover.webp?time=335?time=354?time=357?time=361?time=369?time=373?time=374","path":"2025/08/07/docker/Docker系列二之进阶使用/"},{"title":"Promise","cover":"/imgs/cover/default-cover.jpeg?time=341?time=344?time=345?time=361?time=370?time=374","path":"2023/11/24/js/Promise/"},{"title":"K8s系列(一)---基本概念","cover":"/imgs/cover/default-cover.webp?time=335?time=354?time=357?time=362?time=369?time=375","path":"2025/08/12/k8s/K8s系列一之基本概念/"},{"title":"K8s系列(三)---搭建","cover":"/imgs/cover/default-cover.webp?time=354?time=357?time=362?time=366?time=375?time=376","path":"2025/08/14/k8s/K8s系列三之搭建/"},{"title":"K8s系列---番外篇","cover":"/imgs/cover/default-cover.jpeg?time=354?time=358?time=362?time=366?time=375?time=376?time=376","path":"2025/09/06/k8s/K8s系列之番外篇/"},{"title":"K8s系列(二)---软件安装","cover":"/imgs/cover/default-cover.jpeg?time=354?time=357?time=362?time=366?time=375?time=376","path":"2025/08/13/k8s/K8s系列二之容器安装/"},{"title":"K8s系列(六)---资源补充","cover":"/imgs/cover/default-cover.webp?time=354?time=358?time=362?time=366?time=375","path":"2025/09/17/k8s/K8s系列六之资源补充/"},{"title":"K8s系列(四)---常用命令","cover":"/imgs/cover/default-cover.jpeg?time=354?time=358?time=362?time=366?time=375","path":"2025/09/07/k8s/K8s系列四之常用命令/"},{"title":"K8s系列(五)---资源部署","cover":"/imgs/cover/default-cover.jpeg?time=354?time=358?time=362?time=366?time=375","path":"2025/09/07/k8s/K8s系列五之资源部署/"},{"title":"MySQL系列(三)---索引","cover":"/imgs/cover/default-cover.webp?time=335?time=348?time=352?time=363?time=369?time=377","path":"2024/04/29/mysql/MySQL系列三之索引/"},{"title":"MySQL系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=341?time=342?time=345?time=363?time=370?time=377","path":"2023/11/27/mysql/MySQL系列一之安装/"},{"title":"MySQL系列(二)---SQL","cover":"/imgs/cover/default-cover.jpeg?time=335?time=348?time=351?time=363?time=369?time=377","path":"2024/02/26/mysql/MySQL系列二之SQL/"},{"title":"NPM和PNPM的安装及配置","cover":"/imgs/cover/default-cover.webp?time=339?time=342?time=347?time=363?time=371?time=378?time=378?time=378","path":"2023/12/26/node/npm和pnpm安装及配置/"},{"title":"博客搭建","cover":"/imgs/cover/default-cover.webp?time=341?time=344?time=345?time=364?time=370?time=374?time=379","path":"2023/11/22/other/博客搭建/"},{"title":"项目对接招商银行CBS","cover":"/imgs/cover/default-cover.webp?time=339?time=348?time=351?time=364?time=371?time=379","path":"2024/02/21/other/项目对接招商银行CBS/"},{"title":"项目对接海康SDK","cover":"/imgs/cover/default-cover.webp?time=339?time=348?time=351?time=364?time=371?time=380","path":"2024/02/21/other/项目对接海康SDK/"},{"title":"Typescript系列(一)---基础","cover":"/imgs/cover/default-cover.webp?time=339?time=342?time=347?time=364?time=371?time=380","path":"2023/12/26/ts/TypeScript系列一之基础/"},{"title":"Redis系列(一)---安装","cover":"/imgs/cover/default-cover.webp?time=341?time=342?time=347?time=366?time=370?time=381","path":"2023/12/12/redis/Redis系列一之安装/"},{"title":"Redis系列(三)---应用","cover":"/imgs/cover/default-cover.jpeg?time=359?time=360?time=366?time=366?time=381","path":"2026/04/20/redis/Redis系列三之应用/"},{"title":"Typescript系列(二)---高级","cover":"/imgs/cover/default-cover.jpeg?time=339?time=349?time=350?time=364?time=371?time=380","path":"2024/01/04/ts/TypeScript系列二之高级/"},{"title":"Redis系列(二)---基础","cover":"/imgs/cover/default-cover.webp?time=359?time=360?time=366?time=366?time=381","path":"2026/04/20/redis/Redis系列二之基础/"},{"title":"Vue系列(一)---项目创建和配置","cover":"/imgs/cover/default-cover.webp?time=359?time=360?time=365?time=366?time=378?time=381?time=382","path":"2026/04/01/web/Vue系列一之项目创建和配置/"},{"title":"Vue系列(三)---状态管理库","cover":"/imgs/cover/default-cover.webp?time=339?time=348?time=350?time=365?time=371?time=382","path":"2024/01/18/web/Vue系列三之状态管理库/"},{"title":"Vue系列(二)---路由","cover":"/imgs/cover/default-cover.jpeg?time=339?time=349?time=350?time=365?time=371?time=382","path":"2024/01/07/web/Vue系列二之路由/"},{"title":"Vue系列(四)---请求","cover":"/imgs/cover/default-cover.jpeg?time=339?time=348?time=351?time=365?time=371?time=383","path":"2024/02/01/web/Vue系列四之请求/"},{"title":"Zookeeper系列(一)---原理","cover":"/imgs/cover/default-cover.webp?time=335?time=348?time=353?time=368?time=369?time=383","path":"2024/11/28/zookeeper/Zookeeper系列一之原理/"},{"title":"Zookeeper系列(二)---安装和使用","cover":"/imgs/cover/default-cover.jpeg?time=335?time=356?time=356?time=368?time=369?time=383","path":"2025/01/10/zookeeper/Zookeeper系列二之安装和使用/"},{"title":"SpringCloud系列(一)---项目创建","cover":"/imgs/cover/default-cover.webp?time=341?time=342?time=345?time=368?time=370?time=385","path":"2023/11/25/springcloud/SpringCloud系列一之基础服务/"},{"title":"SpringCloud系列(七)---认证和授权","cover":"/imgs/cover/default-cover.jpeg?time=339?time=348?time=351?time=368?time=371?time=386","path":"2024/02/03/springcloud/SpringCloud系列七之认证和授权/"},{"title":"SpringCloud系列(三)---服务熔断与降级","cover":"/imgs/cover/default-cover.webp?time=341?time=342?time=347?time=368?time=370?time=385?time=387?time=387","path":"2023/12/02/springcloud/SpringCloud系列三之服务熔断与降级/"},{"title":"SpringCloud系列(九)---阶段总结","cover":"/imgs/cover/default-cover.jpeg?time=335?time=348?time=353?time=368?time=369?time=385","path":"2024/05/11/springcloud/SpringCloud系列九之阶段总结/"},{"title":"SpringCloud系列(二)---注册中心和配置中心","cover":"/imgs/cover/default-cover.jpeg?time=341?time=342?time=345?time=368?time=370?time=383?time=385?time=388","path":"2023/11/30/springcloud/SpringCloud系列二之注册中心/"},{"title":"SpringCloud系列(五)---Redis使用","cover":"/imgs/cover/default-cover.jpeg?time=341?time=342?time=347?time=368?time=370?time=381?time=385","path":"2023/12/14/springcloud/SpringCloud系列五之Redis使用/"},{"title":"SpringCloud系列(八)---服务划分","cover":"/imgs/cover/default-cover.webp?time=339?time=348?time=351?time=368?time=371?time=388","path":"2024/02/19/springcloud/SpringCloud系列八之服务划分/"},{"title":"SpringCloud系列(六)---分布式主键","cover":"/imgs/cover/default-cover.webp?time=341?time=342?time=347?time=368?time=370?time=385?time=388","path":"2023/12/11/springcloud/SpringCloud系列六之分布式主键/"},{"title":"SpringCloud系列(四)---网关","cover":"/imgs/cover/default-cover.jpeg?time=341?time=342?time=347?time=368?time=370?time=385?time=389","path":"2023/12/10/springcloud/SpringCloud系列四之网关/"},{"title":"","path":"2026/04/01/k8s/K8s系列五之资源部署/K8s资源清单/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}${'?time=' + new Date().getMilliseconds()}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp'}${'?time=' + new Date().getMilliseconds()}" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg?time=399" class="main-left--avatar" alt />
+      <div class="main-left--intro">
+        <p class="main-left--name">小琳</p>
+        <div class="main-left--tags">
+          
+            <span class="main-left--tag">中二</span>
+          
+            <span class="main-left--tag">乐天派</span>
+          
+            <span class="main-left--tag">悲观主义</span>
+          
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>跳出圈子你会发现</p>
+        <p>其实你一无是处</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        
+          <a target="_blank" rel="noopener" href="https://github.com/?time=399" title="github">
+            <i class="logo xiao-lin-blog xiao-lin-blog-github"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://gitee.com/xiao-lin?time=399" title="码云">
+            <i class="logo xiao-lin-blog xiao-lin-blog-gitee"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43728193?type=blog?time=399" title="CSDN">
+            <i class="logo xiao-lin-blog xiao-lin-blog-csdn"></i>
+          </a>
+        
+          <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiao-lin-unit/?time=399" title="博客园">
+            <i class="logo xiao-lin-blog xiao-lin-blog-cnblogs"></i>
+          </a>
+        
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories?time=399">
+          <div>
+            <span>12</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags?time=399">
+          <div>
+            <span>32</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives?time=399">
+          <div>
+            <span>11 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/?time=399">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log?time=399">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link?time=399">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about?time=399">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tags?time=399">
+            <span class="header-menu--span">标签</span>
+            <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-tags-rectangle"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/categories?time=399">
+            <span class="header-menu--span">分类</span>
+            <i class="header-menu--icon xiao-lin-blog xiao-lin-blog-categories"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools?time=399">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>40 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>906天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  
+
+<link rel="stylesheet" href="/css/partial/article.css?time=297" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">SpringCloud系列(七)---认证和授权</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span class="xiao-lin-blog xiao-lin-blog-categories">分类：</span>
+            <a class="category-link" href="/categories/SpringCloud/">SpringCloud</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span class="xiao-lin-blog xiao-lin-blog-tags-fill">标签：</span>
+            <a class="tag-link" href="/tags/SpringSecurity/" rel="tag">SpringSecurity</a>
+          </div>
+          
+          <p class="article-info--date"><i class="xiao-lin-blog xiao-lin-blog-date-time">日期：2024-02-03 16:00:11</i></p>
+        </div>
+<!--        <img src="/1" alt="" class="article-cover">-->
+        <img src="/imgs/cover/default-cover.jpeg" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <!-- toc -->
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>项目的前端框架基本搭建完成后, 来到项目比较抽象的地方, 登录和授权. 说其抽象主要是因为使用<code>SpringSecurity</code>框架的原因, <code>SpringSecurity</code>框架机制健全切强大, 但由于其封装的非常好, 所以在使用时开发人员会觉得非常抽象, 动不动的就认证异常, 一不小心就弹出默认的登录页面, 也会出现各种不理解的情况, 所以来踩坑吧</p>
+<p>由于开始项目时<code>springboot</code>使用的是<code>3.1.5</code>版本, 所以此处也使用同版本的<code>SpringSecurity</code></p>
+<p>当前网上介绍<code>SpringSecurity</code>的文章大致分为两类, 一类是讲源码, 一类是讲使用的. 本篇是讲<code>SpringSecurity</code>的使用的文章, 所以暂不评论将源码的文章如何, 但对于将使用的文章, 我只能说除了部分大佬的文章外, 其他都是👎</p>
+<p>个人认为讲使用的文章要做到两点: 1.怎样用;2. 每个操作的作用是什么.但绝大多数的文章就是告诉属于者你要这样做, 然后就成功了, 读者看了之后成功了, 但根本不知道自己做了什么,特别是像我这种之前没有做过认证授权(登录)内容的<code>loser</code>, 本身就不了解, 文章也讲不清楚, 个人很迷茫啊</p>
+<p>由于<code>SpringSecurity</code>内容很多, 但最重要的是配置内容, 本篇会介绍<code>SpringSecurity</code>中重要的内容讲解, 其他内容或许一句话带过</p>
+<p><mark>如果想快速明白该如何配置, 可以直接看<a href="#认证流程" style="font-weight: blod">认证流程</a>部分</mark></p>
+<h3 id="引入springsecurity"><a class="markdownIt-Anchor" href="#引入springsecurity"></a> 引入<code>SpringSecurity</code></h3>
+<h4 id="添加依赖"><a class="markdownIt-Anchor" href="#添加依赖"></a> 添加依赖</h4>
+<ol>
+<li>
+<p>父级项目中引入依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-security<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>由于<code>SpringSecurity</code>的依赖在<code>SpringBoot</code>的<code>spring-boot-dependencies</code>中引入, 所以在父项目中不必要显式的声明引入</p>
+<p>才用<code>starter</code>的方式时, 默认就会有<code>@EnableWebSecurity</code>注解, 所以会发现, 当引入依赖后, 就需要进行登录操作了. 如果只是单纯的进入<code>security</code>的依赖, 需要添加该注解开启相关内容</p>
+</li>
+<li>
+<p>子项目中引入依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-security<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>说明</p>
+<ul>
+<li>登录操作先在一个子项目中实现, 然后添加到整个项目中, 在分布式中实现一处登录</li>
+<li>后续在分布到整个项目中时, 可能会将登录操作放置在网关子项目中, 所以会有普通项目到网关项目的登录改造</li>
+</ul>
+</li>
+</ol>
+<h4 id="添加配置"><a class="markdownIt-Anchor" href="#添加配置"></a> 添加配置</h4>
+<p>在使用<code>starter</code>时, 不需要任何配置, 既可以正常使用<code>Security</code>, 如果引入的是单纯的<code>Security</code>, 则需要再配置类上添加<code>@EnableWebSecurity</code>注解</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebSecurity</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Security</span> &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="自定义配置前的说明"><a class="markdownIt-Anchor" href="#自定义配置前的说明"></a> 自定义配置前的说明</h3>
+<p>当需要自定义配置时, 主要是自定义配置两个内容:1. <code>HttpSecurity</code>; 2. <code>WebSecurity</code>. 这两个东西讲起来就啰嗦了</p>
+<ol>
+<li>
+<p>首先区分请求中的容器: <code>servlet</code>容器和<code>spring</code>容器, <code>servlet</code>容器主要是为请求服务的, 主要有两类: <code>Filter</code>和<code>Servlet</code>, <code>Servlet</code>是对请求进行具有实际意义的内容处理, 可以参照<code>spring mvc</code>中的<code>controller+service+dao</code>, <code>Filter</code>是对请求进行预处理或者后置处理; <code>spring</code>容器就是我们常说的<code>spring</code>的<code>bean</code></p>
+</li>
+<li>
+<p>其次区分<code>Filter</code>: <code>Filter</code>根据容器不同, 有<code>servlet</code>的<code>Filter</code>和<code>spring</code>的<code>Filter</code>, 通常我们使用<code>spring</code>的方式注册的<code>Filter</code>都是<code>spring</code>的<code>Filter</code>; <code>servlet</code>必须是继承自<code>javax.serlvet.Filter</code>(<code>tomcat-embed-core</code>依赖包应该是<code>jakarta.servlet.Filter</code>)接口, 并通过<code>web.xml</code>(<code>SpirngBoot</code>是通过<code>@WebFilter</code>注解)注册到<code>servlet</code>容器中(不明白的可以先学习一下<code>servlet</code>开发)</p>
+</li>
+<li>
+<p>在了解上述两个内容之后, 就再认识三个名词:</p>
+<ul>
+<li><code>DelegatingFilterProxy</code>(委派过滤器代理, <code>servlet</code>中的<code>Filter</code>与<code>spring</code>中的<code>Filter</code>的桥接器, <code>spring web</code>中定义的, 任何框架都可以通过此方式添加<code>Filter</code>到<code>servlet</code>执行链中);</li>
+<li><code>FilterChainProxy</code> (<code>spring</code>容器中的过滤器链代理, 内部维护多个<code>spring</code>过滤器链, 在<code>SpringSecurity</code>中定义的, 即专门为<code>SpringSecurity</code>使用);</li>
+<li><code>SecurityFilterChain</code>(安全框架的过滤器链, 在<code>SpringSecurity</code>中定义的, 认证流程的处理过程)</li>
+</ul>
+</li>
+<li>
+<p>直接上图</p>
+<p><img src="Security%E7%9A%84%E8%BF%87%E6%BB%A4%E5%99%A8%E9%93%BE%E6%9E%B6%E6%9E%84.png" alt="Security的过滤器链架构" /></p>
+</li>
+<li>
+<p>现在讲<code>WebSecurity</code>和<code>HttpSecurity</code>. <code>Security</code>的原理就是根据不同的路径, 匹配不同的<code>SecurityFilterChain</code></p>
+<ul>
+<li><code>HttpSecurity</code>是用来构建<code>SecurityFilterChain</code>的, <code>HttpSecurity</code>每<code>build</code>一次, 就构建出一条完整的<code>SecurityFilterChain</code>, 每个<code>SecurityFilterChain</code>根据配置不同, 有不同数量的过滤器, 当项目中没有构建<code>SecurityFilterChain</code>时, 框架会添加一条默认的<code>SecurityFilterChain</code> ;</li>
+<li><code>WebSecurity</code>是用来构建<code>FilterChainProxy</code>的构建类, 它会维护项目中添加的<code>SecurityFilterChain</code>, 根据<code>SecurityFilterChain</code>中的路径匹配规则, 调用不同的<code>SecurityFilterChain</code></li>
+<li><img src="Security%E4%B8%AD%E7%9A%84%E6%9E%84%E5%BB%BA%E5%85%B3%E7%B3%BB.png" alt="Security中的构建关系" /></li>
+</ul>
+</li>
+<li>
+<p>演示</p>
+<p><img src="Security%E7%9A%84WebSecurity%E5%92%8CHttpSecurity%E9%85%8D%E7%BD%AE%E6%96%B9%E5%BC%8F.png" alt="Security的WebSecurity和HttpSecurity配置方式" /></p>
+<p><img src="Security%E4%B8%ADWebSecurity%E5%92%8CHttpSecurity%E9%85%8D%E7%BD%AE%E7%BB%93%E6%9E%9C%E6%BC%94%E7%A4%BA.png" alt="Security中WebSecurity和HttpSecurity配置结果演示" /></p>
+</li>
+<li>
+<p>说明</p>
+<ul>
+<li>
+<p>个人不太推荐使用<code>addSecurityFilterChainBuilder</code>的方式添加<code>SecurityFilterChain</code>, 这种方式定义比较麻烦. 不同的<code>SecurityFilterChain</code>可以通过定义不同的<code>SecurityFilterChain</code>的<code>Bean</code>实例, 通过<code>SecurityFilterChain</code>的<code>securityMatcher</code>来实现不同请求的处理</p>
+</li>
+<li>
+<p>项目中的静态资源推荐使用<code>ignoring</code>的方式实现, 因为大多数静态资源都是允许直接访问的</p>
+</li>
+<li>
+<p>同一个<code>HttpSecurity</code>是不允许重复构建的, 重复构建时会出现已构建的错误, 所以说第一点中的<code>addSecurityFilterChainBuilder</code>添加比较麻烦, 同时也拒绝了直接构建<code>List&lt;SecurityFilterChain&gt;</code>的道路. 但是每次创建新的<code>SecurityFilterChain</code>时注入的<code>HttpSecurity</code>都是不同的, 所以推荐此方式添加<code>SecurityFilterChain</code>.</p>
+<p><img src="Security%E4%B8%8D%E5%90%8C%E7%9A%84HttpSecurity.png" alt="Security不同的HttpSecurity" /></p>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="配置websecurity"><a class="markdownIt-Anchor" href="#配置websecurity"></a> 配置<code>WebSecurity</code></h3>
+<p><img src="Security%E7%9A%84WebSecurity%E7%9A%84%E9%85%8D%E7%BD%AE%E5%86%85%E5%AE%B9.png" alt="Security的WebSecurity的配置内容" /></p>
+<p>上述是<code>WebSecurity</code>中的可配置内容</p>
+<ul>
+<li><code>ignoring</code>: 忽略路径</li>
+<li><code>httpFirewall</code>: 防火墙</li>
+<li><code>debug</code>: 是否开启<code>debug</code></li>
+<li><code>addSecurityFilterChainBuilder</code>: 添加一个<code>SecurityFilterChain</code></li>
+<li><code>privilegeEvaluator</code>: 特权, 这个我也没有明白具体要怎么做, 大致是说判断某个请求是否有某种特权, 至于是什么样的特权, 怎样定义, 不甚了解</li>
+<li><code>expressionHandler</code>: 表达式处理器. 不明白不要紧, 去查看参数, 可以找到<code>SecurityExpressionHandler</code>接口, 有三个方法, 查看其抽象实现类<code>AbstractSecurityExpressionHandler</code>, 其中有一个解析器<code>SpelExpressionParser</code>, 这是<code>spring</code>的<code>spel</code>表达式解析器, 该类中还能找到<code>SecurityExpressionOperations</code>这个类, 看到其中的方法名就明白了, 解析控制器中方法的<code>@PreAuthorize</code>等权限注解中定义的表达式内容. 该方法是为了添加自己的表达式解析类</li>
+<li><code>postBuildAction</code>: 构建后的处理, 参数是一个<code>Runnable</code>任务</li>
+<li><code>requestRejectedHandler</code>: 请求拒绝处理器, 用来处理防火墙的拒绝异常的处理器</li>
+</ul>
+<p>配置<code>WebSecurity</code>主要是为了将路径放行, 避免某些资源即使放行还要走一个完整的<code>SecurityFilterChain</code>, 此方式添加的<code>SecurityFilterChain</code>中没有任何<code>Filter</code>, 直接向下运行; <code>WebSecurity</code>中的其他配置可按需自行添加</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="keyword">public</span> WebSecurityCustomizer <span class="title function_">webSecurityCustomizer</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> web -&gt; web</span><br><span class="line">        .ignoring().requestMatchers(<span class="string">&quot;/static/**&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面即是放行<code>/static</code>路径下的所有请求</p>
+<h3 id="配置httpsecurity"><a class="markdownIt-Anchor" href="#配置httpsecurity"></a> 配置<code>HttpSecurity</code></h3>
+<p><code>HttpSecurity</code>是<code>security</code>配置的重点</p>
+<ol>
+<li>
+<p>可以通过<code>HttpSecurity</code>配置多个<code>SecurityFilterChain</code>, 这些<code>SecurityFilterChain</code>之间需要注意一些内容</p>
+<ul>
+<li>由于每个请求只能走一个<code>SecurityFilterChain</code>, 所以在配置时, 尽可能不要出现路径配置重叠的情况, 避免出现走错了<code>SecurityFilterChain</code>而导致的问题</li>
+<li>如果接收的请求没有被覆盖在配置的<code>SecurityFilterChain</code>的映射路径中, 则该请求会被直接通过, 所以在进行配置时需要确保有一个<code>SecurityFilterChain</code>是覆盖全部请求的, 即上面的图片中的<code>anyRequest</code>的<code>SecurityFilterChain</code></li>
+<li>通常情况下我们只会配置一个<code>SecurityFilterChain</code>, 这个<code>SecurityFilterChain</code>不要配置<code>securityMatcher</code>这一项, 避免覆盖<code>anyRequest</code>的<code>SecurityFilterChain</code>导致的映射路径没有全覆盖的情况</li>
+</ul>
+</li>
+<li>
+<p><code>HttpSecurity</code>可以配置的内容</p>
+<p><code>HttpSecurity</code>可以配置的内容非常多, 目前<code>3.1.5</code>版本中, 保守估计有一半已经标记为过时的方法了, 所以就不截图了, 这里分类介绍一下吧</p>
+<ul>
+<li>配置当前<code>SecurityFilterChain</code> 处理的映射路径: <code>securityMatchers</code></li>
+<li>在当前<code>SecurityFilterChain</code>中添加自定义过滤器: <code>addFilter</code></li>
+<li><code>csrf</code>配置: 默认是开启的, 当设置为<code>disable</code>时会将<code>SecurityFilterChain</code>中的该过滤器删除</li>
+<li><code>cors</code>配置: 默认是没有的, 当添加配置后, 会添加一个<code>CorsFilter</code></li>
+<li>认证配置: 默认是使用用户密码的认证方式; 认证的实现是通过添加每一种的认证过滤器来配置的, 官方定义支持的认证方式:
+<ul>
+<li><code>Basic</code>: <code>Basic</code>请求头的认证方式, 通过<code>httpBasic</code>配置, 可以参考<code>https://blog.csdn.net/ShiJunzhiCome/article/details/126064450</code></li>
+<li>用户密码认证: 用户名, 密码认证, <code>username</code>, <code>password</code>, 通过<code>formLogin</code>可配置</li>
+<li><code>JAAS</code>: <code>jaas</code>认证方式, 官方可能没有提供该认证方式的过滤器实现. 有一个很相似的<code>jee</code>方法是用来配置<code>Java EE security</code>过滤器的</li>
+<li><code>X509</code>: <code>X509</code>认证可以通过<code>x509</code>配置</li>
+<li><code>rememberMe</code>: 记住一个过了<code>session</code>有效期的用户, 可以通过<code>rememberMe</code>配置</li>
+<li><code>SAML 2.0 Login</code>: <code>SAML2.0</code>认证可以通过<code>saml2Login</code>配置</li>
+<li><code>OAuth 2.0 Login</code>: <code>OpenId Connect</code>和非标准的<code>OAuth 2.0</code>认证, 通过<code>oauth2Login</code>配置</li>
+<li><code>CAS</code>: 支持, 但没有实现过滤器</li>
+<li><code>Pre-Authentication Scenatios</code>: 使用外部机制(如<code>SiteMinder</code>或<code>Java EE security</code>)进行认证, 但仍使用<code>spring security</code>进行授权保护. 通过<code>jee</code>可以配置<code>Java EE security</code></li>
+<li>匿名认证: 通过<code>anonymous</code>可以配置匿名认证</li>
+</ul>
+</li>
+<li>认证时可共用的配置:
+<ul>
+<li><code>authenticationManager</code>: 认证管理器, 维护一组认证处理器, 默认的是<code>ProviderManager</code></li>
+<li><code>AuthenticationProvider</code>: 认证处理器, 此方法是添加一个认证处理器, 这些认证处理器通过<code>AuthenticationManager</code>进行维护管理, 进行认证操作时, 会遍历<code>AuthenticationManager</code>中维护的<code>AuthenticationProvider</code>, 通过<code>AuthenticationProvider</code>的<code>supports</code>判断是否符合验证要求, 符合则通过<code>authenticate</code>方法验证, 然后跳过后续还未执行的验证处理器</li>
+<li><code>userDetailsService</code>: 用户详情服务, 用于加载用户的详情信息, 通常会重写该内容(注册一个该接口的<code>@Bean</code>实例即可替换默认<code>SecurityFilterChain</code>中的用户详情服务), 从数据库中查询用户信息</li>
+<li><code>exceptionHandling</code>: 异常处理, 此方法是添加可共用的认证异常处理机制</li>
+<li><code>sessionManagement</code>: <code>session</code>管理</li>
+<li><code>passwordManagement</code>: 加密管理</li>
+<li><code>authorizeHttpRequests</code>: 认证请求配置</li>
+<li><code>securityContext</code>: 安全上下文</li>
+<li><code>setSharedObject</code>: 共享对象</li>
+</ul>
+</li>
+<li>注销认证配置: <code>logout</code></li>
+<li>其它配置我不太明白, 就不误人子弟了</li>
+</ul>
+</li>
+</ol>
+<h3 id="请求流程"><a class="markdownIt-Anchor" href="#请求流程"></a> 请求流程</h3>
+<p><img src="Security%E9%AA%8C%E8%AF%81%E8%AF%B7%E6%B1%82%E7%9A%84%E6%B5%81%E7%A8%8B.png" alt="Security验证请求的流程" /></p>
+<p>在上面描述了基本概念和配置内容之后, 可以简单的描述请求的流程</p>
+<ol>
+<li>接收请求, 执行到<code>security</code>添加的<code>DelegatingFilterProxy</code>, 通过这个桥接器接入认证流程</li>
+<li><code>FilterChainProxy</code>根据请求查询并调用<code>SecurityFilterChain</code>, 执行认证流程</li>
+<li>认证流程执行结束后, 执行后续的操作</li>
+<li>返回请求的处理结果</li>
+</ol>
+<p>其中我们在认证中最关心的就是认证流程, 即使用的<code>SecurityFilterChain</code></p>
+<h3 id="认证流程"><a class="markdownIt-Anchor" href="#认证流程"></a> 认证流程</h3>
+<p>此处就以用户名和密码的登录方式为例, 演示认证流程, 此次演示会偏向于前后端分离的配置, 不会有页面内容</p>
+<p>在开始之前先开启日志, 方便查看和定位</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">logging:</span></span><br><span class="line">  <span class="attr">level:</span></span><br><span class="line">    <span class="attr">org:</span></span><br><span class="line">      <span class="attr">springframework:</span></span><br><span class="line">        <span class="attr">security:</span> <span class="string">trace</span></span><br></pre></td></tr></table></figure>
+<p>首先我们不做配置, 查看一下默认的<code>SecurityFilterChain</code></p>
+<p><img src="Security%E7%9A%84%E8%AE%A4%E8%AF%81%E6%B5%81%E7%A8%8B%E8%BF%87%E6%BB%A4%E5%99%A8.png" alt="Security的认证流程过滤器" /></p>
+<p>我们进行配置时, 多数是进行步骤三的配置和步骤七的配置, 其他的配置内容或禁用,或用默认, 或配置比较简单. 我们先将这部分简单配置一下</p>
+<ol>
+<li>
+<p>先禁用<code>csrf</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http.csrf(AbstractHttpConfigurer::disable);</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>异常处理设置为返回<code>json</code>内容:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">http.exceptionHandling(config -&gt;</span><br><span class="line">                       config</span><br><span class="line">                       .authenticationEntryPoint(customerAuthenticationHandler())</span><br><span class="line">                      );</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CustomerAuthenticationHandler</span> <span class="keyword">implements</span> <span class="title class_">AuthenticationEntryPoint</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">CustomerAuthenticationHandler</span><span class="params">(AuthenticationSaveHandler authenticationSaveHandler)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.authenticationSaveHandler = authenticationSaveHandler;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> AuthenticationSaveHandler authenticationSaveHandler;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">commence</span><span class="params">(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)</span> <span class="keyword">throws</span> IOException, ServletException &#123;</span><br><span class="line">        authenticationSaveHandler.remove(request.getHeader(<span class="string">&quot;TOKEN&quot;</span>));</span><br><span class="line">        Map&lt;String, Object&gt; result = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;String, Object&gt;();</span><br><span class="line">        result.put(<span class="string">&quot;msg&quot;</span>, authException);</span><br><span class="line">        result.put(<span class="string">&quot;status&quot;</span>, <span class="number">500</span>);</span><br><span class="line">        response.setContentType(<span class="string">&quot;application/json;charset=UTF-8&quot;</span>);</span><br><span class="line">        <span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectMapper</span>().writeValueAsString(result);</span><br><span class="line">        response.getWriter().println(s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><mark><code>AuthenticationSaveHandler</code>是我个人封装的一个验证信息的保存处理器,  <code>TOKEN</code>是我个人在请求头中定义的内容, 作为保存处理器的<code>KEY</code>, 至于具体实现可以个人自定义, <code>JWT</code>, <code>Redis</code>保存都可以, 如果演示想要简单点可以直接使用一个<code>Map</code>保存, 通过<code>KEY</code>来<code>get</code>和<code>put</code>即可</mark></p>
+<p>需要注意的是, 当配置完这些后, 访问服务资源时会发现可以直接访问, 这是因为我们没有添加鉴权的配置, 这样生成的<code>SecurityFilterChain</code>是没有鉴权过滤器的, 如果想要验证一下<code>exceptionHandling</code>效果可以先添加简单的鉴权配置</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">http.authorizeHttpRequests(</span><br><span class="line">    (auth) -&gt; auth</span><br><span class="line">    .requestMatchers(<span class="string">&quot;test/unauth&quot;</span>, <span class="string">&quot;login&quot;</span>)</span><br><span class="line">    .permitAll()</span><br><span class="line">    .anyRequest()</span><br><span class="line">    .authenticated()</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>测试访问除了<code>/test/unauth</code>路径之外的资源时, 就会异常, 异常信息是: <code>Full authentication is required to access this resource</code></p>
+</li>
+<li>
+<p>注销认证后的处理和成功的处理:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">http.logout(</span><br><span class="line">    (config) -&gt; config</span><br><span class="line">    .addLogoutHandler(userLogoutHandler())</span><br><span class="line">    .logoutSuccessHandler(userLogoutSuccessHandler())</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserLogoutHandler</span> <span class="keyword">implements</span> <span class="title class_">LogoutHandler</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">UserLogoutHandler</span><span class="params">(AuthenticationSaveHandler authenticationSaveHandler)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.authenticationSaveHandler = authenticationSaveHandler;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> AuthenticationSaveHandler authenticationSaveHandler;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">logout</span><span class="params">(HttpServletRequest request, HttpServletResponse response, Authentication authentication)</span> &#123;</span><br><span class="line">        authenticationSaveHandler.remove(request.getHeader(<span class="string">&quot;TOKEN&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserLogoutSuccessHandler</span> <span class="keyword">implements</span> <span class="title class_">LogoutSuccessHandler</span> &#123;</span><br><span class="line">    <span class="comment">/*public UserLogoutSuccessHandler(AuthenticationSaveHandler authenticationSaveHandler) &#123;</span></span><br><span class="line"><span class="comment">        this.authenticationSaveHandler = authenticationSaveHandler;</span></span><br><span class="line"><span class="comment">    &#125;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">    private AuthenticationSaveHandler authenticationSaveHandler;*/</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onLogoutSuccess</span><span class="params">(HttpServletRequest request, HttpServletResponse response, Authentication authentication)</span> &#123;</span><br><span class="line">        Map&lt;String, Object&gt; result = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;String, Object&gt;();</span><br><span class="line">        result.put(<span class="string">&quot;msg&quot;</span>, <span class="string">&quot;注销成功&quot;</span>);</span><br><span class="line">        result.put(<span class="string">&quot;status&quot;</span>, <span class="number">200</span>);</span><br><span class="line">        response.setContentType(<span class="string">&quot;application/json;charset=UTF-8&quot;</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectMapper</span>().writeValueAsString(result);</span><br><span class="line">            response.getWriter().println(s);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此时可以去请求<code>logout</code>注销认证, 请求成功时就会返回<code>UserLogoutSuccessHandler</code>中<code>onLogoutSuccess</code>返回的内容</p>
+<p><mark>项目默认的注销登录的地址是<code>logout</code>, 可以通过<code>logoutUrl</code>修改注销请求的路径</mark></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">http.logout(</span><br><span class="line">    (config) -&gt; config</span><br><span class="line">    .logoutUrl(<span class="string">&quot;/api/logout&quot;</span>)</span><br><span class="line">    .addLogoutHandler(userLogoutHandler())</span><br><span class="line">    .logoutSuccessHandler(userLogoutSuccessHandler())</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>认证之后的操作和游客模式暂不操作</p>
+</li>
+<li>
+<p>鉴权配置, 通过<code>authorizeHttpRequests</code>配置资源的权限信息</p>
+<p>通过前面图片的过滤器介绍应该清晰的了解到, 鉴权操作实际是在认证等过滤器执行完之后操作的, 所以在此过滤器执行之前就被拦截处理的请求是不会走到该过滤器的, 比如登录配置中配置的登录请求路径(默认<code>/login</code>)和注销请求路径(<code>logout</code>); 部分过滤器是有执行链结束的后置处理的, 比如异常处理器是需要<code>catch</code>鉴权异常(即鉴权过滤器中抛出的异常)的, 所以会出现鉴权过滤器执行完后抛出了异常返回到异常过滤器中执行</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 用于匹配当前的SecurityFilterChain适用的请求路径, 不配置默认为anyRequest</span></span><br><span class="line">http.securityMatcher(<span class="string">&quot;/**&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>上面的配置不是鉴权配置, 而是<code>SecurityFilterChain</code>处理的请求路径, 不符合要求的不会匹配到该<code>SecurityFilterChain</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 请求鉴权配置</span></span><br><span class="line">http.authorizeHttpRequests(</span><br><span class="line">    (auth) -&gt; auth</span><br><span class="line">    .requestMatchers(<span class="string">&quot;test/unauth&quot;</span>) <span class="comment">// 用于匹配路径</span></span><br><span class="line">    .permitAll()</span><br><span class="line">    .requestMatchers(<span class="string">&quot;/test/auth&quot;</span>)</span><br><span class="line">    .hasRole(<span class="string">&quot;USER_TEST&quot;</span>)   <span class="comment">// 具有某种角色</span></span><br><span class="line">    .requestMatchers(<span class="string">&quot;/test/auth&quot;</span>)</span><br><span class="line">    .hasAuthority(<span class="string">&quot;AUTH&quot;</span>)   <span class="comment">// 具有某种权限</span></span><br><span class="line">    .requestMatchers(<span class="string">&quot;/**&quot;</span>)</span><br><span class="line">    .access((authentication, object) -&gt; <span class="keyword">new</span> <span class="title class_">AuthorizationDecision</span>(<span class="literal">true</span>))    <span class="comment">// 自定义符合某种要求</span></span><br><span class="line">    .anyRequest()   <span class="comment">// 用于匹配任何路径</span></span><br><span class="line">    .authenticated()    <span class="comment">// 表示需要认证</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>上述鉴权配置只是演示了几个配置的例子, <code>requestMatchers</code>表示匹配路径, 鉴权处理整体分为5个类别: <code>permitAll</code>(放行), <code>hasRole</code>(具有某种角色), <code>hasAuthority</code>(具有某种权限), <code>access</code>(自定义的访问要求), <code>authenticated</code>(需认证)</p>
+<p>鉴权配置的每一个都会在鉴权配置类<code>AuthorizeHttpRequestsConfigurer</code>中添加一个<code>AuthorizationManager</code>(注意别跟<code>AuthenticationManager</code>混了), 在<code>AuthorizationFilter</code>中实现其作用</p>
+</li>
+<li>
+<p>认证配置</p>
+<p>这是登录操作最重要的配置了, 我们以用户名和密码的认证方式为例进行演示</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">http.formLogin((config) -&gt;</span><br><span class="line">               config</span><br><span class="line">               .usernameParameter(<span class="string">&quot;username&quot;</span>)	<span class="comment">// 用户名参数key</span></span><br><span class="line">               .passwordParameter(<span class="string">&quot;password&quot;</span>)	<span class="comment">// 密码参数key</span></span><br><span class="line">               .loginProcessingUrl(<span class="string">&quot;/login&quot;</span>)	<span class="comment">// 登录处理的匹配路径</span></span><br><span class="line">               .failureHandler(loginFailureHandler())	<span class="comment">// 登录失败处理器</span></span><br><span class="line">               .successHandler(loginSuccessHandler())	<span class="comment">// 登录成功处理</span></span><br><span class="line">              );</span><br></pre></td></tr></table></figure>
+<p>上述配置是常做的配置, 当客户端发送<code>/login</code>请求时会被该过滤器拦截处理, 从请求中获取<code>key</code>为<code>username</code>和<code>password</code>的参数获取其值进行认证;  <code>failureHandler</code>配置一个认证失败的处理器; <code>successHandler</code>配置一个认证成功的处理器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LoginFailureHandler</span> <span class="keyword">implements</span> <span class="title class_">AuthenticationFailureHandler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*public LoginFailureHandler(AuthenticationSaveHandler authenticationSaveHandler) &#123;</span></span><br><span class="line"><span class="comment">        this.authenticationSaveHandler = authenticationSaveHandler;</span></span><br><span class="line"><span class="comment">    &#125;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">    private AuthenticationSaveHandler authenticationSaveHandler;*/</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onAuthenticationFailure</span><span class="params">(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception)</span> <span class="keyword">throws</span> IOException, ServletException &#123;</span><br><span class="line">        Map&lt;String, Object&gt; result = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;String, Object&gt;();</span><br><span class="line">        result.put(<span class="string">&quot;msg&quot;</span>, <span class="string">&quot;登录失败: &quot;</span>+exception.getMessage());</span><br><span class="line">        result.put(<span class="string">&quot;status&quot;</span>, <span class="number">500</span>);</span><br><span class="line">        response.setContentType(<span class="string">&quot;application/json;charset=UTF-8&quot;</span>);</span><br><span class="line">        <span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectMapper</span>().writeValueAsString(result);</span><br><span class="line">        response.getWriter().println(s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LoginSuccessHandler</span> <span class="keyword">implements</span> <span class="title class_">AuthenticationSuccessHandler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*public LoginSuccessHandler(AuthenticationSaveHandler authenticationSaveHandler) &#123;</span></span><br><span class="line"><span class="comment">        this.authenticationSaveHandler = authenticationSaveHandler;</span></span><br><span class="line"><span class="comment">    &#125;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">    private AuthenticationSaveHandler authenticationSaveHandler;*/</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onAuthenticationSuccess</span><span class="params">(HttpServletRequest request, HttpServletResponse response, Authentication authentication)</span> <span class="keyword">throws</span> IOException, ServletException &#123;</span><br><span class="line">        <span class="comment">/*String token = StringUtils.isBlank(request.getHeader(&quot;TOKEN&quot;)) ? UUID.randomUUID().toString() : request.getHeader(&quot;TOKEN&quot;);</span></span><br><span class="line"><span class="comment">        authenticationSaveHandler.add(token, authentication);*/</span></span><br><span class="line">        Map&lt;String, Object&gt; result = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        result.put(<span class="string">&quot;msg&quot;</span>, <span class="string">&quot;登录成功&quot;</span>);</span><br><span class="line">        result.put(<span class="string">&quot;status&quot;</span>, <span class="number">200</span>);</span><br><span class="line">        Map&lt;String, Object&gt; data = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        data.put(<span class="string">&quot;token&quot;</span>, token);</span><br><span class="line">        data.put(<span class="string">&quot;userInfo&quot;</span>, authentication);</span><br><span class="line">        result.put(<span class="string">&quot;data&quot;</span>, data);</span><br><span class="line">        response.setContentType(<span class="string">&quot;application/json;charset=UTF-8&quot;</span>);</span><br><span class="line">        <span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectMapper</span>().writeValueAsString(result);</span><br><span class="line">        response.getWriter().println(s);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>当配置到此处时, 会发现登录功能都已经成功了, 但是有一个问题还没有解决, 请求的认证存储问题</p>
+<p>当我说出这个问题时可能会有疑问: 认证信息在登录成功后已经保存, <code>token</code>也已经返回, 只需要在请求时添加<code>token</code>到请求头里不就可以成功了. 答案是否</p>
+<p>先认识两个概念: 1. 请求是无状态的, 请求与请求之间是不存在关联的; 2. 在认证框架中, 请求是分为两类的: 认证类(登录和注销); 普通类(资源请求)</p>
+<p>当我们在上述配置的基础上登录请求登录成功了, 会将认证信息保存到自定义的存储中并返回<code>token</code>, 但是当资源请求进来时我们并没有获取对应的认证信息添加到请求上下文中来表示已经通过验证</p>
+<p>当登录后如果访问资源请求时成功这不是我们的逻辑的成功, 而是框架的一些默认配置带来的效果, 默认配置中会将<code>sessionId</code>返回并写到<code>Cookie</code>中, 所以访问资源时可能带有了已通过认证的<code>sessionId</code>导致的</p>
+<p>解决方案:</p>
+<ul>
+<li>
+<p>第一种是网上大多的解决方案: 在走到认证流程过滤器前添加一个过滤器, 在这个过滤器中添加验证信息到上下文中, 还有的有会再获取<code>AuthenticationManager</code>然后再手动调用认证方法</p>
+</li>
+<li>
+<p>第二种是修改<code>session</code>的保存策略: 我个人比较懒, 所以想直接替换<code>spring</code>中验证信息的获取和保存方式. <code>spring</code>中无论是<code>mvc</code>还是<code>security</code>都是将请求基于<code>ThreadLocal</code>的, 所以此处的<code>session</code>策略不要修改, 依然使用<code>ThreadLocalSecurityContextHolderStrategy</code>, 我们要修改的是其存储库<code>SecurityContextRepository</code></p>
+<p><code>SecurityContextHolderFilter</code>: 获取验证信息的过滤器</p>
+<p><code>AuthorizationFilter</code>: 获取并使用验证信息的过滤器</p>
+<p><code>AbstractAuthenticationProcessingFilter</code>: 保存验证信息的过滤器(仅仅是用户名密码模式下的保存过滤器)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">AuthenticationSaveHandler</span> <span class="keyword">extends</span> <span class="title class_">SecurityContextRepository</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="type">boolean</span> <span class="title function_">add</span><span class="params">(Object account, SecurityContext authentication)</span>;</span><br><span class="line"></span><br><span class="line">    SecurityContext <span class="title function_">get</span><span class="params">(Object account)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">boolean</span> <span class="title function_">remove</span><span class="params">(Object account)</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MemoryAuthenticationSaveHandler</span> <span class="keyword">implements</span> <span class="title class_">AuthenticationSaveHandler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Map&lt;Object, SecurityContext&gt; USER = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">add</span><span class="params">(Object account, SecurityContext authentication)</span> &#123;</span><br><span class="line">        USER.put(account, authentication);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> SecurityContext <span class="title function_">get</span><span class="params">(Object account)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> USER.get(account);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">remove</span><span class="params">(Object account)</span> &#123;</span><br><span class="line">        USER.remove(account);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> SecurityContext <span class="title function_">loadContext</span><span class="params">(HttpRequestResponseHolder requestResponseHolder)</span> &#123;</span><br><span class="line">        <span class="type">HttpServletRequest</span> <span class="variable">request</span> <span class="operator">=</span> requestResponseHolder.getRequest();</span><br><span class="line">        <span class="type">String</span> <span class="variable">token</span> <span class="operator">=</span> request.getHeader(<span class="string">&quot;TOKEN&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> get(token);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">saveContext</span><span class="params">(SecurityContext context, HttpServletRequest request, HttpServletResponse response)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">token</span> <span class="operator">=</span> UUID.randomUUID().toString();</span><br><span class="line">        response.addHeader(<span class="string">&quot;TOKEN&quot;</span>, token);</span><br><span class="line"><span class="comment">//        Authentication authentication = context.getAuthentication();</span></span><br><span class="line">        add(token, context);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">containsContext</span><span class="params">(HttpServletRequest request)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">token</span> <span class="operator">=</span> request.getHeader(<span class="string">&quot;TOKEN&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> USER.containsKey(token);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http.setSharedObject(SecurityContextRepository.class, authenticationSaveHandler());</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="自定义登录"><a class="markdownIt-Anchor" href="#自定义登录"></a> 自定义登录</h3>
+<p>通过前面的配置, 我们可以实现配置官方的登录处理, 有些时候我们不希望使用官方的登录流程, 而是希望自定义登录流程和逻辑, 此处有两种方式:</p>
+<ol>
+<li>
+<p>请求处理器的方式</p>
+<p>这种方式就是前面提到的, 将登录请求放行, 然后在<code>controller</code>中实现自定义的登录逻辑, 并进行相关处理</p>
+</li>
+<li>
+<p>登录过滤器方式</p>
+<p>这种方式与上述方式类似, 只是逻辑处理通过自定义的过滤器实现</p>
+<p>首先根据自己的需求, 将官方实现的登录过滤器配置好, 然后创建一个自定义的过滤器, 并添加到<code>SecurityFilterChain</code>中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http.addFilterBefore(<span class="keyword">new</span> <span class="title class_">MyLoginFilter</span>(passwordEncoder, userDetailsService, authenticationSaveHandler), RequestCacheAwareFilter.class);</span><br></pre></td></tr></table></figure>
+<p>然后自定义实现一个过滤器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyLoginFilter</span> <span class="keyword">extends</span> <span class="title class_">OncePerRequestFilter</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> PasswordEncoder passwordEncoder;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">RequestMatcher</span> <span class="variable">requiresAuthenticationRequestMatcher</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AntPathRequestMatcher</span>(<span class="string">&quot;/login&quot;</span>,</span><br><span class="line">            <span class="string">&quot;POST&quot;</span>);</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> UserDetailsService userDetailsService;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> SecurityContextRepository securityContextRepository;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">MyLoginFilter</span><span class="params">(PasswordEncoder passwordEncoder, UserDetailsService userDetailsService, SecurityContextRepository securityContextRepository)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.passwordEncoder = passwordEncoder;</span><br><span class="line">        <span class="built_in">this</span>.userDetailsService = userDetailsService;</span><br><span class="line">        <span class="built_in">this</span>.securityContextRepository = securityContextRepository;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">doFilterInternal</span><span class="params">(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)</span> <span class="keyword">throws</span> ServletException, IOException &#123;</span><br><span class="line">        <span class="keyword">if</span> (!requiresAuthentication(request, response)) &#123;</span><br><span class="line">            filterChain.doFilter(request, response);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">String</span> <span class="variable">username</span> <span class="operator">=</span> request.getParameter(<span class="string">&quot;username&quot;</span>);</span><br><span class="line">        <span class="type">String</span> <span class="variable">password</span> <span class="operator">=</span> request.getParameter(<span class="string">&quot;password&quot;</span>);</span><br><span class="line">        <span class="type">UserDetails</span> <span class="variable">user</span> <span class="operator">=</span> userDetailsService.loadUserByUsername(username);</span><br><span class="line">        <span class="keyword">if</span> (passwordEncoder.matches(password, user.getPassword())) &#123;</span><br><span class="line">            <span class="type">Authentication</span> <span class="variable">authentication</span> <span class="operator">=</span> UsernamePasswordAuthenticationToken.authenticated(user, user, Collections.emptyList());</span><br><span class="line">            <span class="type">SecurityContext</span> <span class="variable">context</span> <span class="operator">=</span> SecurityContextHolder.createEmptyContext();</span><br><span class="line">            context.setAuthentication(authentication);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                securityContextRepository.saveContext(context, request, response);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IOException</span>(e);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        filterChain.doFilter(request, response);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> <span class="type">boolean</span> <span class="title function_">requiresAuthentication</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>.requiresAuthenticationRequestMatcher.matches(request);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以在<code>OncePerRequestFilter</code>这个过滤器类的基础上进行构建, 此处只是简单的做了一个简单的逻辑处理和上下文保存样例, 具体实现可根据个人需要进行具体修改</p>
+</li>
+</ol>
+<h3 id="出现问题"><a class="markdownIt-Anchor" href="#出现问题"></a> 出现问题😭</h3>
+<p>问题一</p>
+<p>出现问题:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Not injecting HSTS header since it did not match request to [Is Secure]</span><br></pre></td></tr></table></figure>
+<p>问题描述: 这个问题在自定义登录后, 在请求登录时可能会出现, 具体内容上不会报错, 但是在打开日志打印时会显示自定义的登录过滤器出现了该描述</p>
+<p>解决方案: 配置请求头<code>https</code>配置, 具体可参考: <a target="_blank" rel="noopener" href="https://blog.csdn.net/w_monster/article/details/119936215">https://blog.csdn.net/w_monster/article/details/119936215</a></p>
+<h3 id="挖坑"><a class="markdownIt-Anchor" href="#挖坑"></a> 挖坑</h3>
+<p><code>SpringSecurity</code>源码</p>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2024/02/03/springcloud/SpringCloud系列七之认证和授权/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text"> 前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%95%E5%85%A5springsecurity"><span class="toc-number">2.</span> <span class="toc-text"> 引入SpringSecurity</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96"><span class="toc-number">2.1.</span> <span class="toc-text"> 添加依赖</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E9%85%8D%E7%BD%AE"><span class="toc-number">2.2.</span> <span class="toc-text"> 添加配置</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E9%85%8D%E7%BD%AE%E5%89%8D%E7%9A%84%E8%AF%B4%E6%98%8E"><span class="toc-number">3.</span> <span class="toc-text"> 自定义配置前的说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEwebsecurity"><span class="toc-number">4.</span> <span class="toc-text"> 配置WebSecurity</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEhttpsecurity"><span class="toc-number">5.</span> <span class="toc-text"> 配置HttpSecurity</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%B7%E6%B1%82%E6%B5%81%E7%A8%8B"><span class="toc-number">6.</span> <span class="toc-text"> 请求流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A4%E8%AF%81%E6%B5%81%E7%A8%8B"><span class="toc-number">7.</span> <span class="toc-text"> 认证流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E7%99%BB%E5%BD%95"><span class="toc-number">8.</span> <span class="toc-text"> 自定义登录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BA%E7%8E%B0%E9%97%AE%E9%A2%98"><span class="toc-number">9.</span> <span class="toc-text"> 出现问题😭</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%96%E5%9D%91"><span class="toc-number">10.</span> <span class="toc-text"> 挖坑</span></a></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2024/02/19/springcloud/SpringCloud系列八之服务划分/">SpringCloud系列(八)---服务划分</a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2024/02/01/web/Vue系列四之请求/">Vue系列(四)---请求</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2024/02/03/springcloud/SpringCloud系列七之认证和授权/'
+  })
+</script>
+
+
+<script>
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        let href = decodeURIComponent(link.href);
+        href = href.substring(href.indexOf('#'));
+        const target = $(href)[0];
+        const top = target.offsetTop;
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      我们在绵延的海滩上捡贝壳，今天捡到了不必欣喜，因为海很大，今天没捡到，也不必失落，因为海很大。 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">我好像没有网络备案</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"自転车","artist":"オレスカバンド","url":"/music/自転车-オレスカバンド.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"撞地球","artist":"鱼儿七","url":"/music/撞地球-鱼儿七.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"晴天","artist":"周杰伦","url":"/music/晴天-周杰伦.mp3","cover":"/imgs/music-bg1.jpg"},{"name":"告白气球","artist":"周杰伦","url":"/music/告白气球-周杰伦.mp3","cover":"/imgs/music-bg1.jpg"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>

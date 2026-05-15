@@ -1,0 +1,217 @@
+<h3 id="常用资源清单"><a class="markdownIt-Anchor" href="#常用资源清单"></a> 常用资源清单</h3>
+<h4 id="必选字段"><a class="markdownIt-Anchor" href="#必选字段"></a> 必选字段</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">参数名</th>
+<th style="text-align:left">字段类型</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">version</td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">指 K8s API 的版本，目前基本上是 v1 ，可以用 kubectl api-versions 命令查询</td>
+</tr>
+<tr>
+<td style="text-align:left">kind</td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">指 yaml 文件定义的资源类型和角色，比如：Pod</td>
+</tr>
+<tr>
+<td style="text-align:left">metadata</td>
+<td style="text-align:left">Object</td>
+<td style="text-align:left">元数据对象</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="http://metadata.name">metadata.name</a></td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">元数据对象的名字，比如命名 Pod 的名字</td>
+</tr>
+<tr>
+<td style="text-align:left">metadata.namespace</td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">元数据对象的命名空间（默认default）</td>
+</tr>
+<tr>
+<td style="text-align:left">spec</td>
+<td style="text-align:left">Object</td>
+<td style="text-align:left">详细定义对象</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[]</td>
+<td style="text-align:left">List</td>
+<td style="text-align:left">容器列表的定义</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[].name</td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">容器的名字</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[].image</td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">容器镜像的名称</td>
+</tr>
+</tbody>
+</table>
+<h4 id="主要字段"><a class="markdownIt-Anchor" href="#主要字段"></a> 主要字段</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">参数名</th>
+<th style="text-align:left">字段类型</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">spec.containers[].imagePullPolicy</td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">定义镜像的拉取策略，有Always、Never、IfNotPresent三个值可选，（1）Always：意思是每次都尝试重新拉取镜像，（2）Never：表示仅使用本地镜像，（3）IfNotPresent：如果本地有镜像就使用本地镜像，没有就拉取在线镜像。上面三个值都没设置的话，默认是Always。</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[].command[]</td>
+<td style="text-align:left">List</td>
+<td style="text-align:left">指定容器启动命令，因为是数组可以指定多个，不指定则使用镜像打包时使用的启动命令。</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[].args[]</td>
+<td style="text-align:left">List</td>
+<td style="text-align:left">批定容器启动命令参数，因为是数组可以指定多个。</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[].workingDir</td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">指定容器的工作目录</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[].volumeMounts[]</td>
+<td style="text-align:left">List</td>
+<td style="text-align:left">指定容器内部的存储卷位置</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[].volumeMounts[].name</td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">指定可以被容器挂载的存储卷的名称</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[].volumeMounts[].mountPath</td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">指定可以被挂载的存储卷的路径</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[].volumeMounts[].readOnly</td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">设置存储卷路径的读写模式，true或者false，默认为读写模式</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[].ports[]</td>
+<td style="text-align:left">List</td>
+<td style="text-align:left">指定容器需要用到的端口列表</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[].ports[].name</td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">指定端口名称</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[].ports[].containerPort</td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">指定容器需要监听的端口号</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[].ports[].hostPort</td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">指定容器所在主机需要监听的端口号，默认跟上面containerPort相同，注意设置了hostPort同一台主机无法启动该容器的相同副本（会端口冲突）</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[].ports[].protocol</td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">指定端口协议，支持TCP和UDP，默认为TCP</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[].env[]</td>
+<td style="text-align:left">List</td>
+<td style="text-align:left">指定容器运行前需要设置的环境变量列表</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[].env[].name</td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">指定环境变量名称</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[].env[].value</td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">指定环境变量值</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[].resources</td>
+<td style="text-align:left">Object</td>
+<td style="text-align:left">指定资源限制和资源请求的值（这里开始就是设置容器的资源上限）</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[].resources.limits</td>
+<td style="text-align:left">Object</td>
+<td style="text-align:left">指定设置容器运行时资源的运行上限</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[].resources.limits.cpu</td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">指定CPU限制，单位为core数，将用于docker run --cpu-shares参数</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[].resources.limits.memory</td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">指定MEM内存的限制，单位为MIB、GiB</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[].resources.requests</td>
+<td style="text-align:left">Object</td>
+<td style="text-align:left">指定容器启动和调度时的限制设置</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[].resources.requests.cpu</td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">CPU请求，单位为core数，容器启动时初始化可用数量</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.containers[].resources.requests.memory</td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">内存请求，单位为MIB、GiB，容器启动时初始化可用数量</td>
+</tr>
+</tbody>
+</table>
+<h4 id="额外字段"><a class="markdownIt-Anchor" href="#额外字段"></a> 额外字段</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">参数名</th>
+<th style="text-align:left">字段类型</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">spec.restartPolicy</td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">定义Pod的重启策略，可选值为Always、OnFailure、默认为Always。 1. Always：Pod一旦终止运行，则无论容器是如何终止的，kubelet服务都将重启它 2.OnFailure：只有Pod以非零退出码终止时，kubelet才会重启该容器。如果容器正常结束（退出码为0），则kubelet不会重启它。 3.Never：Pod终止后，kubelet将退出码报告给master，不会重启该Pod</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.nodeSelector</td>
+<td style="text-align:left">Object</td>
+<td style="text-align:left">定义Node的Label过滤标签，以key:value格式指定</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.imagePullSecrets</td>
+<td style="text-align:left">Object</td>
+<td style="text-align:left">定义pull镜像时使用secret名称，以name:secretkey格式指定</td>
+</tr>
+<tr>
+<td style="text-align:left">spec.hostNetwork</td>
+<td style="text-align:left">Boolean</td>
+<td style="text-align:left">定义是否使用主机网络模式，默认值是false，设置true表示使用主机网络，不使用docker网桥，同时设置了true将无法在同一台宿主机上启动第二个副本</td>
+</tr>
+</tbody>
+</table>
